@@ -1,33 +1,30 @@
-import { PlaceholderScene } from '@/components/3d/PlaceholderScene'
+import { useState } from 'react'
+
 import { SceneCanvas } from '@/components/3d/SceneCanvas'
-import { ModeSwitch } from '@/components/navigation/ModeSwitch'
+import { EntranceScene } from '@/components/3d/entrance/EntranceScene'
+import { EntranceOverlay } from '@/components/experience/EntranceOverlay'
+import type { ExperienceStage } from '@/systems/experienceStage'
 
 /**
  * Owns the 3D experience. The Canvas lives only here, so navigating away
  * unmounts it and releases the WebGL context.
  *
- * The world itself is not built yet — this renders a placeholder scene.
+ * Stage is the one piece of React state in the experience: it changes on a
+ * click, never on a frame, and the camera rig reads it to pick its pose.
  */
 export function ExperiencePage() {
+  const [stage, setStage] = useState<ExperienceStage>('intro')
+
   return (
     <main className="bg-void relative h-dvh w-full overflow-hidden">
       <SceneCanvas>
-        <PlaceholderScene />
+        <EntranceScene stage={stage} />
       </SceneCanvas>
 
-      {/* DOM overlay. Kept entirely outside the Canvas tree. */}
-      <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-6 sm:p-8">
-        <header className="flex items-start justify-between gap-4">
-          <p className="text-mist text-xs tracking-[0.3em] uppercase">3D Experience</p>
-          <div className="pointer-events-auto">
-            <ModeSwitch />
-          </div>
-        </header>
+      {/* Fades the first frame in, so the scene never pops. */}
+      <div aria-hidden className="experience-veil bg-void pointer-events-none absolute inset-0" />
 
-        <p className="text-mist/70 text-xs tracking-wide">
-          Placeholder scene — the environment is built in a later phase.
-        </p>
-      </div>
+      <EntranceOverlay stage={stage} onEnter={() => setStage('explore')} />
     </main>
   )
 }

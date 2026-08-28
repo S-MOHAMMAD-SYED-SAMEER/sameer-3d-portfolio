@@ -52,3 +52,20 @@
     @apply outline-none focus-visible:ring-2 focus-visible:ring-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-void;
   }
 }
+
+@keyframes experience-veil {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@layer components {
+  /* Covers the canvas for the first frames so the scene fades in rather
+     than popping. The reduced-motion rule above collapses its duration. */
+  .experience-veil {
+    animation: experience-veil 1400ms ease-out forwards;
+  }
+}

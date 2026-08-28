@@ -12,8 +12,12 @@ Visitors switch between them from anywhere.
 ## Status
 
 Phase 1 (foundation) is complete: app shell, routing, mode system, design
-tokens, project data layer, and an isolated WebGL boundary with a placeholder
-scene. The 3D world itself is not built yet.
+tokens, project data layer, and an isolated WebGL boundary.
+
+Phase 2 (entrance vertical slice) is complete: an enclosed architectural hall
+lit through a single portal, a placeholder figure, a cinematic camera move and
+a two-stage intro. The rest of the journey — car, world, project areas — is not
+built yet.
 
 ## Stack
 
@@ -53,3 +57,5 @@ src/
   by the 3D route so leaving it releases the WebGL context.
 - Never call `setState` from `useFrame`.
 - The 3D route is lazy-loaded so the Normal portfolio never downloads Three.js.
+- Scene dimensions, palette and camera poses live in `src/data/entranceScene.ts`,
+  not in the components that draw them.
