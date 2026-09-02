@@ -1,0 +1,7 @@
+# Text files are stored with LF in the repository so line endings never show
+# up in a diff. Checkout still honours core.autocrlf, so the working tree
+# stays CRLF on Windows.
+* text=auto
+
+# Binary assets: never normalized, never diffed as text.
+*.png binary

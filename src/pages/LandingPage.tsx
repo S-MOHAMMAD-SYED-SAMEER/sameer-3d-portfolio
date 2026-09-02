@@ -18,7 +18,7 @@ export function LandingPage() {
       />
 
       <div className="relative mx-auto flex min-h-dvh max-w-5xl flex-col justify-center px-6 py-24 sm:px-10">
-        <h1 className="text-display leading-[0.85] font-semibold tracking-[-0.03em]">
+        <h1 className="text-display max-w-4xl leading-[0.95] font-semibold tracking-[-0.02em] text-balance">
           {PROFILE.name}
         </h1>
 

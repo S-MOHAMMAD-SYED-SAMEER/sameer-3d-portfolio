@@ -1,4 +1,3 @@
-import { DaylightPortal } from '@/components/3d/entrance/DaylightPortal'
 import { ENTRANCE_PALETTE, PORTAL_SURROUND, PORTAL_WALL } from '@/data/entranceScene'
 
 const { z, thickness, height, halfWidth, opening } = PORTAL_WALL
@@ -55,9 +54,8 @@ export function PortalWall() {
         <meshStandardMaterial color={ENTRANCE_PALETTE.stoneLight} roughness={0.8} />
       </mesh>
 
-      <group position={[0, opening.height / 2, -thickness]}>
-        <DaylightPortal width={opening.halfWidth * 2} height={opening.height} />
-      </group>
+      {/* No daylight plane here any more: the opening now looks through to
+          the workshop, and that room's window is the light beyond. */}
     </group>
   )
 }

@@ -2,7 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useLayoutEffect, useRef } from 'react'
 import { MathUtils, Vector3 } from 'three'
 
-import { CAMERA_POSES, CAMERA_START, FRAMING, type CameraPose } from '@/data/entranceScene'
+import { CAMERA_POSES, CAMERA_START, FRAMING, type CameraPose } from '@/data/cameraPoses'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import type { ExperienceStage } from '@/systems/experienceStage'
 
@@ -24,7 +24,17 @@ function narrowness(aspect: number): number {
   return (ratio - 1) / 2
 }
 
-export function CinematicRig({ stage }: { stage: ExperienceStage }) {
+interface CinematicRigProps {
+  stage: ExperienceStage
+  /**
+   * Takes precedence over the stage's own pose. Used inside the workshop,
+   * where the visitor moves between destinations without the journey
+   * advancing — so the rig still has exactly one thing to ease toward.
+   */
+  override?: CameraPose | null
+}
+
+export function CinematicRig({ stage, override = null }: CinematicRigProps) {
   const initialCamera = useThree((state) => state.camera)
   const prefersReducedMotion = usePrefersReducedMotion()
 
@@ -45,7 +55,7 @@ export function CinematicRig({ stage }: { stage: ExperienceStage }) {
   useFrame((state, delta) => {
     const { camera, pointer } = state
     const lookAt = lookAtRef.current
-    const pose = CAMERA_POSES[stage]
+    const pose = override ?? CAMERA_POSES[stage]
     const lambda = prefersReducedMotion ? REDUCED_MOTION_LAMBDA : SETTLE_LAMBDA
     const step = Math.min(delta, MAX_DELTA)
 

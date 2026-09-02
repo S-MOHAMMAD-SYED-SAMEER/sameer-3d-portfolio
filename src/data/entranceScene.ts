@@ -1,15 +1,15 @@
 /**
- * Layout, palette and camera data for the entrance scene.
+ * Layout, palette and lighting for the entrance hall.
  *
- * The scene components are pure geometry — every dimension, colour and
- * camera pose lives here so the composition can be re-tuned without
- * touching component code.
+ * Scene data only. The components that draw it are pure geometry, and
+ * camera behaviour lives in `@/data/cameraPoses` — every dimension and
+ * colour can be re-tuned here without touching either.
  *
  * Units are metres. The space is an enclosed hall running down -Z: the
  * camera looks from inside it toward a portal in the far wall.
  */
 
-export type Vec3 = readonly [number, number, number]
+import type { Vec3 } from '@/lib/vec3'
 
 /*
  * Warm daylight against cool shadow. Deliberately no saturated accent —
@@ -113,6 +113,28 @@ export const PORTAL_SURROUND = { width: 0.35, depth: 0.12 } as const
 /** Skirting along the base of the long walls. */
 export const WALL_BASE = { height: 0.5, depth: 0.15 } as const
 
+/**
+ * The entrance door: two leaves filling the opening below a fixed transom.
+ *
+ * The leaves cast shadows, so closing them genuinely closes the light — the
+ * hall's shaft comes from the transom while they are shut and floods in when
+ * they swing. Nothing about the daylight is faked for the transition.
+ *
+ * The reveal gaps are what let a thin line of daylight sit around a closed
+ * door, which is the whole reason the closed state still reads as a way out.
+ */
+export const DOOR = {
+  /** Fixed glazed light above the leaves. Never closes. */
+  transomHeight: 1.2,
+  /** Gap around each leaf, so daylight outlines the closed door. */
+  reveal: 0.045,
+  thickness: 0.16,
+  /** Radians each leaf swings inward when open. */
+  openAngle: 1.6,
+  /** Inset from the wall face, so the leaves sit within the opening. */
+  z: 0.1,
+} as const
+
 export const PLINTH = { radius: 2.4, height: 0.18, z: -10 } as const
 
 export const CHARACTER = {
@@ -126,56 +148,8 @@ export const CHARACTER = {
  * a real room would get from that much daylight.
  */
 export const LIGHTING = {
-  key: { position: [3, 18, -38] as Vec3, intensity: 4.4 },
-  fill: { position: [-9, 8, 16] as Vec3, intensity: 1.6 },
-  spill: { position: [0, 4.5, -18] as Vec3, intensity: 70, distance: 34 },
-  hemisphere: { intensity: 1.3 },
+  key: { position: [3, 18, -38] as Vec3, intensity: 7.2 },
+  fill: { position: [-9, 8, 16] as Vec3, intensity: 1.9 },
+  spill: { position: [0, 4.5, -17] as Vec3, intensity: 55, distance: 30 },
+  hemisphere: { intensity: 1.7 },
 } as const
-
-/**
- * Narrow viewports lose horizontal field of view, which crops the hall
- * away until only the doorway is left. The rig widens the lens and eases
- * the camera back to hold the composition — blended, because doing either
- * alone gives a fisheye or puts the camera through the wall.
- */
-export const FRAMING = {
-  referenceAspect: 1.6,
-  baseFov: 42,
-  maxFov: 60,
-  maxPullback: 1.2,
-  /** The camera may never reach the open end of the hall. */
-  maxZ: HALL.front - 4,
-  /**
-   * Metres the aim point drops on a fully portrait viewport. Tilting beats
-   * moving here: it trades ceiling for light path without changing the
-   * camera's distance, so the character keeps its size.
-   */
-  portraitTilt: 1.35,
-} as const
-
-export interface CameraPose {
-  position: Vec3
-  lookAt: Vec3
-  /** How far the camera drifts with the pointer, in metres. */
-  parallax: number
-}
-
-/** Where the camera begins before the cinematic move settles it. */
-export const CAMERA_START: CameraPose = {
-  position: [0, 1.2, 26],
-  lookAt: [0, 4.2, -20],
-  parallax: 0,
-}
-
-export const CAMERA_POSES = {
-  intro: {
-    position: [0, 2.9, 14],
-    lookAt: [0, 3.4, -16],
-    parallax: 0.3,
-  },
-  explore: {
-    position: [0, 1.9, 4.5],
-    lookAt: [0, 2.8, -14],
-    parallax: 1,
-  },
-} as const satisfies Record<string, CameraPose>

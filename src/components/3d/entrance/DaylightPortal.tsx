@@ -6,6 +6,9 @@ import { ENTRANCE_PALETTE } from '@/data/entranceScene'
 interface DaylightPortalProps {
   width: number
   height: number
+  /** Overrides for rooms lit more softly than the open sky. */
+  top?: string
+  bottom?: string
 }
 
 /**
@@ -20,13 +23,18 @@ interface DaylightPortalProps {
  * Vertex colours rather than a texture: no asset to load or decode, and
  * the gradient stays resolution-independent.
  */
-export function DaylightPortal({ width, height }: DaylightPortalProps) {
+export function DaylightPortal({
+  width,
+  height,
+  top: topColour = ENTRANCE_PALETTE.daylightTop,
+  bottom: bottomColour = ENTRANCE_PALETTE.daylightBottom,
+}: DaylightPortalProps) {
   const geometry = useMemo(() => {
     const plane = new PlaneGeometry(width, height, 1, 24)
     const { position } = plane.attributes
 
-    const top = new Color(ENTRANCE_PALETTE.daylightTop)
-    const bottom = new Color(ENTRANCE_PALETTE.daylightBottom)
+    const top = new Color(topColour)
+    const bottom = new Color(bottomColour)
     const shade = new Color()
     const colors = new Float32Array(position.count * 3)
 
@@ -41,7 +49,7 @@ export function DaylightPortal({ width, height }: DaylightPortalProps) {
 
     plane.setAttribute('color', new Float32BufferAttribute(colors, 3))
     return plane
-  }, [width, height])
+  }, [width, height, topColour, bottomColour])
 
   // Built by hand, so it has to be released by hand.
   useEffect(() => () => geometry.dispose(), [geometry])

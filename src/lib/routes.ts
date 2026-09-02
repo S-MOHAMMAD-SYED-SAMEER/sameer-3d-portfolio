@@ -14,3 +14,14 @@ export const ROUTES = {
 export function projectRoute(id: ProjectId): string {
   return `${ROUTES.projects}/${id}`
 }
+
+/**
+ * The interactive demo that runs inside this portfolio.
+ *
+ * Nested under the project rather than given its own namespace, so the URL
+ * reads as "the demo belonging to this project" and the same shape works for
+ * the other two when they get one.
+ */
+export function projectDemoRoute(id: ProjectId): string {
+  return `${projectRoute(id)}/demo`
+}

@@ -1,4 +1,9 @@
+import { useFrame } from '@react-three/fiber'
+import { useRef } from 'react'
+import { MathUtils, type PointLight } from 'three'
+
 import { ENTRANCE_PALETTE, LIGHTING } from '@/data/entranceScene'
+import { MAX_FRAME_DELTA } from '@/lib/motion'
 
 /**
  * Three lights, no environment map.
@@ -8,7 +13,19 @@ import { ENTRANCE_PALETTE, LIGHTING } from '@/data/entranceScene'
  * silhouette. The fill only stops the camera-facing surfaces going
  * completely black.
  */
-export function EntranceLighting() {
+export function EntranceLighting({ doorOpen = 1 }: { doorOpen?: number }) {
+  const spillRef = useRef<PointLight>(null)
+  const spill = useRef(0)
+
+  // There is nothing to bounce in until the doors are open, so this rises
+  // with them rather than sitting on the closed leaves as a hotspot.
+  useFrame((_state, delta) => {
+    spill.current = MathUtils.damp(spill.current, doorOpen, 1.1, Math.min(delta, MAX_FRAME_DELTA))
+    if (spillRef.current !== null) {
+      spillRef.current.intensity = spill.current * LIGHTING.spill.intensity
+    }
+  })
+
   return (
     <>
       <hemisphereLight
@@ -44,8 +61,9 @@ export function EntranceLighting() {
       {/* Stands in for the bounce a doorway of daylight would throw back
           into the room. Without it the near faces of the stone go flat. */}
       <pointLight
+        ref={spillRef}
         position={LIGHTING.spill.position}
-        intensity={LIGHTING.spill.intensity}
+        intensity={0}
         distance={LIGHTING.spill.distance}
         decay={2}
         color={ENTRANCE_PALETTE.daylight}

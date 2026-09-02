@@ -20,7 +20,7 @@
     'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, sans-serif;
 
-  --text-display: clamp(3.25rem, 13vw, 11rem);
+  --text-display: clamp(2rem, 7vw, 5.5rem);
 }
 
 @layer base {
@@ -67,5 +67,41 @@
      than popping. The reduced-motion rule above collapses its duration. */
   .experience-veil {
     animation: experience-veil 1400ms ease-out forwards;
+  }
+}
+
+@keyframes experience-loading {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@layer components {
+  /* Held invisible for a beat: a chunk that arrives quickly swaps straight
+     to the scene and this never paints at all. */
+  .experience-loading {
+    animation: experience-loading 500ms ease-out 400ms both;
+  }
+}
+
+@keyframes dialogue-line {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer components {
+  /* Each line arrives rather than swapping under the reader. The
+     reduced-motion rule above collapses its duration. */
+  .dialogue-line {
+    animation: dialogue-line 420ms ease-out both;
   }
 }
