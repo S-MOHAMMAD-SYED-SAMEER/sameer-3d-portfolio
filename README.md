@@ -145,5 +145,11 @@ src/
 
 ## Deployment
 
-Not deployed. No hosting is configured in this repository, and no production
-URL exists yet. `npm run build` produces a static bundle in `dist/`.
+Live at <https://sameer-3d-portfolio-amber.vercel.app>, deployed from `main`
+on Vercel.
+
+`npm run build` produces the static bundle in `dist/` that is served.
+`vercel.json` rewrites paths with no file behind them to `index.html`, so a
+client-side route opened directly — `/projects/p3/demo` being the one that
+matters — reaches the router instead of the host's 404. Vercel checks the
+filesystem first, so built assets still serve themselves.
