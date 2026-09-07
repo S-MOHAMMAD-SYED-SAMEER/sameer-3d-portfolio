@@ -105,7 +105,7 @@ export function NormalPortfolioPage() {
             <HeadlineStat
               label="Live"
               value={`${PROOF.live} of ${PROJECTS.length}`}
-              note="The third is built, not deployed"
+              note="All three deployed"
             />
           </dl>
 

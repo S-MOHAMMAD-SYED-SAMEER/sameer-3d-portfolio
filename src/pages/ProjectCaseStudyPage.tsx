@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 
 import { ModeSwitch } from '@/components/navigation/ModeSwitch'
-import { ProjectArticle } from '@/components/normal/NormalProjects'
+import { ProjectArticle } from '@/components/normal/ProjectArticle'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { PROFILE } from '@/data/profile'
 import { ROUTES } from '@/lib/routes'

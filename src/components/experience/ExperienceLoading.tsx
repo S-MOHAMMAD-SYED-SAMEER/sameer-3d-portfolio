@@ -13,14 +13,14 @@
  * Same restraint as everything else: a tracked line on the same dark ground,
  * no spinner, no progress bar it could not honestly fill in.
  */
-export function ExperienceLoading() {
+export function ExperienceLoading({ label = 'Entering experience' }: { label?: string }) {
   return (
     <div className="bg-void relative flex h-dvh w-full items-center justify-center">
       <p
         role="status"
         className="experience-loading text-mist text-[11px] tracking-[0.4em] uppercase"
       >
-        Entering experience
+        {label}
       </p>
     </div>
   )

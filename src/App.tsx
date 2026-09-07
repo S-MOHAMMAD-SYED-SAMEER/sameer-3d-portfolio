@@ -1,9 +1,9 @@
 import { Suspense, lazy } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
+import { CanonicalUrl } from '@/components/CanonicalUrl'
 import { ExperienceLoading } from '@/components/experience/ExperienceLoading'
 import { LandingPage } from '@/pages/LandingPage'
-import { NormalPortfolioPage } from '@/pages/NormalPortfolioPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { ROUTES } from '@/lib/routes'
 import { ExperienceModeProvider } from '@/systems/ExperienceModeProvider'
@@ -15,6 +15,19 @@ import { ExperienceModeProvider } from '@/systems/ExperienceModeProvider'
  */
 const ExperiencePage = lazy(() =>
   import('@/pages/ExperiencePage').then((module) => ({ default: module.ExperiencePage })),
+)
+
+/*
+ * The Normal portfolio is loaded on demand too. It is not heavy in itself,
+ * but it reads the whole project dataset, and importing it statically put
+ * that dataset in the entry graph — so the landing page, which shows a name
+ * and two links, was preloading every project's case study and screenshot
+ * metadata before the visitor had chosen a mode.
+ */
+const NormalPortfolioPage = lazy(() =>
+  import('@/pages/NormalPortfolioPage').then((module) => ({
+    default: module.NormalPortfolioPage,
+  })),
 )
 
 /*
@@ -41,10 +54,18 @@ export default function App() {
   return (
     <BrowserRouter>
       <ExperienceModeProvider>
+        <CanonicalUrl />
         <Suspense fallback={<ExperienceLoading />}>
           <Routes>
             <Route path={ROUTES.landing} element={<LandingPage />} />
-            <Route path={ROUTES.normal} element={<NormalPortfolioPage />} />
+            <Route
+              path={ROUTES.normal}
+              element={
+                <Suspense fallback={<ExperienceLoading label="Loading portfolio" />}>
+                  <NormalPortfolioPage />
+                </Suspense>
+              }
+            />
             <Route path={ROUTES.experience} element={<ExperiencePage />} />
             <Route path={`${ROUTES.projects}/:id`} element={<ProjectCaseStudyPage />} />
             <Route path={`${ROUTES.projects}/:id/demo`} element={<ProjectDemoPage />} />

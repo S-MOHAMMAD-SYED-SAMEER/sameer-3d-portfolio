@@ -334,7 +334,7 @@ export const PROJECTS: readonly Project[] = [
     ],
     shortDescription:
       'An applicant tracking system that scores candidates with logic you can read back and audit.',
-    status: 'demo-pending',
+    status: 'live',
     proof: {
       tests: 326,
       evaluation: null,
@@ -354,14 +354,14 @@ export const PROJECTS: readonly Project[] = [
       },
     ],
     links: {
-      demo: null,
+      demo: 'https://explainable-ats.onrender.com',
       github:
         'https://github.com/S-MOHAMMAD-SYED-SAMEER/ai-business-automation/tree/main/explainable-ats',
       caseStudy: null,
     },
-    // The pipeline runs in the browser from the project's own source, so the
-    // portfolio can show it working without the deployment this project does
-    // not have. `status` stays `demo-pending`, which describes exactly that.
+    // The pipeline also runs in the browser from the project's own source,
+    // so the workflow can be stepped through here without leaving the
+    // portfolio. The deployment above is the application itself.
     interactiveDemo: true,
     caseStudy: {
       problem:

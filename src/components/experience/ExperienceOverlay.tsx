@@ -65,7 +65,7 @@ export function ExperienceOverlay({
       />
 
       <header className="relative flex items-start justify-between gap-4">
-        <p className="text-mist text-[10px] tracking-[0.35em] uppercase">3D Experience</p>
+        <h1 className="text-mist text-[10px] tracking-[0.35em] uppercase">3D Experience</h1>
         <div className="pointer-events-auto flex flex-col items-end gap-2">
           <ModeSwitch />
           <PlaybackSwitch mode={journey.mode} onChange={journey.setMode} />

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sameer-3d-portfolio-amber.vercel.app/sitemap.xml
