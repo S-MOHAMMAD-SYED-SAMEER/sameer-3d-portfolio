@@ -25,7 +25,7 @@ import {
  * corrected, and nothing in the codebase would have noticed.
  */
 
-test('there are three projects, each with its own id, in stated order', () => {
+test('every project has its own id, in stated order', () => {
   const ids = PROJECTS.map((project) => project.id)
 
   assert.equal(new Set(ids).size, ids.length)
@@ -42,7 +42,7 @@ test('both lookups agree, and only real ids are accepted', () => {
     assert.ok(isProjectId(project.id))
   }
 
-  for (const junk of ['p0', 'p4', '', 'P1', 'projects', '../p1']) {
+  for (const junk of ['p0', 'p5', '', 'P1', 'projects', '../p1']) {
     assert.equal(isProjectId(junk), false, `${junk} should not be a project id`)
   }
 })

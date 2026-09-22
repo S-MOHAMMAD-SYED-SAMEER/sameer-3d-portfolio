@@ -9,7 +9,7 @@
  * backed by the project's own repository or a reachable deployment.
  */
 
-export type ProjectId = 'p1' | 'p2' | 'p3'
+export type ProjectId = 'p1' | 'p2' | 'p3' | 'p4'
 
 /** Deployment state of a project. */
 export type ProjectStatus =
@@ -388,6 +388,67 @@ export const PROJECTS: readonly Project[] = [
       ],
       result:
         '326 automated tests pass across the API and the dashboard. The build runs locally against a deterministic offline extractor by default, which is what makes the whole pipeline reproducible without a key or a spend; a Claude adapter is implemented behind the same interface but is not what the current build exercises.',
+    },
+  },
+  {
+    id: 'p4',
+    order: 4,
+    title: 'KnowledgeOS',
+    category: 'RAG / Retrieval',
+    technologies: [
+      'Python',
+      'FastAPI',
+      'PostgreSQL',
+      'pgvector',
+      'SQLAlchemy',
+      'Alembic',
+      'sentence-transformers',
+      'Google Gemini',
+      'Jinja2',
+      'Docker',
+      'GitHub Actions',
+    ],
+    shortDescription:
+      'Retrieval-grounded answers over internal documents, with citation validation and honest abstention.',
+    status: 'demo-pending',
+    proof: {
+      tests: 88,
+      evaluation: null,
+      properties: [
+        'Hybrid retrieval (PostgreSQL full-text + pgvector) fused by Reciprocal Rank Fusion, reranked by a local CrossEncoder',
+        'Every citation checked in Python against the retrieved evidence before an answer is shown — an invalid citation rejects the answer rather than displaying it',
+        'A deterministic, keyless demo replays real BGE and CrossEncoder output through the same production query pipeline via dependency overrides — never a separate implementation',
+      ],
+    },
+    screenshots: [],
+    links: {
+      demo: null,
+      github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/knowledgeos',
+      caseStudy: null,
+    },
+    caseStudy: {
+      problem:
+        'An organization’s internal documentation is scattered and rarely trusted: an employee either digs through wikis and PDFs by hand, or asks a general LLM that answers confidently and cites nothing. A wrong answer with no citation is indistinguishable from a right one — the risk is not that evidence is missing, but that a system full of evidence still says something it cannot back.',
+      approach:
+        'Retrieval and generation are treated as separate failure modes, measured separately rather than blended into one score. Hybrid retrieval finds candidate evidence, a local reranker orders it, and generation is constrained to produce only citations a deterministic validator checks — in Python, not in the prompt — before an answer is ever shown. The system refuses outright when the evidence is insufficient rather than guessing.',
+      architecture: [
+        'Ingest, parse and chunk documents; embed with a local BGE model',
+        'Hybrid retrieval: PostgreSQL full-text search + pgvector similarity, fused by Reciprocal Rank Fusion',
+        'A local CrossEncoder reranks the fused candidates',
+        'Generation constrained to a versioned prompt and a structured output contract (answer, citations, sufficient_evidence)',
+        'Citation validation in Python: every citation checked against the retrieved, selected evidence before an answer is returned',
+        'Deterministic grounding and evidence-based abstention when citation checks fail or evidence is insufficient',
+        'One active document version enforced by a database constraint; superseded versions stay queryable for audit',
+      ],
+      engineering: [
+        'Every model sits behind a provider interface — embedding, reranking and generation can each be swapped by writing an adapter, not changing a config flag',
+        'A deterministic, keyless demo replays real, precomputed BGE and CrossEncoder output from committed fixtures through the identical production query pipeline, via FastAPI dependency overrides — never a second implementation',
+        'Static tests enforce the architecture itself: no application module may select a fake provider, and full-text search is never mislabelled as BM25',
+        'One active document version per document is a database-level constraint, not just application logic',
+        'Retrieval and answer-quality evaluation each run as a separate offline harness against a labelled fixture corpus, kept apart from the deterministic citation and grounding checks',
+      ],
+      result:
+        '88 tests covering the deterministic demo layer — the citation, grounding and abstention pipeline replaying real precomputed BGE and CrossEncoder output — pass in full, with no live model call. The complete local suite is 1,026 passing; the 11 remaining failures are Windows-specific (file-encoding and symlink-privilege behaviour) or reflect a locally cached model no longer matching an older test’s assumption, not defects in the system itself. Retrieval and answer-quality evaluation harnesses exist and are proven correct against fixtures, but neither has produced an official score yet — none is claimed here.',
     },
   },
 ] as const
