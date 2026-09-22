@@ -10,6 +10,7 @@ import {
 } from '@/data/projects'
 import { ProjectActions } from '@/components/experience/ProjectActions'
 import { ProjectEvidence } from '@/components/experience/ProjectEvidence'
+import { ProjectVideo } from '@/components/experience/ProjectVideo'
 import { cn } from '@/lib/cn'
 
 interface ProjectsPanelProps {
@@ -124,11 +125,14 @@ function CaseStudy({ project, onBack }: { project: Project; onBack: () => void }
         )}
       </Section>
 
-      {project.screenshots.length > 0 && (
+      {(project.screenshots.length > 0 || project.video !== undefined) && (
         <>
           <Rule />
           <Section title="Evidence">
-            <ProjectEvidence shots={project.screenshots} />
+            <div className="space-y-5">
+              <ProjectVideo video={project.video} />
+              <ProjectEvidence shots={project.screenshots} />
+            </div>
           </Section>
         </>
       )}

@@ -81,6 +81,29 @@ export interface ProjectShot {
   height: number
 }
 
+/**
+ * A recorded demo of the project actually running.
+ *
+ * The video counterpart of `ProjectShot`: a real capture, never a stand-in
+ * for `interactiveDemo`, which is a separate, live, in-browser mechanism
+ * rather than a recording. At most one per project — this is evidence, not a
+ * highlight reel.
+ *
+ * `caption` describes only what is visible in the recording, for the same
+ * reason a screenshot's caption does. The intrinsic size is recorded so the
+ * panel can reserve the right box before the file arrives.
+ */
+export interface ProjectVideo {
+  /** Served from public/, so root-relative. */
+  src: string
+  /** A still frame shown before playback starts. Served from public/, so root-relative. */
+  poster?: string
+  /** One line naming what the visitor is watching. */
+  caption: string
+  width: number
+  height: number
+}
+
 export type ProjectActionEmphasis = 'primary' | 'secondary'
 
 export interface ProjectAction {
@@ -136,6 +159,8 @@ export interface Project {
   proof: ProjectProof
   /** Evidence that it runs. Empty until a real capture exists. */
   screenshots: readonly ProjectShot[]
+  /** A recorded walkthrough, if one has been captured. Absent until then. */
+  video?: ProjectVideo
   links: ProjectLinks
   /** Absent until written. See `ProjectCaseStudy`. */
   caseStudy?: ProjectCaseStudy

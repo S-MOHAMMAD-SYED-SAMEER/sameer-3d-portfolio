@@ -1,5 +1,6 @@
 import { ProjectActions } from '@/components/experience/ProjectActions'
 import { ProjectEvidence } from '@/components/experience/ProjectEvidence'
+import { ProjectVideo } from '@/components/experience/ProjectVideo'
 import {
   PROJECT_STATUS_LABEL,
   caseStudySections,
@@ -50,10 +51,11 @@ export function ProjectArticle({ project }: { project: Project }) {
         )}
       </Block>
 
-      {project.screenshots.length > 0 && (
+      {(project.screenshots.length > 0 || project.video !== undefined) && (
         <Block title="Evidence">
-          {/* Two up on a wide screen; the component itself stays unchanged. */}
-          <div className="max-w-3xl">
+          <div className="max-w-3xl space-y-5">
+            <ProjectVideo video={project.video} />
+            {/* Two up on a wide screen; the component itself stays unchanged. */}
             <ProjectEvidence shots={project.screenshots} />
           </div>
         </Block>
