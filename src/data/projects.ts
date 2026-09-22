@@ -9,7 +9,7 @@
  * backed by the project's own repository or a reachable deployment.
  */
 
-export type ProjectId = 'p1' | 'p2' | 'p3' | 'p4' | 'p5'
+export type ProjectId = 'p1' | 'p2' | 'p3' | 'p4' | 'p5' | 'p6'
 
 /** Deployment state of a project. */
 export type ProjectStatus =
@@ -534,6 +534,63 @@ export const PROJECTS: readonly Project[] = [
       ],
       result:
         '478 tests are collected; 477 pass. The one remaining failure is a known, environment-specific test-capture artifact — not a defect in the application — and has been reproduced independently of the environment it runs in. No real-model benchmark has been run: the evaluation harness is proven correct against a stub provider and a committed synthetic dataset, but extraction accuracy, cost and latency require an Anthropic API key and credits that were not available, so none of those numbers are claimed here.',
+    },
+  },
+  {
+    id: 'p6',
+    order: 6,
+    title: 'VoiceDesk',
+    category: 'Voice AI',
+    technologies: [
+      'Python 3.13',
+      'FastAPI',
+      'Uvicorn',
+      'WebSockets',
+      'SQLAlchemy 2.x',
+      'Alembic',
+      'psycopg 3',
+      'PostgreSQL',
+      'Twilio Media Streams',
+      'Anthropic SDK',
+    ],
+    shortDescription:
+      'Answers a business phone line, understands the caller, books or reschedules appointments in a real calendar, and hands off to a human when it should.',
+    status: 'demo-pending',
+    proof: {
+      tests: 1651,
+      evaluation: '18/18',
+      properties: [
+        'Double-booking prevented by a PostgreSQL exclusion constraint, not application logic alone',
+        'A deterministic evaluation suite scripts eighteen calls through the real system and scores tool-calling, escalation and final database state against structured ground truth',
+        'Speech-to-text, text-to-speech and the dialogue model each sit behind a provider interface, swappable without touching the dialogue code',
+      ],
+    },
+    screenshots: [],
+    links: {
+      demo: null,
+      github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/voicedesk',
+      caseStudy: null,
+    },
+    caseStudy: {
+      problem:
+        'A missed call is a lost booking. Clinics, salons and trades businesses lose revenue to calls nobody could answer in time, and the hard part is not recognising speech — it is knowing when to stop talking and hand off to a person.',
+      approach:
+        'Six tools mediate every action the model can take on a call: check_availability, book_appointment, reschedule, cancel, take_message and transfer_to_human. The dialogue layer was built and tested as text in, text out — no audio involved — before telephony was added, so the logic was stable before the hardest engineering (streaming speech, barge-in, latency) had to work at the same time. Double-booking is prevented at the database layer, not trusted to application code.',
+      architecture: [
+        'Caller → Twilio Media Stream (WS) → audio buffer → streaming speech-to-text → turn manager',
+        'LLM turn with tool use → tool executor → CalendarService → PostgreSQL',
+        'Text-to-speech → audio back to the caller, with full transcript, tool calls, latency and cost persisted per call',
+        'A PostgreSQL exclusion constraint (EXCLUDE USING gist) prevents two callers from ever double-booking the same slot',
+        'A deterministic evaluation harness scripts eighteen calls through the real system and scores the result against structured ground truth',
+      ],
+      engineering: [
+        'Double-booking is enforced by a PostgreSQL exclusion constraint ahead of any booking code, so two callers who both pass an availability check cannot both win the race',
+        'The dialogue layer is testable with text in, text out and no audio anywhere near it — audio is an adapter, not the product',
+        '`transfer_to_human` records the intent and reason to escalate; actually connecting the caller to a person is not implemented',
+        'Speech-to-text, text-to-speech and the dialogue model each sit behind a provider interface, so swapping one is an adapter, not a config change',
+      ],
+      result:
+        '1,651 tests pass. The deterministic evaluation suite — eighteen scripted call scenarios run against the real system — scores 18/18 task success, covering straightforward booking, rescheduling, ambiguous dates and four adversarial scenarios that must be refused. This measures VoiceDesk’s own tool-calling, escalation and database behaviour against structured ground truth; the scenario model answers from a script, so the suite does not measure a real model’s conversational quality.',
     },
   },
 ] as const
