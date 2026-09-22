@@ -560,12 +560,13 @@ export const PROJECTS: readonly Project[] = [
       'Answers a business phone line, understands the caller, books or reschedules appointments in a real calendar, and hands off to a human when it should.',
     status: 'demo-pending',
     proof: {
-      tests: 1651,
+      tests: 1660,
       evaluation: '18/18',
       properties: [
         'Double-booking prevented by a PostgreSQL exclusion constraint, not application logic alone',
         'A deterministic evaluation suite scripts eighteen calls through the real system and scores tool-calling, escalation and final database state against structured ground truth',
         'Speech-to-text, text-to-speech and the dialogue model each sit behind a provider interface, swappable without touching the dialogue code',
+        'A browser harness exercises the real dialogue, tool-calling and calendar pipeline with no telephony credential required, bounded by a 300-second session limit and a 20-turn cap so a demo session cannot run unbounded',
       ],
     },
     screenshots: [],
@@ -591,9 +592,11 @@ export const PROJECTS: readonly Project[] = [
         'The dialogue layer is testable with text in, text out and no audio anywhere near it — audio is an adapter, not the product',
         '`transfer_to_human` records the intent and reason to escalate; actually connecting the caller to a person is not implemented',
         'Speech-to-text, text-to-speech and the dialogue model each sit behind a provider interface, so swapping one is an adapter, not a config change',
+        'A browser harness (`/harness`, `/ws/harness`) runs the identical `Conversation` → tool layer → `CalendarService` → PostgreSQL pipeline a phone call runs, with speech providers defaulting to a deterministic offline mode — a fixed transcript and a tone — so it needs no STT/TTS credential; real dialogue still needs an Anthropic key, and telephony itself is untouched and stays off by default',
+        'Two harness-only bounds — a 300-second session limit and a 20-turn cap, neither a rate limit nor authentication — close a demo session cleanly through the same admission and cleanup path a hung-up call already uses',
       ],
       result:
-        '1,651 tests pass. The deterministic evaluation suite — eighteen scripted call scenarios run against the real system — scores 18/18 task success, covering straightforward booking, rescheduling, ambiguous dates and four adversarial scenarios that must be refused. This measures VoiceDesk’s own tool-calling, escalation and database behaviour against structured ground truth; the scenario model answers from a script, so the suite does not measure a real model’s conversational quality.',
+        '1,661 tests collected; 1,660 pass, with one known pre-existing intermittent realtime telephony timing test. Focused browser-harness/demo coverage: 73/73 pass. The deterministic evaluation suite — eighteen scripted call scenarios run against the real system — scores 18/18 task success, covering straightforward booking, rescheduling, ambiguous dates and four adversarial scenarios that must be refused. This measures VoiceDesk’s own tool-calling, escalation and database behaviour against structured ground truth; the scenario model answers from a script, so the suite does not measure a real model’s conversational quality. A browser demo is documented and runnable through the existing Docker Compose stack, exercising the real pipeline end to end without a phone number; production telephony behaviour is unchanged.',
     },
   },
 ] as const
