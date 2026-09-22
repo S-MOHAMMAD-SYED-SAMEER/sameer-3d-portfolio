@@ -42,7 +42,7 @@ test('both lookups agree, and only real ids are accepted', () => {
     assert.ok(isProjectId(project.id))
   }
 
-  for (const junk of ['p0', 'p5', '', 'P1', 'projects', '../p1']) {
+  for (const junk of ['p0', 'p6', '', 'P1', 'projects', '../p1']) {
     assert.equal(isProjectId(junk), false, `${junk} should not be a project id`)
   }
 })

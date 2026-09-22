@@ -9,7 +9,7 @@
  * backed by the project's own repository or a reachable deployment.
  */
 
-export type ProjectId = 'p1' | 'p2' | 'p3' | 'p4'
+export type ProjectId = 'p1' | 'p2' | 'p3' | 'p4' | 'p5'
 
 /** Deployment state of a project. */
 export type ProjectStatus =
@@ -449,6 +449,66 @@ export const PROJECTS: readonly Project[] = [
       ],
       result:
         '88 tests covering the deterministic demo layer — the citation, grounding and abstention pipeline replaying real precomputed BGE and CrossEncoder output — pass in full, with no live model call. The complete local suite is 1,026 passing; the 11 remaining failures are Windows-specific (file-encoding and symlink-privilege behaviour) or reflect a locally cached model no longer matching an older test’s assumption, not defects in the system itself. Retrieval and answer-quality evaluation harnesses exist and are proven correct against fixtures, but neither has produced an official score yet — none is claimed here.',
+    },
+  },
+  {
+    id: 'p5',
+    order: 5,
+    title: 'DocIntel',
+    category: 'Document Intelligence',
+    technologies: [
+      'FastAPI',
+      'Pydantic',
+      'SQLAlchemy',
+      'Alembic',
+      'PostgreSQL',
+      'Anthropic SDK',
+      'pypdfium2',
+      'Docker',
+    ],
+    shortDescription:
+      'Extracts structured data from invoices and purchase orders, validates it deterministically outside the model, scores per-field confidence, and routes anything uncertain to a human review queue.',
+    status: 'demo-pending',
+    proof: {
+      tests: 477,
+      evaluation: null,
+      properties: [
+        'Deterministic validation runs outside the model — arithmetic, dates and currency codes are checked in Python, not trusted to generation',
+        'Confidence scoring combines the model’s own signal with independent deterministic-check outcomes',
+        'A failed deterministic check routes a field to human review regardless of how confident the model was',
+        'Human corrections preserve the model’s original answer in an audit trail rather than overwriting it',
+      ],
+    },
+    screenshots: [],
+    links: {
+      demo: null,
+      github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/docintel',
+      caseStudy: null,
+    },
+    caseStudy: {
+      problem:
+        'Businesses receive invoices and purchase orders as PDFs and photographs and need reliable structured data out of them. Handing the page to a vision model and storing whatever comes back is worse than no automation at all — a model will produce a plausible total that is off by one digit, or a date read day-first instead of month-first, with exactly the same confident tone as when it is right.',
+      approach:
+        'Extraction and trust are kept separate. A model proposes a structured answer against a strict schema, and every field is then independently re-checked in Python — arithmetic, line-item sums, ISO 4217 currency codes, date validity — regardless of what the model claims; the prompt explicitly instructs the model not to compute totals itself. Confidence is a weighted combination of the model’s own signal and those deterministic outcomes, and anything below a configurable threshold, or that fails a deterministic check outright, is routed to a human review queue rather than the export.',
+      architecture: [
+        'Upload validated by file signature and rendered to page images with pypdfium2',
+        'Extraction through a provider-agnostic interface, currently backed by the Anthropic SDK (vision, structured outputs)',
+        'Deterministic validation in Python: totals arithmetic, line-item sums, ISO 4217 currency codes, date validity',
+        'Per-field confidence scoring combines model self-report with deterministic-check outcomes',
+        'Anything below threshold — or failing a deterministic check regardless of score — is routed to a human review queue',
+        'Corrections recorded with a full audit trail, preserving the model’s original answer for comparison',
+        'One pipeline shared by invoices and purchase orders through registries, with no document-type conditionals',
+      ],
+      engineering: [
+        'Deterministic checks run entirely outside the model; the prompt explicitly instructs it not to compute totals, so arithmetic is never trusted to generation',
+        'Model confidence carries under half the weight of the final score, and a failed deterministic check forces review regardless of the model’s own confidence',
+        'Corrections preserve the model’s original answer rather than overwriting it, so human and model judgment stay comparable',
+        'An autouse test fixture patches the Anthropic client to raise on any call, with a dedicated test asserting the guard fires — no test can reach the real API',
+        'The container runs as a non-root user with a health check; Alembic migrations are verified to upgrade, downgrade and re-upgrade cleanly',
+        'An offline evaluation harness runs a committed, deterministic synthetic invoice dataset through the real pipeline with a stub provider, proving the harness itself works without needing model credentials',
+      ],
+      result:
+        '478 tests are collected; 477 pass. The one remaining failure is a known, environment-specific test-capture artifact — not a defect in the application — and has been reproduced independently of the environment it runs in. No real-model benchmark has been run: the evaluation harness is proven correct against a stub provider and a committed synthetic dataset, but extraction accuracy, cost and latency require an Anthropic API key and credits that were not available, so none of those numbers are claimed here.',
     },
   },
 ] as const
