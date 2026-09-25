@@ -442,7 +442,7 @@ export const PROJECTS: readonly Project[] = [
       properties: [
         'Hybrid retrieval (PostgreSQL full-text + pgvector) fused by Reciprocal Rank Fusion, reranked by a local CrossEncoder',
         'Every citation checked in Python against the retrieved evidence before an answer is shown — an invalid citation rejects the answer rather than displaying it',
-        'Two separate demo mechanisms exist: a standalone, deterministic demo (`demo/`) that replays real, precomputed BGE and CrossEncoder output from committed fixtures through the production query pipeline via dependency overrides; and a newer, credential-free integrated demo mode inside the main application that serves fixed scenario answers without invoking BGE or CrossEncoder at all',
+        'Two separate demo mechanisms exist: a standalone, deterministic demo (`demo/`) that replays real, precomputed BGE and CrossEncoder output from committed fixtures through the production query pipeline via dependency overrides; and a credential-free integrated demo mode inside the main application that runs the real BGE embedding and CrossEncoder reranking providers while using fixed scenario answers for the generation step',
       ],
     },
     screenshots: [],
@@ -467,7 +467,7 @@ export const PROJECTS: readonly Project[] = [
       ],
       engineering: [
         'Every model sits behind a provider interface — embedding, reranking and generation can each be swapped by writing an adapter, not changing a config flag',
-        "The standalone demo/ package replays real, precomputed BGE and CrossEncoder output — generated once, historically, during that package's own fixture build — through the identical production query pipeline via FastAPI dependency overrides. A second, separately built demo mode now lives directly in the application (app/), serving fixed scenario answers through the same query API for a credential-free walkthrough; it does not invoke BGE or CrossEncoder, and is a distinct mechanism from the fixture-replay demo, not a replacement for it.",
+        "The standalone demo/ package replays real, precomputed BGE and CrossEncoder output — generated once, historically, during that package's own fixture build — through the identical production query pipeline via FastAPI dependency overrides. A second demo mode now lives directly in the application (app/): it runs the real BGE embedding and CrossEncoder reranking providers against the seeded corpus, while the generation step uses fixed scenario answers through the credential-free DemoLLMProvider.",
         'Static tests enforce the architecture itself: no application module may select a fake provider, and full-text search is never mislabelled as BM25',
         'One active document version per document is a database-level constraint, not just application logic',
         'Retrieval and answer-quality evaluation each run as a separate offline harness against a labelled fixture corpus, kept apart from the deterministic citation and grounding checks',
