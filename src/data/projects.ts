@@ -437,12 +437,12 @@ export const PROJECTS: readonly Project[] = [
       'Retrieval-grounded answers over internal documents, with citation validation and honest abstention.',
     status: 'demo-pending',
     proof: {
-      tests: 88,
+      tests: 1120,
       evaluation: null,
       properties: [
         'Hybrid retrieval (PostgreSQL full-text + pgvector) fused by Reciprocal Rank Fusion, reranked by a local CrossEncoder',
         'Every citation checked in Python against the retrieved evidence before an answer is shown — an invalid citation rejects the answer rather than displaying it',
-        'A deterministic, keyless demo replays real BGE and CrossEncoder output through the same production query pipeline via dependency overrides — never a separate implementation',
+        'Two separate demo mechanisms exist: a standalone, deterministic demo (`demo/`) that replays real, precomputed BGE and CrossEncoder output from committed fixtures through the production query pipeline via dependency overrides; and a newer, credential-free integrated demo mode inside the main application that serves fixed scenario answers without invoking BGE or CrossEncoder at all',
       ],
     },
     screenshots: [],
@@ -467,13 +467,13 @@ export const PROJECTS: readonly Project[] = [
       ],
       engineering: [
         'Every model sits behind a provider interface — embedding, reranking and generation can each be swapped by writing an adapter, not changing a config flag',
-        'A deterministic, keyless demo replays real, precomputed BGE and CrossEncoder output from committed fixtures through the identical production query pipeline, via FastAPI dependency overrides — never a second implementation',
+        "The standalone demo/ package replays real, precomputed BGE and CrossEncoder output — generated once, historically, during that package's own fixture build — through the identical production query pipeline via FastAPI dependency overrides. A second, separately built demo mode now lives directly in the application (app/), serving fixed scenario answers through the same query API for a credential-free walkthrough; it does not invoke BGE or CrossEncoder, and is a distinct mechanism from the fixture-replay demo, not a replacement for it.",
         'Static tests enforce the architecture itself: no application module may select a fake provider, and full-text search is never mislabelled as BM25',
         'One active document version per document is a database-level constraint, not just application logic',
         'Retrieval and answer-quality evaluation each run as a separate offline harness against a labelled fixture corpus, kept apart from the deterministic citation and grounding checks',
       ],
       result:
-        '88 tests covering the deterministic demo layer — the citation, grounding and abstention pipeline replaying real precomputed BGE and CrossEncoder output — pass in full, with no live model call. The complete local suite is 1,026 passing; the 11 remaining failures are Windows-specific (file-encoding and symlink-privilege behaviour) or reflect a locally cached model no longer matching an older test’s assumption, not defects in the system itself. Retrieval and answer-quality evaluation harnesses exist and are proven correct against fixtures, but neither has produced an official score yet — none is claimed here.',
+        'The full merged test suite — covering both demo mechanisms, the core retrieval/reranking/generation pipeline, and the citation and grounding checks — passes 1,120 of 1,124 collected tests, with 4 skipped and 0 failed. The skips are a single, disclosed environment limitation: the real BGE and CrossEncoder model weights are not cached and network access to fetch them is blocked in the verification environment, so those specific real-model-inference tests are skipped rather than faked or force-passed. Retrieval and answer-quality evaluation harnesses exist and are proven correct against fixtures, but neither has produced an official score yet — none is claimed here.',
     },
   },
   {
