@@ -48,7 +48,7 @@ handles contexts that fail to acquire.
 
 ### Project pages
 
-Three projects live in `src/data/projects.ts`. Each case study renders from
+Six projects live in `src/data/projects.ts`. Each case study renders from
 that file alone — problem, approach, architecture, engineering, result — along
 with screenshots of the project actually running, stored in `public/projects/`.
 Deployment state is a field on the project (`live` or `demo-pending`), not
@@ -57,11 +57,14 @@ prose, so a page can never claim a demo that does not exist.
 ## The Explainable ATS demo (`/projects/p3/demo`)
 
 Project 3, the Explainable ATS, is an applicant tracking system that scores
-candidates with logic you can read back and audit. It has no public
-deployment, so the portfolio runs its pipeline in the browser instead.
+candidates with logic you can read back and audit. A hosted deployment now
+exists (its health endpoint was independently verified to return 200), and
+the portfolio also runs its pipeline in the browser — the vendored demo
+below is a separate, standalone presentation of the same logic, not a
+substitute for the real deployment.
 
 `src/demo/p3/vendored/` is that project's own source, copied byte for byte from
-[`ai-business-automation/explainable-ats`](https://github.com/S-MOHAMMAD-SYED-SAMEER/ai-business-automation/tree/main/explainable-ats).
+[`explainable-ats`](https://github.com/S-MOHAMMAD-SYED-SAMEER/explainable-ats).
 Every judgement — redaction, evidence verification, requirement matching,
 scoring, ranking — is made by a vendored function. `src/demo/p3/run.ts`
 composes them and owns nothing but ids, timestamps and the audit events the
@@ -99,7 +102,7 @@ npm run preview    # serve the production build
 
 There is no test runner in this repository. The Explainable ATS tests,
 including the parity test that covers the vendored demo, live in the
-`ai-business-automation` repository and run there with `npm test`.
+`explainable-ats` repository and run there with `npm test`.
 
 ## Structure
 

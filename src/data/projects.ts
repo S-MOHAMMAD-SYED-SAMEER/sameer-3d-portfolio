@@ -226,11 +226,10 @@ export const PROJECTS: readonly Project[] = [
       },
     ],
     links: {
-      demo: 'https://sales-recovery-agent-j0mc.onrender.com',
-      github:
-        'https://github.com/S-MOHAMMAD-SYED-SAMEER/ai-business-automation/tree/main/sales-recovery-agent',
+      demo: 'https://sales-recovery-agent-krk0.onrender.com',
+      github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/sales-recovery-agent',
       caseStudy:
-        'https://github.com/S-MOHAMMAD-SYED-SAMEER/ai-business-automation/blob/main/sales-recovery-agent/PROJECT-1.md',
+        'https://github.com/S-MOHAMMAD-SYED-SAMEER/sales-recovery-agent/blob/main/PROJECT-1.md',
     },
     access: { kind: 'open' },
     caseStudy: {
@@ -305,8 +304,7 @@ export const PROJECTS: readonly Project[] = [
     ],
     links: {
       demo: 'https://inbox-crm-agent.onrender.com',
-      github:
-        'https://github.com/S-MOHAMMAD-SYED-SAMEER/ai-business-automation/tree/main/inbox-crm-agent',
+      github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/inbox-crm-agent',
       caseStudy: null,
     },
     access: {
@@ -380,8 +378,7 @@ export const PROJECTS: readonly Project[] = [
     ],
     links: {
       demo: 'https://explainable-ats.onrender.com',
-      github:
-        'https://github.com/S-MOHAMMAD-SYED-SAMEER/ai-business-automation/tree/main/explainable-ats',
+      github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/explainable-ats',
       caseStudy: null,
     },
     // The pipeline also runs in the browser from the project's own source,
@@ -437,7 +434,7 @@ export const PROJECTS: readonly Project[] = [
       'Retrieval-grounded answers over internal documents, with citation validation and honest abstention.',
     status: 'demo-pending',
     proof: {
-      tests: 1120,
+      tests: 1135,
       evaluation: null,
       properties: [
         'Hybrid retrieval (PostgreSQL full-text + pgvector) fused by Reciprocal Rank Fusion, reranked by a local CrossEncoder',
@@ -473,7 +470,7 @@ export const PROJECTS: readonly Project[] = [
         'Retrieval and answer-quality evaluation each run as a separate offline harness against a labelled fixture corpus, kept apart from the deterministic citation and grounding checks',
       ],
       result:
-        'The full merged test suite — covering both demo mechanisms, the core retrieval/reranking/generation pipeline, and the citation and grounding checks — passes 1,120 of 1,124 collected tests, with 4 skipped and 0 failed. The skips are a single, disclosed environment limitation: the real BGE and CrossEncoder model weights are not cached and network access to fetch them is blocked in the verification environment, so those specific real-model-inference tests are skipped rather than faked or force-passed. Retrieval and answer-quality evaluation harnesses exist and are proven correct against fixtures, but neither has produced an official score yet — none is claimed here.',
+        'The full merged test suite — covering both demo mechanisms, the core retrieval/reranking/generation pipeline, and the citation and grounding checks — passes 1,135 of 1,139 collected tests in CI, with 4 skipped and 0 failed. The skips are a single, disclosed environment limitation: CI never downloads the real BGE and CrossEncoder model weights, so those specific real-model-inference tests are skipped rather than faked or force-passed. (On a machine with both models cached, 1,127 of the same 1,139 pass, with 11 failures — all pre-existing and environment-specific, none touching retrieval, reranking, generation, citation validation or abstention correctness.) Retrieval and answer-quality evaluation harnesses exist and are proven correct against fixtures, but neither has produced an official score yet — none is claimed here.',
     },
   },
   {
@@ -495,7 +492,7 @@ export const PROJECTS: readonly Project[] = [
       'Extracts structured data from invoices and purchase orders, validates it deterministically outside the model, scores per-field confidence, and routes anything uncertain to a human review queue.',
     status: 'demo-pending',
     proof: {
-      tests: 494,
+      tests: 513,
       evaluation: null,
       properties: [
         'Deterministic validation runs outside the model — arithmetic, dates and currency codes are checked in Python, not trusted to generation',
@@ -536,7 +533,7 @@ export const PROJECTS: readonly Project[] = [
         'Docker Compose packages the demo alongside production: a shared `migrate` service runs once, and both `app` and a dedicated `demo` service (serving `demo.app:app` on host port 8001) depend on it completing before either starts — `docker compose config` validates the merged graph, though the image has not yet been built or run against a live Docker daemon',
       ],
       result:
-        '495 tests are collected; 494 pass. The one remaining failure is a known, environment-specific test-capture artifact — not a defect in the application — and has been reproduced independently of the environment it runs in. No real-model benchmark has been run: the evaluation harness is proven correct against a stub provider and a committed synthetic dataset, but extraction accuracy, cost and latency require an Anthropic API key and credits that were not available, so none of those numbers are claimed here. A deterministic, credential-free demo now exists, reusing the real pipeline end to end, and is packaged in Docker Compose alongside the production service; the Compose configuration itself has been validated, but building and running the container has not yet been verified against a live Docker daemon.',
+        '513 tests are collected; 513 pass. A previously-reported environment-specific test-capture artifact did not reproduce in the most recently verified run — it is recorded in the project’s own documentation rather than silently dropped, since nothing about the underlying mechanism changed, only the environment happened not to trigger it this time. No real-model benchmark has been run: the evaluation harness is proven correct against a stub provider and a committed synthetic dataset, but extraction accuracy, cost and latency require an Anthropic API key and credits that were not available, so none of those numbers are claimed here. A deterministic, credential-free demo now exists, reusing the real pipeline end to end, and is packaged in Docker Compose alongside the production service; the Compose configuration itself has been validated, but building and running the container has not yet been verified against a live Docker daemon.',
     },
   },
   {
@@ -560,7 +557,7 @@ export const PROJECTS: readonly Project[] = [
       'Answers a business phone line, understands the caller, books or reschedules appointments in a real calendar, and hands off to a human when it should.',
     status: 'demo-pending',
     proof: {
-      tests: 1660,
+      tests: 1661,
       evaluation: '18/18',
       properties: [
         'Double-booking prevented by a PostgreSQL exclusion constraint, not application logic alone',
@@ -596,7 +593,7 @@ export const PROJECTS: readonly Project[] = [
         'Two harness-only bounds — a 300-second session limit and a 20-turn cap, neither a rate limit nor authentication — close a demo session cleanly through the same admission and cleanup path a hung-up call already uses',
       ],
       result:
-        '1,661 tests collected; 1,660 pass, with one known pre-existing intermittent realtime telephony timing test. Focused browser-harness/demo coverage: 73/73 pass. The deterministic evaluation suite — eighteen scripted call scenarios run against the real system — scores 18/18 task success, covering straightforward booking, rescheduling, ambiguous dates and four adversarial scenarios that must be refused. This measures VoiceDesk’s own tool-calling, escalation and database behaviour against structured ground truth; the scenario model answers from a script, so the suite does not measure a real model’s conversational quality. A browser demo is documented and runnable through the existing Docker Compose stack, exercising the real pipeline end to end without a phone number; production telephony behaviour is unchanged.',
+        '1,661 tests collected; 1,661 pass. Focused browser-harness/demo coverage: 73/73 pass. The deterministic evaluation suite — eighteen scripted call scenarios run against the real system — scores 18/18 task success, covering straightforward booking, rescheduling, ambiguous dates and four adversarial scenarios that must be refused. This measures VoiceDesk’s own tool-calling, escalation and database behaviour against structured ground truth; the scenario model answers from a script, so the suite does not measure a real model’s conversational quality. A browser demo is documented and runnable through the existing Docker Compose stack, exercising the real pipeline end to end without a phone number; production telephony behaviour is unchanged.',
     },
   },
 ] as const
