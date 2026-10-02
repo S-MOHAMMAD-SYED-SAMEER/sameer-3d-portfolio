@@ -127,9 +127,9 @@ export function NormalPortfolioPage() {
           </ul>
 
           {/*
-            What he works with, listed as stated rather than as a claim that
-            each item is demonstrated by the three projects below — several are
-            broader than what this repository links to.
+            What he works with, grouped by outcome. Every technology named is
+            demonstrated by one of the six projects below — see
+            `@/data/skills` for the source these groups are taken from.
           */}
           <div className="border-line mt-12 border-t pt-8">
             <ul className="grid gap-6 sm:grid-cols-2">

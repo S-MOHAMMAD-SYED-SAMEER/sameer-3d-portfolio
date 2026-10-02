@@ -49,8 +49,13 @@ export interface ProjectLinks {
  * and the demo link behaves like any other link.
  */
 export type ProjectAccess =
-  /** Open to anyone with the link. */
-  | { kind: 'open' }
+  /**
+   * Open to anyone with the link. `note` is for the case where "open" is not
+   * the whole story — a read-only view that is open while some action behind
+   * it still needs an account, which is a narrower claim than plain `open`
+   * and would be wrong to leave unsaid.
+   */
+  | { kind: 'open'; note?: string }
   /** Needs an account. The portfolio says so rather than pretending. */
   | { kind: 'sign-in-required'; note?: string }
   /** A shared account made for the demo. Only ever filled in by hand. */
@@ -202,7 +207,7 @@ export const PROJECTS: readonly Project[] = [
       'An AI system that handles customer support conversations and recovers sales that would otherwise be lost.',
     status: 'live',
     proof: {
-      tests: 206,
+      tests: 247,
       evaluation: '16/16',
       properties: [
         'Eight guardrail policies enforced in code, not prompt text',
@@ -279,7 +284,7 @@ export const PROJECTS: readonly Project[] = [
       'An inbox-to-CRM system that triages incoming mail and moves qualified leads into the CRM.',
     status: 'live',
     proof: {
-      tests: 827,
+      tests: 895,
       evaluation: '10/10',
       properties: [
         'No value reaches the database without text quoted from the email',
@@ -308,8 +313,8 @@ export const PROJECTS: readonly Project[] = [
       caseStudy: null,
     },
     access: {
-      kind: 'sign-in-required',
-      note: 'The dashboard is behind sign-in, so the demo needs an account. Free-tier hosting sleeps when idle — the first request after a quiet spell is slow.',
+      kind: 'open',
+      note: 'The deployed dashboard runs in read-only demo mode on synthetic data, so no account is needed to look around. Signing in is only required to approve or change anything. Free-tier hosting sleeps when idle — the first request after a quiet spell is slow.',
     },
     caseStudy: {
       problem:
@@ -359,7 +364,7 @@ export const PROJECTS: readonly Project[] = [
       'An applicant tracking system that scores candidates with logic you can read back and audit.',
     status: 'live',
     proof: {
-      tests: 326,
+      tests: 389,
       evaluation: null,
       properties: [
         'Deterministic integer scoring — no floating point in the scoring path',

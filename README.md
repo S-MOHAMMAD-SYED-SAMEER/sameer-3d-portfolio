@@ -1,6 +1,6 @@
 # sameer-3d-portfolio
 
-Interactive portfolio for S Mohammad Syed Sameer — AI Automation Engineer.
+Interactive portfolio for S Mohammad Syed Sameer — AI & Automation Engineer.
 
 The site has two modes that share one data layer and one design system:
 

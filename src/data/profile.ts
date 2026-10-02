@@ -7,7 +7,7 @@ export const PROFILE = {
   name: 'S MOHAMMAD SYED SAMEER',
   /** Sentence case, for when the host says it aloud. */
   spokenName: 'S Mohammad Syed Sameer',
-  title: 'AI Automation Engineer',
+  title: 'AI & Automation Engineer',
   intro:
     'I build AI automation systems and hold them to engineering standards — real test suites, measurable evaluations, and behaviour you can inspect.',
 } as const

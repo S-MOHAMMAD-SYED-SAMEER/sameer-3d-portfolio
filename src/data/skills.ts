@@ -1,9 +1,13 @@
 /**
  * What the workshop is for.
  *
- * Taken verbatim from what Sameer has stated he works with — nothing has
- * been added to round out a group. If a technology is not on this list it
- * does not belong on the wall.
+ * Grouped around what each capability achieves rather than what it is
+ * called, and every technology named is one genuinely demonstrated by one
+ * of the six canonical projects — taken from the professional portfolio's
+ * own canonical `src/data/skills.ts` (frozen at commit ff4d65d8), which is
+ * the source of truth for which technologies the six projects actually
+ * demonstrate. Nothing here is a learning-roadmap item or a general
+ * familiarity claim; if a project doesn't demonstrate it, it is not listed.
  */
 export interface SkillGroup {
   id: string
@@ -13,23 +17,44 @@ export interface SkillGroup {
 
 export const SKILL_GROUPS: readonly SkillGroup[] = [
   {
-    id: 'ai',
-    title: 'AI / GenAI',
-    items: ['LLM integration', 'AI agents', 'RAG', 'AI automation'],
+    id: 'customer-answers',
+    title: 'Answer customer questions accurately',
+    items: [
+      'Retrieval-Augmented Generation (RAG)',
+      'Hybrid retrieval & reranking (PostgreSQL + pgvector, Chroma, Qdrant)',
+      'Tool-calling / function-calling agents',
+      'Conversation memory',
+    ],
   },
   {
-    id: 'software',
-    title: 'Software',
-    items: ['Python', 'Go', 'React', 'TypeScript', 'SQL'],
+    id: 'trustworthy-output',
+    title: 'Keep the output trustworthy',
+    items: [
+      'Guardrails',
+      'Eval harnesses',
+      'Deterministic validation & confidence scoring',
+      'Explainable AI output',
+    ],
   },
   {
-    id: 'backend',
-    title: 'Backend / Data',
-    items: ['APIs', 'PostgreSQL', 'SQLAlchemy', 'Data systems'],
+    id: 'beyond-chat',
+    title: 'Extend automation beyond chat',
+    items: [
+      'Document extraction & human-review workflows',
+      'Real-time voice (Deepgram speech-to-text, ElevenLabs text-to-speech)',
+      'Twilio telephony integration',
+      'PostgreSQL exclusion constraints for scheduling',
+    ],
   },
   {
-    id: 'cloud',
-    title: 'Cloud / DevOps',
-    items: ['Git', 'GitHub', 'CI/CD', 'Cloud infrastructure'],
+    id: 'working-software',
+    title: 'Ship it as working software',
+    items: [
+      'Python / FastAPI / PostgreSQL / SQLAlchemy / Alembic',
+      'React / TypeScript / Vite / Tailwind CSS',
+      'Node.js',
+      'Docker & Docker Compose',
+      'Claude API (Haiku 4.5, Sonnet 5)',
+    ],
   },
 ]
