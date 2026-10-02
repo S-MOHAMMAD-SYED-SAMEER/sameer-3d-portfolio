@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 
-import { RACK, SYSTEMS_PANEL, WORKSHOP_PALETTE } from '@/data/workshop'
+import { PROJECTOR_SCREEN, RACK, SYSTEMS_PANEL, WORKSHOP_PALETTE } from '@/data/workshop'
 import { createCanvasTexture } from '@/lib/canvasTexture'
 
 /**
@@ -109,6 +109,36 @@ export function WorkshopFittings() {
         <mesh position-z={SYSTEMS_PANEL.depth / 2 + 0.008}>
           <planeGeometry args={[SYSTEMS_PANEL.width - 0.14, SYSTEMS_PANEL.height - 0.14]} />
           <meshStandardMaterial map={diagram} roughness={0.7} />
+        </mesh>
+      </group>
+
+      {/* The projector screen: a frame flush against the right wall, facing
+          into the room, with an inset display surface. Geometry only — the
+          dim emissive tint is there so it reads as a screen rather than a
+          dark panel, not to present anything yet. */}
+      <group
+        position={PROJECTOR_SCREEN.position}
+        rotation-y={PROJECTOR_SCREEN.rotationY}
+      >
+        <mesh castShadow receiveShadow>
+          <boxGeometry
+            args={[PROJECTOR_SCREEN.width, PROJECTOR_SCREEN.height, PROJECTOR_SCREEN.depth]}
+          />
+          <meshStandardMaterial color={WORKSHOP_PALETTE.screenFrame} roughness={0.55} metalness={0.3} />
+        </mesh>
+        <mesh position-z={PROJECTOR_SCREEN.depth / 2 + 0.008}>
+          <planeGeometry
+            args={[
+              PROJECTOR_SCREEN.width - PROJECTOR_SCREEN.bezel,
+              PROJECTOR_SCREEN.height - PROJECTOR_SCREEN.bezel,
+            ]}
+          />
+          <meshStandardMaterial
+            color={WORKSHOP_PALETTE.screenGlow}
+            emissive={WORKSHOP_PALETTE.screenGlow}
+            emissiveIntensity={0.18}
+            roughness={0.35}
+          />
         </mesh>
       </group>
     </group>

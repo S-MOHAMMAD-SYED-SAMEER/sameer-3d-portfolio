@@ -53,6 +53,9 @@ export const WORKSHOP_PALETTE = {
   metal: '#3d404a',
   screenFrame: '#15161b',
   seat: '#1d1f25',
+  /** The projector screen's dormant display surface — dim enough to read as
+      off, cool enough to read as glass rather than wall. */
+  screenGlow: '#263241',
 } as const
 
 /** One long bench on the axis, set back so the doorway stays clear. */
@@ -104,6 +107,23 @@ export const SYSTEMS_PANEL = {
   width: 5.4,
   height: 3,
   depth: 0.06,
+} as const
+
+/**
+ * A large screen, wall-mounted on the right side, in the bare stretch
+ * between the doorway and the build station. Physical geometry only — it
+ * does not yet present any project. Mirrors `SYSTEMS_PANEL`'s own mounting
+ * offset (flush against the wall, facing into the room) on the opposite
+ * wall, which is why the sign of `rotationY` is flipped rather than reused.
+ */
+export const PROJECTOR_SCREEN = {
+  position: [6.95, 3, -25] as Vec3,
+  rotationY: -Math.PI / 2,
+  width: 6,
+  height: 4,
+  depth: 0.08,
+  /** Border between the outer frame and the inset display surface. */
+  bezel: 0.14,
 } as const
 
 /** Low and warm, so the bench reads without becoming the brightest thing. */

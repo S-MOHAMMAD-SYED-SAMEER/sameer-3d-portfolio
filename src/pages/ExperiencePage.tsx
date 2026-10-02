@@ -24,7 +24,7 @@ export function ExperiencePage() {
   const workshop = useWorkshop(inWorkshop)
 
   const { advance, back, isTransition, mode } = journey
-  const { isOpen, close, step, highlighted, select, project, clearProject } = workshop
+  const { isOpen, close, step, highlighted, select, project, clearProject, stepProject } = workshop
 
   /**
    * Back is a hierarchy, not one action. Reading a case study, it returns to
@@ -65,6 +65,12 @@ export function ExperiencePage() {
 
       if (event.key === 'ArrowLeft') {
         event.preventDefault()
+        // A project on the projector screen takes the arrows first: they
+        // step between projects, not between destinations or the story.
+        if (project !== null) {
+          stepProject(-1)
+          return
+        }
         // In the room the arrows walk the destinations rather than the story.
         if (inWorkshop && !isOpen) step(-1)
         else goBack()
@@ -72,6 +78,11 @@ export function ExperiencePage() {
       }
 
       if (event.key === 'ArrowRight') {
+        if (project !== null) {
+          event.preventDefault()
+          stepProject(1)
+          return
+        }
         if (inWorkshop && !isOpen) {
           event.preventDefault()
           step(1)
@@ -96,7 +107,19 @@ export function ExperiencePage() {
 
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [advance, goBack, highlighted, inWorkshop, isOpen, isTransition, mode, project, select, step])
+  }, [
+    advance,
+    goBack,
+    highlighted,
+    inWorkshop,
+    isOpen,
+    isTransition,
+    mode,
+    project,
+    select,
+    step,
+    stepProject,
+  ])
 
   return (
     <WebGLBoundary>

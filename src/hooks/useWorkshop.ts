@@ -2,8 +2,9 @@ import { useCallback, useMemo, useState } from 'react'
 
 import { AREA_POSES } from '@/data/workshopAreas'
 import type { CameraPose } from '@/data/cameraPoses'
-import { PROJECT_DETAIL_POSE } from '@/data/projectDisplays'
+import { PROJECTOR_POSE } from '@/data/projectDisplays'
 import type { ProjectId } from '@/data/projects'
+import { clampProjectStep } from '@/systems/projectNavigation'
 import { WORKSHOP_AREAS, type WorkshopArea } from '@/systems/workshopArea'
 
 export interface Workshop {
@@ -27,6 +28,8 @@ export interface Workshop {
   clearProject: () => void
   /** Moves the highlight along the row; wraps at both ends. */
   step: (direction: 1 | -1) => void
+  /** Moves the selected project by one; clamps at p1 and the last project. */
+  stepProject: (direction: 1 | -1) => void
 }
 
 /**
@@ -78,6 +81,15 @@ export function useWorkshop(active: boolean): Workshop {
 
   const clearProject = useCallback(() => setProject(null), [])
 
+  const stepProject = useCallback(
+    (direction: 1 | -1) => {
+      const next = clampProjectStep(project, direction)
+      setProject(next)
+      setHighlightedProject(next)
+    },
+    [project],
+  )
+
   const highlight = useCallback((area: WorkshopArea | null) => setHighlighted(area), [])
 
   const step = useCallback((direction: 1 | -1) => {
@@ -90,9 +102,9 @@ export function useWorkshop(active: boolean): Workshop {
 
   const pose = useMemo<CameraPose | null>(() => {
     if (!active || open === null) return null
-    // Inspecting a case study leans in a little; everything else keeps the
-    // destination's own pose.
-    if (open === 'projects' && project !== null) return PROJECT_DETAIL_POSE
+    // A project selected inside Projects faces the projector screen;
+    // everything else keeps the destination's own pose.
+    if (open === 'projects' && project !== null) return PROJECTOR_POSE
     return AREA_POSES[open]
   }, [active, open, project])
 
@@ -109,6 +121,7 @@ export function useWorkshop(active: boolean): Workshop {
     selectProject,
     highlightProject,
     clearProject,
+    stepProject,
     step,
   }
 }
