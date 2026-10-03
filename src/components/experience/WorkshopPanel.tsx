@@ -16,6 +16,7 @@ interface WorkshopPanelProps {
   onSelectProject: (id: ProjectId) => void
   onHighlightProject: (id: ProjectId | null) => void
   onClearProject: () => void
+  onStepProject: (direction: 1 | -1) => void
 }
 
 /**
@@ -35,6 +36,7 @@ export function WorkshopPanel({
   onSelectProject,
   onHighlightProject,
   onClearProject,
+  onStepProject,
 }: WorkshopPanelProps) {
   return (
     <aside
@@ -60,6 +62,7 @@ export function WorkshopPanel({
             onSelect={onSelectProject}
             onHighlight={onHighlightProject}
             onBack={onClearProject}
+            onStep={onStepProject}
           />
         )}
         {area === 'skills' && <Skills />}

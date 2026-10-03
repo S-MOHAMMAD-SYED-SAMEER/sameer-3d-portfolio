@@ -87,6 +87,7 @@ export function ExperienceOverlay({
             onSelectProject={workshop.selectProject}
             onHighlightProject={workshop.highlightProject}
             onClearProject={workshop.clearProject}
+            onStepProject={workshop.stepProject}
           />
         )}
       </div>

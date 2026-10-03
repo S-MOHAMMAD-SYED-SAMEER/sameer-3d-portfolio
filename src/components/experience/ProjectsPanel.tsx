@@ -10,6 +10,7 @@ import {
 } from '@/data/projects'
 import { ProjectActions } from '@/components/experience/ProjectActions'
 import { ProjectEvidence } from '@/components/experience/ProjectEvidence'
+import { ProjectSlide } from '@/components/experience/ProjectSlide'
 import { ProjectVideo } from '@/components/experience/ProjectVideo'
 import { cn } from '@/lib/cn'
 
@@ -18,7 +19,12 @@ interface ProjectsPanelProps {
   highlighted: ProjectId | null
   onSelect: (id: ProjectId) => void
   onHighlight: (id: ProjectId | null) => void
+  /** Returns from a selected project to the list — `ProjectSlide`'s own
+      "Back to projects" control. */
   onBack: () => void
+  /** Moves the selected project by one; clamped at both ends — `ProjectSlide`'s
+      own Previous/Next controls. */
+  onStep: (direction: 1 | -1) => void
 }
 
 /**
@@ -34,11 +40,12 @@ export function ProjectsPanel({
   onSelect,
   onHighlight,
   onBack,
+  onStep,
 }: ProjectsPanelProps) {
   const selected = project === null ? undefined : projectById(project)
 
   if (selected !== undefined) {
-    return <CaseStudy project={selected} onBack={onBack} />
+    return <ProjectSlide project={selected} onBack={onBack} onStep={onStep} />
   }
 
   return (
@@ -78,7 +85,15 @@ export function ProjectsPanel({
   )
 }
 
-function CaseStudy({ project, onBack }: { project: Project; onBack: () => void }) {
+/**
+ * The long-form write-up, kept here and exported rather than deleted: it
+ * has no caller now that the selected-project view renders `ProjectSlide`
+ * instead, but its fate (reuse, or retire in favour of `ProjectArticle`'s
+ * own rendering of the same data) is an open question for a later phase,
+ * not this one. `export` only so the compiler's unused-code check doesn't
+ * force a decision that hasn't been made yet.
+ */
+export function CaseStudy({ project, onBack }: { project: Project; onBack: () => void }) {
   const sections = caseStudySections(project)
   // No links means no actions block, and no rule introducing one.
   const hasActions = projectActions(project).length > 0
