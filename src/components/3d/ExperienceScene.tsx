@@ -6,6 +6,7 @@ import { EntranceHall } from '@/components/3d/entrance/EntranceHall'
 import { BuildStation } from '@/components/3d/workshop/BuildStation'
 import { WorkshopFittings } from '@/components/3d/workshop/WorkshopFittings'
 import { ProjectHotspots } from '@/components/3d/workshop/ProjectHotspots'
+import { ProjectorDisplay } from '@/components/3d/workshop/ProjectorDisplay'
 import { WorkshopHotspots } from '@/components/3d/workshop/WorkshopHotspots'
 import { WorkshopShell } from '@/components/3d/workshop/WorkshopShell'
 import { Workstation } from '@/components/3d/workshop/Workstation'
@@ -35,6 +36,10 @@ interface ExperienceSceneProps {
   onSelectArea: (area: WorkshopArea) => void
   /** Overrides the stage pose while a destination is open. */
   cameraOverride: CameraPose | null
+  /** The DOM element `ExperienceOverlay` renders the Projects panel into —
+      `ProjectorDisplay` keeps it lined up with the physical projector
+      screen every frame. */
+  projectorAnchorRef: React.RefObject<HTMLDivElement | null>
 }
 
 /**
@@ -64,6 +69,7 @@ export function ExperienceScene({
   onHighlightArea,
   onSelectArea,
   cameraOverride,
+  projectorAnchorRef,
 }: ExperienceSceneProps) {
   const reveal = STAGE_REVEAL[stage]
 
@@ -109,6 +115,8 @@ export function ExperienceScene({
         onHighlight={onHighlightProject}
         onSelect={onSelectProject}
       />
+
+      <ProjectorDisplay active={openArea === 'projects'} anchorRef={projectorAnchorRef} />
 
       <CinematicRig stage={stage} override={cameraOverride} />
     </>

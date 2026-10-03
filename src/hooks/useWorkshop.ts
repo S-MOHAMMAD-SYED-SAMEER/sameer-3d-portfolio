@@ -102,11 +102,14 @@ export function useWorkshop(active: boolean): Workshop {
 
   const pose = useMemo<CameraPose | null>(() => {
     if (!active || open === null) return null
-    // A project selected inside Projects faces the projector screen;
-    // everything else keeps the destination's own pose.
-    if (open === 'projects' && project !== null) return PROJECTOR_POSE
+    // Projects always faces the projector screen now — the list and a
+    // selected project are two views of the same destination, and the
+    // projector is the one authoritative place either is presented. The
+    // desk's own `AREA_POSES.projects` pose is no longer used; everything
+    // else still keeps its destination's own pose.
+    if (open === 'projects') return PROJECTOR_POSE
     return AREA_POSES[open]
-  }, [active, open, project])
+  }, [active, open])
 
   return {
     open,

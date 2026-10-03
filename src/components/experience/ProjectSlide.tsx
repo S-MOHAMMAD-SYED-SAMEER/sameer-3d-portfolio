@@ -17,42 +17,55 @@ interface ProjectSlideProps {
  * Deliberately concise — this is a slide, not the case study. `CaseStudy`
  * (in `ProjectsPanel.tsx`) still holds the long-form write-up for now.
  *
- * Category, name, status and the one sentence that says what it does, then
- * proof, the evidence behind it, the stack, what a visitor can actually do
- * about it, and finally how to move to another project or back to the
- * list. Nothing here comes from `caseStudy` — that prose belongs to the
+ * Laid out for the landscape projector screen: identity, status, the
+ * sentence that says what it does and the proof behind it sit in a left
+ * column; the evidence, stack and what a visitor can actually do about it
+ * sit in a right column beside them, rather than stacked into one long
+ * portrait scroll. Only the scrollable area between the header and the
+ * navigation footer grows or shrinks with content — Previous/Next, the
+ * counter and Back to projects stay in a footer outside that scroll region,
+ * so moving between projects never depends on how far a visitor has
+ * scrolled. Nothing here comes from `caseStudy` — that prose belongs to the
  * case study, not the slide that points toward it.
  */
 export function ProjectSlide({ project, onBack, onStep }: ProjectSlideProps) {
   return (
-    <article>
-      <p className="text-mist/70 text-[10px] tracking-[0.3em] uppercase">{project.category}</p>
-      <h3 className="mt-1.5 text-xl leading-snug font-medium">{project.title}</h3>
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
+        <article className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
+          <div>
+            <p className="text-mist/70 text-[10px] tracking-[0.3em] uppercase">
+              {project.category}
+            </p>
+            <h3 className="mt-1.5 text-xl leading-snug font-medium">{project.title}</h3>
 
-      <dl className="mt-3">
-        <dt className="text-mist/60 text-[10px] tracking-[0.2em] uppercase">Status</dt>
-        <dd className="mt-1 text-sm font-medium">{PROJECT_STATUS_LABEL[project.status]}</dd>
-      </dl>
+            <dl className="mt-3">
+              <dt className="text-mist/60 text-[10px] tracking-[0.2em] uppercase">Status</dt>
+              <dd className="mt-1 text-sm font-medium">{PROJECT_STATUS_LABEL[project.status]}</dd>
+            </dl>
 
-      <p className="text-mist mt-4 text-sm leading-relaxed">{project.shortDescription}</p>
+            <p className="text-mist mt-4 text-sm leading-relaxed">{project.shortDescription}</p>
 
-      <ProjectProof project={project} />
-      <ProjectVisualEvidence project={project} />
-      <ProjectTechnologies project={project} />
+            <ProjectProof project={project} />
+          </div>
 
-      {/* The existing action system: it already knows which links exist
-          (GitHub always; Live Demo only for p1–p3; Case Study for every
-          project, external where one was written, the portfolio's own
-          `/projects/:id` route otherwise), already renders nothing when
-          there is nothing to show, and already opens every external action
-          in a new tab because this component lives inside the 3D route.
-          None of that is recomputed here. */}
-      <div className="mt-5">
-        <ProjectActions project={project} />
+          {/* The existing action system: it already knows which links exist
+              (GitHub always; Live Demo only for p1–p3; Case Study for every
+              project, external where one was written, the portfolio's own
+              `/projects/:id` route otherwise), already renders nothing when
+              there is nothing to show, and already opens every external
+              action in a new tab because this component lives inside the 3D
+              route. None of that is recomputed here. */}
+          <div className="space-y-5">
+            <ProjectVisualEvidence project={project} />
+            <ProjectTechnologies project={project} />
+            <ProjectActions project={project} />
+          </div>
+        </article>
       </div>
 
       <ProjectNavigation project={project} onBack={onBack} onStep={onStep} />
-    </article>
+    </div>
   )
 }
 
@@ -69,7 +82,8 @@ export function ProjectSlide({ project, onBack, onStep }: ProjectSlideProps) {
  * leaving the selected project entirely is a different action from moving
  * to a neighbour, and the existing keyboard hierarchy already treats them
  * as separate layers (`ExperiencePage.goBack` only calls `clearProject`,
- * never `stepProject`).
+ * never `stepProject`). Rendered as a footer outside `ProjectSlide`'s
+ * scrollable region, so it never requires scrolling to reach.
  */
 function ProjectNavigation({
   project,
@@ -91,7 +105,7 @@ function ProjectNavigation({
   const next = isLast ? null : PROJECTS[index + 1]
 
   return (
-    <nav aria-label="Project navigation" className="border-line mt-6 border-t pt-4">
+    <nav aria-label="Project navigation" className="border-line shrink-0 border-t px-5 py-4">
       <div className="flex items-center justify-between gap-3">
         <button
           type="button"
@@ -133,24 +147,25 @@ function ProjectNavigation({
 }
 
 /**
- * Real captures of the project actually running — nothing else. Placed
- * between Proof and Technologies rather than at the very end: that is
- * exactly where `CaseStudy`'s own "Evidence" section already sits relative
- * to the same two neighbours, and matching it is what makes this feel like
- * part of the same slide rather than a block bolted onto the bottom.
+ * Real captures of the project actually running — nothing else. The first
+ * item in the right column, above Technologies and Actions, so the three
+ * read top to bottom as "what it looks like, what it's built with, what you
+ * can do with it" — beside, not below, the identity and proof in the left
+ * column.
  *
  * p1–p3 have real screenshots; p4–p6 currently have none
  * (`screenshots: []`), and `ProjectEvidence` already renders nothing in
  * that case — including even the "Evidence" label would leave an empty
  * heading floating over nothing, so this wrapper renders nothing at all
- * for those three rather than a labelled empty section. No placeholder,
- * no "coming soon" text: an absent screenshot is simply absent.
+ * for those three rather than a labelled empty section or placeholder
+ * imagery. The right column still carries Technologies and Actions for
+ * those projects, so it is never left empty.
  */
 function ProjectVisualEvidence({ project }: { project: Project }) {
   if (project.screenshots.length === 0) return null
 
   return (
-    <section className="mt-5">
+    <section>
       <h4 className="text-mist/60 text-[10px] tracking-[0.2em] uppercase">Evidence</h4>
       <div className="mt-2">
         <ProjectEvidence shots={project.screenshots} />
@@ -212,14 +227,14 @@ function ProjectProof({ project }: { project: Project }) {
  * The stack, as plain tags rather than the prose-joined line `CaseStudy`
  * uses — a projector slide is read at a glance, and a row of short chips
  * scans faster than a comma-separated sentence. `flex-wrap` is what keeps a
- * long stack (p1 has eight entries, p6 has ten) from forcing the slide
+ * long stack (p1 has eight entries, p6 has ten) from forcing the column
  * wider instead of taller.
  */
 function ProjectTechnologies({ project }: { project: Project }) {
   if (project.technologies.length === 0) return null
 
   return (
-    <section className="mt-5">
+    <section>
       <h4 className="text-mist/60 text-[10px] tracking-[0.2em] uppercase">Technologies</h4>
       <ul className="mt-2 flex flex-wrap gap-2">
         {project.technologies.map((technology) => (

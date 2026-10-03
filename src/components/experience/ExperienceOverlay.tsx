@@ -14,6 +14,11 @@ interface ExperienceOverlayProps {
   inWorkshop: boolean
   /** Closes an open destination first, and only then steps back a beat. */
   onBack: () => void
+  /** The Projects panel's mount point — kept lined up with the physical
+      projector screen by `ProjectorDisplay`, inside the Canvas tree, every
+      frame. The panel itself still renders here, in the normal DOM tree, so
+      it keeps the Router context it needs for `ProjectActions`. */
+  projectorAnchorRef: React.RefObject<HTMLDivElement | null>
 }
 
 /**
@@ -30,6 +35,7 @@ export function ExperienceOverlay({
   workshop,
   inWorkshop,
   onBack,
+  projectorAnchorRef,
 }: ExperienceOverlayProps) {
   const copy = STAGE_COPY[journey.stage]
   const isAuto = journey.mode === 'auto'
@@ -75,9 +81,15 @@ export function ExperienceOverlay({
       {/* The panel is a column beside the room on a wide screen and a sheet
           above the controls on a phone; in both the environment stays
           visible. Positioned out of the flow so a tall panel can never push
-          the controls off the bottom of the viewport. */}
+          the controls off the bottom of the viewport.
+
+          Projects is the one exception: it renders the same way, in this
+          same DOM tree (so `ProjectActions`'s `useLocation()` keeps its
+          Router context), but anchored to the physical projector screen
+          instead of this fixed corner — so it is skipped here and rendered
+          in its own anchored wrapper below. */}
       <div className="pointer-events-none absolute inset-x-6 bottom-44 flex justify-end sm:inset-x-auto sm:top-1/2 sm:right-10 sm:bottom-auto sm:-translate-y-1/2">
-        {workshop.open !== null && (
+        {workshop.open !== null && workshop.open !== 'projects' && (
           <WorkshopPanel
             area={workshop.open}
             onClose={workshop.close}
@@ -91,6 +103,29 @@ export function ExperienceOverlay({
           />
         )}
       </div>
+
+      {/* `ProjectorDisplay` (inside the Canvas) keeps this element's left/top
+          lined up with the projector screen's on-screen position every
+          frame, by direct style mutation — never React state. */}
+      {workshop.open === 'projects' && (
+        <div
+          ref={projectorAnchorRef}
+          className="pointer-events-none fixed left-0 top-0"
+          style={{ transform: 'translate(-50%, -50%)' }}
+        >
+          <WorkshopPanel
+            area="projects"
+            onClose={workshop.close}
+            onOpen={workshop.select}
+            project={workshop.project}
+            highlightedProject={workshop.highlightedProject}
+            onSelectProject={workshop.selectProject}
+            onHighlightProject={workshop.highlightProject}
+            onClearProject={workshop.clearProject}
+            onStepProject={workshop.stepProject}
+          />
+        </div>
+      )}
 
       <div className="relative">
         {copy.label !== undefined && !inWorkshop && (

@@ -32,7 +32,10 @@ interface ProjectsPanelProps {
  *
  * Two views in one component because they are one destination — the list is
  * an index of what is on the screens, and selecting an entry is stepping
- * closer to read it. Editorial rather than a card grid: rules, not boxes.
+ * closer to read it. The projector screen is landscape, so the index is a
+ * two-column grid of compact cards rather than one tall column of rows —
+ * all six still read at a glance, without scrolling further than the panel
+ * itself already allows for.
  */
 export function ProjectsPanel({
   project,
@@ -49,9 +52,9 @@ export function ProjectsPanel({
   }
 
   return (
-    <ul className="divide-line divide-y">
+    <ul className="grid min-h-0 flex-1 auto-rows-min grid-cols-1 gap-3 overflow-y-auto px-5 py-5 sm:grid-cols-2">
       {PROJECTS.map((entry) => (
-        <li key={entry.id} className="first:pt-0 last:pb-0">
+        <li key={entry.id}>
           <button
             type="button"
             onClick={() => onSelect(entry.id)}
@@ -61,17 +64,19 @@ export function ProjectsPanel({
             onBlur={() => onHighlight(null)}
             aria-label={`Inspect ${entry.title}`}
             className={cn(
-              'focus-ring group -mx-2 block w-full rounded-lg px-2 py-5 text-left transition-colors duration-200',
+              'focus-ring group border-line block h-full w-full rounded-lg border px-4 py-4 text-left transition-colors duration-200',
               entry.id === highlighted ? 'bg-surface/50' : 'hover:bg-surface/40',
             )}
           >
             <p className="text-mist/70 text-[10px] tracking-[0.3em] uppercase">
               {entry.category}
             </p>
-            <h3 className="mt-1.5 text-base leading-snug font-medium">{entry.title}</h3>
-            <p className="text-mist mt-2 text-sm leading-relaxed">{entry.shortDescription}</p>
+            <h3 className="mt-1.5 text-sm leading-snug font-medium">{entry.title}</h3>
+            <p className="text-mist mt-2 line-clamp-2 text-xs leading-relaxed">
+              {entry.shortDescription}
+            </p>
 
-            <div className="text-mist/80 mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+            <div className="text-mist/80 mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
               {projectHighlights(entry).map((highlight) => (
                 <span key={highlight}>{highlight}</span>
               ))}

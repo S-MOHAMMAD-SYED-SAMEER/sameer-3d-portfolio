@@ -4,6 +4,7 @@ import { ProjectsPanel } from '@/components/experience/ProjectsPanel'
 import type { ProjectId } from '@/data/projects'
 import { SERVICES, SERVICES_CTA } from '@/data/services'
 import { SKILL_GROUPS } from '@/data/skills'
+import { cn } from '@/lib/cn'
 import { AREA_LABEL, type WorkshopArea } from '@/systems/workshopArea'
 
 interface WorkshopPanelProps {
@@ -26,6 +27,15 @@ interface WorkshopPanelProps {
  * alongside — the point of building this in 3D is lost the moment a panel
  * covers it. Same palette as everything else: dark ground, one accent, no
  * cards.
+ *
+ * Projects is the one destination with a wide, landscape-sized desktop
+ * panel rather than the narrow column every other area uses — it is always
+ * the one anchored to the physical projector screen (a landscape 6×4
+ * surface), never the fixed-corner slot the others render in, so its shape
+ * is allowed to differ. `ProjectsPanel`/`ProjectSlide` own their own
+ * scrolling and padding in that case, so a selected project's Previous/Next
+ * footer can stay pinned outside the scrollable content instead of being
+ * laid out here.
  */
 export function WorkshopPanel({
   area,
@@ -38,12 +48,17 @@ export function WorkshopPanel({
   onClearProject,
   onStepProject,
 }: WorkshopPanelProps) {
+  const isProjects = area === 'projects'
+
   return (
     <aside
       aria-label={AREA_LABEL[area]}
-      className="border-line bg-ink/92 pointer-events-auto flex max-h-[58dvh] w-full flex-col rounded-2xl border backdrop-blur-md sm:max-h-[66dvh] sm:w-[26rem]"
+      className={cn(
+        'border-line bg-ink/92 pointer-events-auto flex max-h-[58dvh] w-full flex-col rounded-2xl border backdrop-blur-md',
+        isProjects ? 'sm:max-h-[32rem] sm:w-[48rem]' : 'sm:max-h-[66dvh] sm:w-[26rem]',
+      )}
     >
-      <header className="border-line flex items-center justify-between border-b px-5 py-4">
+      <header className="border-line flex shrink-0 items-center justify-between border-b px-5 py-4">
         <p className="text-mist text-[11px] tracking-[0.35em] uppercase">{AREA_LABEL[area]}</p>
         <button
           type="button"
@@ -54,8 +69,8 @@ export function WorkshopPanel({
         </button>
       </header>
 
-      <div className="overflow-y-auto px-5 py-5">
-        {area === 'projects' && (
+      <div className={isProjects ? 'flex min-h-0 flex-1 flex-col' : 'overflow-y-auto px-5 py-5'}>
+        {isProjects && (
           <ProjectsPanel
             project={project}
             highlighted={highlightedProject}
