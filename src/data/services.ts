@@ -58,7 +58,7 @@ export const SERVICES: readonly Service[] = [
     summary:
       'Answers grounded in your own documents, with every citation checked before it reaches you — never a guess dressed up as a source.',
     delivers: [
-      '1,135/1,139 tests passing (CI)',
+      '1,135 tests · CI green (4 skipped: need model weights)',
       'deterministic, credential-free demo',
       'citations checked in Python before display',
     ],
