@@ -42,7 +42,7 @@ export const CONTACT_CHANNELS: readonly ContactChannel[] = [
     id: 'linkedin',
     label: 'LinkedIn',
     kind: 'external',
-    value: 'https://www.linkedin.com/in/mohammad-syed-sameer-s-a879a235a',
+    value: 'https://www.linkedin.com/in/mohammad-syed-sameer-s',
   },
   // The same account the three projects are hosted under; see src/data/projects.ts.
   {
