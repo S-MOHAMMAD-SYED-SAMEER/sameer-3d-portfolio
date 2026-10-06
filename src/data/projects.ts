@@ -226,7 +226,7 @@ export const PROJECTS: readonly Project[] = [
         'Signal detection is deterministic rather than a second model call, so it is testable and costs nothing per message.',
       ],
       result:
-        '206 of 206 automated tests pass. The 16-case evaluation suite passes 16/16 in deterministic mock mode and 16/16 in a real run against the live model — the real run being what surfaced two genuine bugs a mocked run could not have found. These numbers describe this dataset on these runs, not a general accuracy claim.',
+        '247 of 247 automated tests pass. The 16-case evaluation suite passes 16/16 in deterministic mock mode and 16/16 in a real run against the live model — the real run being what surfaced two genuine bugs a mocked run could not have found. These numbers describe this dataset on these runs, not a general accuracy claim.',
     },
   },
   {
@@ -302,7 +302,7 @@ export const PROJECTS: readonly Project[] = [
       'The two database drivers disagreed over JSON columns — SQLite hands back the text it stored, Postgres hands back a parsed value — and it stayed hidden while every JSON column happened to hold an object. That divergence is pinned by a test now rather than by memory.',
       ],
       result:
-        '827 automated tests pass across the API and the dashboard. The understand-stage evaluation runs ten demo cases through the real pipeline and passes 10/10, with a hallucinated-field rate of zero and full provenance and injection containment — the three metrics treated as absolutes rather than targets.',
+        '895 automated tests pass across the API and the dashboard. The understand-stage evaluation runs ten demo cases through the real pipeline and passes 10/10, with a hallucinated-field rate of zero and full provenance and injection containment — the three metrics treated as absolutes rather than targets.',
     },
   },
   {
@@ -324,7 +324,7 @@ export const PROJECTS: readonly Project[] = [
       'An applicant tracking system that scores candidates with logic you can read back and audit.',
     status: 'built',
     proof: {
-      tests: 389,
+      tests: 689,
       evaluation: null,
       properties: [
         'Deterministic integer scoring — no floating point in the scoring path',
@@ -373,7 +373,7 @@ export const PROJECTS: readonly Project[] = [
         'Both database drivers are held to the same behaviour by driver-parity and schema-parity tests.',
       ],
       result:
-        '326 automated tests pass across the API and the dashboard. The build runs locally against a deterministic offline extractor by default, which is what makes the whole pipeline reproducible without a key or a spend; a Claude adapter is implemented behind the same interface but is not what the current build exercises.',
+        '689 automated tests pass across the API and the dashboard. The build runs locally against a deterministic offline extractor by default, which is what makes the whole pipeline reproducible without a key or a spend; a Claude adapter is implemented behind the same interface but is not what the current build exercises.',
     },
   },
   {
@@ -455,7 +455,7 @@ export const PROJECTS: readonly Project[] = [
       'Extracts structured data from invoices and purchase orders, validates it deterministically outside the model, scores per-field confidence, and routes anything uncertain to a human review queue.',
     status: 'built',
     proof: {
-      tests: 513,
+      tests: 521,
       evaluation: null,
       properties: [
         'Deterministic validation runs outside the model — arithmetic, dates and currency codes are checked in Python, not trusted to generation',
@@ -495,7 +495,7 @@ export const PROJECTS: readonly Project[] = [
         'Docker Compose packages the demo alongside production: a shared `migrate` service runs once, and both `app` and a dedicated `demo` service (serving `demo.app:app` on host port 8001) depend on it completing before either starts — `docker compose config` validates the merged graph, though the image has not yet been built or run against a live Docker daemon',
       ],
       result:
-        '513 tests are collected; 513 pass. A previously-reported environment-specific test-capture artifact did not reproduce in the most recently verified run — it is recorded in the project’s own documentation rather than silently dropped, since nothing about the underlying mechanism changed, only the environment happened not to trigger it this time. No real-model benchmark has been run: the evaluation harness is proven correct against a stub provider and a committed synthetic dataset, but extraction accuracy, cost and latency require an Anthropic API key and credits that were not available, so none of those numbers are claimed here. A deterministic, credential-free demo now exists, reusing the real pipeline end to end, and is packaged in Docker Compose alongside the production service; the Compose configuration itself has been validated, but building and running the container has not yet been verified against a live Docker daemon.',
+        '521 tests are collected; 521 pass, with PostgreSQL available. No real-model benchmark has been run: the evaluation harness is proven correct against a stub provider and a committed synthetic dataset, but extraction accuracy, cost and latency require an Anthropic API key and credits that were not available, so none of those numbers are claimed here. A deterministic, credential-free demo now exists, reusing the real pipeline end to end, and is packaged in Docker Compose alongside the production service; the Compose configuration itself has been validated, but building and running the container has not yet been verified against a live Docker daemon.',
     },
   },
   {
@@ -519,7 +519,7 @@ export const PROJECTS: readonly Project[] = [
       'Answers a business phone line, understands the caller, books or reschedules appointments in a real calendar, and hands off to a human when it should.',
     status: 'built',
     proof: {
-      tests: 1661,
+      tests: 1666,
       evaluation: '18/18',
       properties: [
         'Double-booking prevented by a PostgreSQL exclusion constraint, not application logic alone',
@@ -554,7 +554,7 @@ export const PROJECTS: readonly Project[] = [
         'Two harness-only bounds — a 300-second session limit and a 20-turn cap, neither a rate limit nor authentication — close a demo session cleanly through the same admission and cleanup path a hung-up call already uses',
       ],
       result:
-        '1,661 tests collected; 1,661 pass. Focused browser-harness/demo coverage: 73/73 pass. The deterministic evaluation suite — eighteen scripted call scenarios run against the real system — scores 18/18 task success, covering straightforward booking, rescheduling, ambiguous dates and four adversarial scenarios that must be refused. This measures VoiceDesk’s own tool-calling, escalation and database behaviour against structured ground truth; the scenario model answers from a script, so the suite does not measure a real model’s conversational quality. A browser demo is documented and runnable through the existing Docker Compose stack, exercising the real pipeline end to end without a phone number; production telephony behaviour is unchanged.',
+        '1,666 collected, with a PostgreSQL database available; 1,666 pass. The deterministic evaluation suite — eighteen scripted call scenarios run against the real system — scores 18/18 task success, covering straightforward booking, rescheduling, ambiguous dates and four adversarial scenarios that must be refused. This measures VoiceDesk’s own tool-calling, escalation and database behaviour against structured ground truth; the scenario model answers from a script, so the suite does not measure a real model’s conversational quality. A browser demo is documented and runnable through the existing Docker Compose stack, exercising the real pipeline end to end without a phone number; production telephony behaviour is unchanged.',
     },
   },
 ] as const
@@ -570,6 +570,26 @@ export function getProject(id: ProjectId): Project | undefined {
 
 export function isProjectId(value: string): value is ProjectId {
   return PROJECTS.some((project) => project.id === value)
+}
+
+/** A count as shown on the site: thousands separated, the same everywhere. */
+export function formatCount(value: number): string {
+  return value.toLocaleString('en-US')
+}
+
+/**
+ * Total automated tests across projects — the one place the headline figure is
+ * computed, so it cannot drift from the per-project `proof.tests` it sums.
+ */
+export function totalTests(projects: readonly Project[] = PROJECTS): number {
+  return projects.reduce((total, project) => total + project.proof.tests, 0)
+}
+
+/** "1,135 tests": a project's own count, phrased for a services list. */
+export function testsLabel(id: ProjectId): string {
+  const project = getProject(id)
+  if (project === undefined) throw new Error(`No project with id "${id}"`)
+  return `${formatCount(project.proof.tests)} tests`
 }
 
 /**
