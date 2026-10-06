@@ -33,7 +33,7 @@ export const SERVICES: readonly Service[] = [
     title: 'AI Inbox & Lead Management',
     summary:
       'Turn the enquiries sitting in your inbox into tracked CRM records with drafted replies — nothing sent without your approval.',
-    delivers: ['895 tests', '10/10 eval', 'live read-only demo, no account needed'],
+    delivers: ['895 tests', '10/10 eval', 'interactive in-browser demo'],
   },
   {
     id: 'recruitment',

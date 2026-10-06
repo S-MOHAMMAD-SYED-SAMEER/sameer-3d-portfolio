@@ -17,12 +17,9 @@ import {
  *
  * Both routes and the 3D panel read this one dataset, so a wrong value here is
  * wrong everywhere at once and is visible to whoever the portfolio was sent
- * to. The rules below are the ones that make a claim self-consistent — a
- * project cannot be called live and have nowhere to go, and cannot be called
- * demo-pending while its deployment is right there in the same object.
- *
- * That second rule is not hypothetical: the two halves disagreed until it was
- * corrected, and nothing in the codebase would have noticed.
+ * to. The rules below are the ones that make a claim self-consistent — every
+ * project is presented as built and source-available, and none of them
+ * advertises a hosted instance, because none is hosted.
  */
 
 test('every project has its own id, in stated order', () => {
@@ -47,36 +44,38 @@ test('both lookups agree, and only real ids are accepted', () => {
   }
 })
 
-test('a project called live has somewhere live to go', () => {
+test('no project claims a hosted instance', () => {
   for (const project of PROJECTS) {
-    if (project.status !== 'live') continue
-
-    assert.notEqual(
-      project.links.demo,
-      null,
-      `${project.id} is marked live but has no deployment URL`,
+    assert.equal(project.status, 'built', `${project.id} is not presented as built`)
+    assert.ok(!('demo' in project.links), `${project.id} carries a live-demo link`)
+    assert.ok(
+      !projectActions(project).some((action) => (action.id as string) === 'demo'),
+      `${project.id} offers a live-demo action`,
     )
   }
 })
 
-test('nothing is called demo-pending while holding a deployment', () => {
-  for (const project of PROJECTS) {
-    if (project.status !== 'demo-pending') continue
-
-    assert.equal(
-      project.links.demo,
-      null,
-      `${project.id} claims demo-pending but names a deployment`,
-    )
-  }
-})
-
-test('the Explainable ATS deployment is the one that was verified', () => {
+test('the Explainable ATS has no live-demo link', () => {
   const p3 = getProject('p3')
 
   assert.ok(p3 !== undefined)
-  assert.equal(p3.status, 'live')
-  assert.equal(p3.links.demo, 'https://explainable-ats.onrender.com')
+  assert.equal(p3.status, 'built')
+  assert.ok(!('demo' in p3.links), 'p3 carries a live-demo link')
+  for (const link of Object.values(p3.links)) {
+    assert.ok(link === null || !link.includes('onrender.com'), `p3 links to ${link}`)
+  }
+})
+
+test('a project with an interactive demo leads with it, and one without leads with its case study', () => {
+  for (const project of PROJECTS) {
+    const actions = projectActions(project)
+    const lead =
+      actions.find((action) => action.id === 'interactiveDemo') ??
+      actions.find((action) => action.id === 'caseStudy')
+
+    if (project.interactiveDemo === true) assert.equal(lead?.id, 'interactiveDemo')
+    else assert.ok(lead === undefined || lead.id === 'caseStudy')
+  }
 })
 
 test('every status that is used has a label to render', () => {

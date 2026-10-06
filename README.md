@@ -51,17 +51,16 @@ handles contexts that fail to acquire.
 Six projects live in `src/data/projects.ts`. Each case study renders from
 that file alone — problem, approach, architecture, engineering, result — along
 with screenshots of the project actually running, stored in `public/projects/`.
-Deployment state is a field on the project (`live` or `demo-pending`), not
-prose, so a page can never claim a demo that does not exist.
+A project's state is a field on the project (`built`), not prose, so a page
+can never claim a hosted instance that does not exist.
 
 ## The Explainable ATS demo (`/projects/p3/demo`)
 
 Project 3, the Explainable ATS, is an applicant tracking system that scores
-candidates with logic you can read back and audit. A hosted deployment now
-exists (its health endpoint was independently verified to return 200), and
-the portfolio also runs its pipeline in the browser — the vendored demo
-below is a separate, standalone presentation of the same logic, not a
-substitute for the real deployment.
+candidates with logic you can read back and audit. The portfolio runs its
+pipeline in the browser — the vendored demo below is a separate, standalone
+presentation of the same logic, not a substitute for the real application,
+which runs locally from the `explainable-ats` repository.
 
 `src/demo/p3/vendored/` is that project's own source, copied byte for byte from
 [`explainable-ats`](https://github.com/S-MOHAMMAD-SYED-SAMEER/explainable-ats).

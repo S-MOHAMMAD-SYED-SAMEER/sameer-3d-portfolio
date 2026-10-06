@@ -5,8 +5,8 @@ import type { ProjectVideo as ProjectVideoData } from '@/data/projects'
  *
  * The video counterpart of `ProjectEvidence`: a real capture, played back
  * with the browser's own controls — never a stand-in for `interactiveDemo`,
- * which is a separate, live, in-browser reproduction of the system rather
- * than a recording.
+ * which is a separate, in-browser reproduction of the system rather than a
+ * recording.
  *
  * Plain `<video>` rather than a hosted-embed player: the file is served from
  * this portfolio's own `public/`, so there is no third-party origin to load,

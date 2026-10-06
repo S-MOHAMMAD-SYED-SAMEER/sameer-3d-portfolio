@@ -50,8 +50,8 @@ export function ProjectSlide({ project, onBack, onStep }: ProjectSlideProps) {
           </div>
 
           {/* The existing action system: it already knows which links exist
-              (GitHub always; Live Demo only for p1–p3; Case Study for every
-              project, external where one was written, the portfolio's own
+              (GitHub always; the interactive demo only where one is hosted;
+              Case Study for every project, external where one was written, the portfolio's own
               `/projects/:id` route otherwise), already renders nothing when
               there is nothing to show, and already opens every external
               action in a new tab because this component lives inside the 3D
