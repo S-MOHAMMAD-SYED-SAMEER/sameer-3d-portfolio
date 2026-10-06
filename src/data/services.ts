@@ -1,3 +1,5 @@
+import { testsLabel } from './projects.ts'
+
 /**
  * What gets built for other people.
  *
@@ -26,20 +28,20 @@ export const SERVICES: readonly Service[] = [
     title: 'AI Customer Support & Sales Recovery',
     summary:
       'Answer customer questions from your own policies and live data — and notice the buyer who is about to leave.',
-    delivers: ['247 tests', '16/16 eval', '8 guardrail policies enforced in code'],
+    delivers: [testsLabel('p1'), '16/16 eval', '8 guardrail policies enforced in code'],
   },
   {
     id: 'inbox-crm',
     title: 'AI Inbox & Lead Management',
     summary:
       'Turn the enquiries sitting in your inbox into tracked CRM records with drafted replies — nothing sent without your approval.',
-    delivers: ['895 tests', '10/10 eval', 'interactive in-browser demo'],
+    delivers: [testsLabel('p2'), '10/10 eval', 'interactive in-browser demo'],
   },
   {
     id: 'recruitment',
     title: 'AI Recruitment Intelligence',
     summary: 'Screening decisions you can defend to the person they were made about.',
-    delivers: ['389 tests', '10-stage demo ending in Decision + Audit'],
+    delivers: [testsLabel('p3'), '10-stage demo ending in Decision + Audit'],
   },
   {
     // Generalises the Inbox-to-CRM agent's own machinery rather than being a
@@ -58,7 +60,7 @@ export const SERVICES: readonly Service[] = [
     summary:
       'Answers grounded in your own documents, with every citation checked before it reaches you — never a guess dressed up as a source.',
     delivers: [
-      '1,135 tests · CI green (4 skipped: need model weights)',
+      `${testsLabel('p4')} · CI green (4 skipped: need model weights)`,
       'deterministic, credential-free demo',
       'citations checked in Python before display',
     ],
@@ -69,7 +71,7 @@ export const SERVICES: readonly Service[] = [
     summary:
       'Structured data out of invoices and purchase orders, with every field checked outside the model and anything uncertain sent to a person — never silently guessed.',
     delivers: [
-      '513 tests',
+      testsLabel('p5'),
       'deterministic, credential-free demo',
       'confidence-scored human review queue',
     ],
@@ -80,7 +82,7 @@ export const SERVICES: readonly Service[] = [
     summary:
       'A phone line that checks the calendar before it promises a slot, and hands off to a person when it should.',
     delivers: [
-      '1,661 tests',
+      testsLabel('p6'),
       'double-booking prevented at the database layer',
       'browser demo needs no telephony credential',
     ],

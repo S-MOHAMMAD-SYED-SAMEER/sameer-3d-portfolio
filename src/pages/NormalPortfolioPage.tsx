@@ -3,7 +3,7 @@ import { ModeSwitch } from '@/components/navigation/ModeSwitch'
 import { NormalProjects } from '@/components/normal/NormalProjects'
 import { ABOUT } from '@/data/about'
 import { PROFILE } from '@/data/profile'
-import { PROJECTS } from '@/data/projects'
+import { PROJECTS, formatCount, totalTests } from '@/data/projects'
 import { SERVICES } from '@/data/services'
 import { SKILL_GROUPS } from '@/data/skills'
 
@@ -23,7 +23,7 @@ const SECTIONS = [
  * the summary cannot drift from the detail.
  */
 const PROOF = {
-  tests: PROJECTS.reduce((total, project) => total + project.proof.tests, 0),
+  tests: totalTests(),
   evaluations: PROJECTS.map((project) => project.proof.evaluation).filter(
     (value): value is string => value !== null,
   ),
@@ -93,8 +93,8 @@ export function NormalPortfolioPage() {
           <dl className="grid gap-8 sm:grid-cols-2">
             <HeadlineStat
               label="Automated tests"
-              value={PROOF.tests.toLocaleString()}
-              note="Across six systems"
+              value={formatCount(PROOF.tests)}
+              note={`Across ${PROJECTS.length} systems`}
             />
             <HeadlineStat
               label="Evaluation suites"
