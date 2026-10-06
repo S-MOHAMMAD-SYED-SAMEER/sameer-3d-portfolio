@@ -33,15 +33,15 @@ function navigatesInPlace(action: ProjectAction, insideExperience: boolean): boo
  * What a visitor can actually do with a project.
  *
  * Renders only the links that exist — a project with no URLs produces no
- * buttons rather than dead ones — and says plainly when the demo needs an
- * account instead of implying it is open.
+ * buttons rather than dead ones.
  *
- * The live demo is the prominent action because it is the one that shows the
- * work running; source and write-up sit beside it as quiet links.
+ * The interactive demo is the prominent action when the project has one,
+ * because it is the one that shows the work running; otherwise the case study
+ * takes that position. Source and the remaining write-up sit beside it as
+ * quiet links.
  */
 export function ProjectActions({ project }: { project: Project }) {
   const actions = projectActions(project)
-  const access = project.access
   const { pathname } = useLocation()
 
   /*
@@ -53,44 +53,16 @@ export function ProjectActions({ project }: { project: Project }) {
   const insideExperience = pathname === ROUTES.experience
 
   // The interactive demo leads when there is one: it is the thing that shows
-  // the work running. Otherwise the deployed instance keeps the position it
-  // had, so nothing changes for a project without a demo.
+  // the work running. Otherwise the case study takes the primary position.
   const demo =
     actions.find((action) => action.id === 'interactiveDemo') ??
-    actions.find((action) => action.id === 'demo')
+    actions.find((action) => action.id === 'caseStudy')
   const rest = actions.filter((action) => action !== demo)
-
-  const needsSignIn = demo !== undefined && access?.kind === 'sign-in-required'
-  const hasPublicLogin = demo !== undefined && access?.kind === 'public-demo'
 
   if (actions.length === 0) return null
 
   return (
     <div>
-      {needsSignIn && (
-        <div className="mb-4">
-          <p className="text-mist/70 text-[10px] tracking-[0.3em] uppercase">Demo access</p>
-          <p className="text-mist mt-2 text-sm leading-relaxed">
-            {access.note ?? 'This project requires sign-in.'}
-          </p>
-        </div>
-      )}
-
-      {hasPublicLogin && (
-        <div className="border-line mb-4 rounded-lg border p-3">
-          <p className="text-mist/70 text-[10px] tracking-[0.3em] uppercase">Demo account</p>
-          {access.note !== undefined && (
-            <p className="text-mist mt-2 text-xs leading-relaxed">{access.note}</p>
-          )}
-          <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 font-mono text-xs">
-            <dt className="text-mist/60">user</dt>
-            <dd className="text-chalk break-all">{access.username}</dd>
-            <dt className="text-mist/60">pass</dt>
-            <dd className="text-chalk break-all">{access.password}</dd>
-          </dl>
-        </div>
-      )}
-
       <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
         {demo !== undefined &&
           (navigatesInPlace(demo, insideExperience) ? (

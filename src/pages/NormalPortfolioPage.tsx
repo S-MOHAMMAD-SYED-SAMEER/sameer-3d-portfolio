@@ -27,7 +27,6 @@ const PROOF = {
   evaluations: PROJECTS.map((project) => project.proof.evaluation).filter(
     (value): value is string => value !== null,
   ),
-  live: PROJECTS.filter((project) => project.status === 'live').length,
 }
 
 /**
@@ -91,21 +90,16 @@ export function NormalPortfolioPage() {
         </section>
 
         <Section id="work" title="Selected work">
-          <dl className="grid gap-8 sm:grid-cols-3">
+          <dl className="grid gap-8 sm:grid-cols-2">
             <HeadlineStat
               label="Automated tests"
               value={PROOF.tests.toLocaleString()}
-              note="Across three systems"
+              note="Across six systems"
             />
             <HeadlineStat
               label="Evaluation suites"
               value={PROOF.evaluations.join(' · ')}
               note="Passed in full"
-            />
-            <HeadlineStat
-              label="Live"
-              value={`${PROOF.live} of ${PROJECTS.length}`}
-              note="All three deployed"
             />
           </dl>
 
