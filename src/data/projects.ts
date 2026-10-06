@@ -495,7 +495,7 @@ export const PROJECTS: readonly Project[] = [
         'Docker Compose packages the demo alongside production: a shared `migrate` service runs once, and both `app` and a dedicated `demo` service (serving `demo.app:app` on host port 8001) depend on it completing before either starts — `docker compose config` validates the merged graph, though the image has not yet been built or run against a live Docker daemon',
       ],
       result:
-        '521 tests are collected; 521 pass, with PostgreSQL available. A previously-reported environment-specific test-capture artifact did not reproduce in the most recently verified run — it is recorded in the project’s own documentation rather than silently dropped, since nothing about the underlying mechanism changed, only the environment happened not to trigger it this time. No real-model benchmark has been run: the evaluation harness is proven correct against a stub provider and a committed synthetic dataset, but extraction accuracy, cost and latency require an Anthropic API key and credits that were not available, so none of those numbers are claimed here. A deterministic, credential-free demo now exists, reusing the real pipeline end to end, and is packaged in Docker Compose alongside the production service; the Compose configuration itself has been validated, but building and running the container has not yet been verified against a live Docker daemon.',
+        '521 tests are collected; 521 pass, with PostgreSQL available. No real-model benchmark has been run: the evaluation harness is proven correct against a stub provider and a committed synthetic dataset, but extraction accuracy, cost and latency require an Anthropic API key and credits that were not available, so none of those numbers are claimed here. A deterministic, credential-free demo now exists, reusing the real pipeline end to end, and is packaged in Docker Compose alongside the production service; the Compose configuration itself has been validated, but building and running the container has not yet been verified against a live Docker daemon.',
     },
   },
   {
@@ -519,7 +519,7 @@ export const PROJECTS: readonly Project[] = [
       'Answers a business phone line, understands the caller, books or reschedules appointments in a real calendar, and hands off to a human when it should.',
     status: 'built',
     proof: {
-      tests: 1659,
+      tests: 1666,
       evaluation: '18/18',
       properties: [
         'Double-booking prevented by a PostgreSQL exclusion constraint, not application logic alone',
@@ -554,7 +554,7 @@ export const PROJECTS: readonly Project[] = [
         'Two harness-only bounds — a 300-second session limit and a 20-turn cap, neither a rate limit nor authentication — close a demo session cleanly through the same admission and cleanup path a hung-up call already uses',
       ],
       result:
-        '1,659 tests pass out of 1,661 collected, with PostgreSQL available; two timing-sensitive realtime tests failed intermittently in full-suite runs and passed when run on their own. The deterministic evaluation suite — eighteen scripted call scenarios run against the real system — scores 18/18 task success, covering straightforward booking, rescheduling, ambiguous dates and four adversarial scenarios that must be refused. This measures VoiceDesk’s own tool-calling, escalation and database behaviour against structured ground truth; the scenario model answers from a script, so the suite does not measure a real model’s conversational quality. A browser demo is documented and runnable through the existing Docker Compose stack, exercising the real pipeline end to end without a phone number; production telephony behaviour is unchanged.',
+        '1,666 collected, with a PostgreSQL database available; 1,666 pass. The deterministic evaluation suite — eighteen scripted call scenarios run against the real system — scores 18/18 task success, covering straightforward booking, rescheduling, ambiguous dates and four adversarial scenarios that must be refused. This measures VoiceDesk’s own tool-calling, escalation and database behaviour against structured ground truth; the scenario model answers from a script, so the suite does not measure a real model’s conversational quality. A browser demo is documented and runnable through the existing Docker Compose stack, exercising the real pipeline end to end without a phone number; production telephony behaviour is unchanged.',
     },
   },
 ] as const
