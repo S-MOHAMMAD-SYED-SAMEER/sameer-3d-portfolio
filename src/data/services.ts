@@ -28,7 +28,7 @@ export const SERVICES: readonly Service[] = [
     title: 'AI Customer Support & Sales Recovery',
     summary:
       'Answer customer questions from your own policies and live data — and notice the buyer who is about to leave.',
-    delivers: [testsLabel('p1'), '21/21 eval (mock)', '8 guardrail policies enforced in code'],
+    delivers: [testsLabel('p1'), '21/21 eval (live Gemini)', '8 guardrail policies enforced in code'],
   },
   {
     id: 'inbox-crm',

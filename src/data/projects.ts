@@ -175,11 +175,11 @@ export const PROJECTS: readonly Project[] = [
       'An AI system that handles customer support conversations and recovers sales that would otherwise be lost.',
     status: 'built',
     proof: {
-      tests: 349,
-      evaluation: '21/21 (mock)',
+      tests: 367,
+      evaluation: '21/21 (live Gemini)',
       properties: [
         'Eight guardrail policies enforced in code, not prompt text',
-        'Mock evaluation only so far: the real-model run is still to be re-run',
+        'Evaluated on a live model (Gemini), not only mocked responses, with the first result and the grader fix both reported',
       ],
     },
     screenshots: [
@@ -192,10 +192,10 @@ export const PROJECTS: readonly Project[] = [
       },
       {
         src: '/projects/p1-buying-signal-recovery.png',
-        alt: 'A customer writes “I like this but I’m still deciding if I need it.” The reply is the guardrails’ fixed fallback, which offers the support team, tagged “Checked store information” and “Noticed: hesitation”.',
-        caption: 'Hesitation is noticed, but the model’s answer was blocked and the customer got no real recovery. To be replaced after the real-model run.',
-        width: 912,
-        height: 608,
+        alt: 'A real conversation with the live model: a stock question answered from a tool, then a hesitating buyer reassured with the store’s 30-day return policy, tagged “Checked store information” and “Noticed: hesitation”.',
+        caption: 'A real recovery: hesitation is noticed, the store’s own return policy is checked, and the customer is reassured without an invented discount.',
+        width: 940,
+        height: 433,
       },
     ],
     links: {
@@ -226,7 +226,7 @@ export const PROJECTS: readonly Project[] = [
         'Signal detection is deterministic rather than a second model call, so it is testable and costs nothing per message.',
       ],
       result:
-        '349 of 349 automated tests pass. The 21-case evaluation suite passes 21/21 in deterministic mock mode, which replays scripted answers and checks the code around the model, not a model. A recorded run against a real model is still to be done: an earlier Gemini run was reported, but its output was not kept, so no real-model result is claimed. The Anthropic adapter is implemented and has not yet been run.',
+        '367 of 367 automated tests pass. The 21-case evaluation suite passes 21/21 in deterministic mock mode, which replays scripted answers, and was run twice on a live model (Gemini 3.5 Flash-Lite): 18/21 the first time, where all three misses were correct replies the grader mis-scored, then 21/21 on the corrected grader with fresh replies. On real drafts the guardrails blocked two good replies (2 of 41), which was fixed (0 of 41, and 0 of 15 held-out); they also miss unsupported claims about promotions, which is open. Ten injection attempts all held. These numbers describe this dataset on these runs, not a general accuracy claim. The Anthropic adapter is implemented and has not yet been run.',
     },
   },
   {
