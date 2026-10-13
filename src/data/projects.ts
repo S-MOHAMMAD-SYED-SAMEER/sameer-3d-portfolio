@@ -175,11 +175,11 @@ export const PROJECTS: readonly Project[] = [
       'An AI system that handles customer support conversations and recovers sales that would otherwise be lost.',
     status: 'built',
     proof: {
-      tests: 247,
-      evaluation: '16/16',
+      tests: 349,
+      evaluation: '21/21 (mock)',
       properties: [
         'Eight guardrail policies enforced in code, not prompt text',
-        'Evaluated against the live model, not only mocked responses',
+        'Mock evaluation only so far: the real-model run is still to be re-run',
       ],
     },
     screenshots: [
@@ -192,8 +192,8 @@ export const PROJECTS: readonly Project[] = [
       },
       {
         src: '/projects/p1-buying-signal-recovery.png',
-        alt: 'A customer writes “I like this but I’m still deciding if I need it.” The assistant declines to answer and offers to connect them with the support team, tagged “Checked store information” and “Noticed: hesitation”.',
-        caption: 'Hesitation is noticed — and an answer it cannot back is refused rather than guessed.',
+        alt: 'A customer writes “I like this but I’m still deciding if I need it.” The reply is the guardrails’ fixed fallback, which offers the support team, tagged “Checked store information” and “Noticed: hesitation”.',
+        caption: 'Hesitation is noticed, but the model’s answer was blocked and the customer got no real recovery. To be replaced after the real-model run.',
         width: 912,
         height: 608,
       },
@@ -220,13 +220,13 @@ export const PROJECTS: readonly Project[] = [
       engineering: [
         'Guardrails are application code, not prompt text: eight pure policies run against the reply after generation, whether or not the model followed instructions.',
         'Four of those policies cross-reference the reply against the tools that actually ran that turn, so a discount, stock or order-status claim with no matching tool call is blocked.',
-        'Validation is fail-safe rather than silent — a failed policy returns a fixed, honest fallback offering a handover, never the unverified reply.',
-        'Both model providers sit behind one interface, so switching between them is an environment variable rather than a code change.',
+        'Validation is fail-safe rather than silent — a failed policy returns a fixed fallback that says the support team can help, never the unverified reply. Nothing in the system actually hands the customer to a person.',
+        'Both model providers sit behind one interface, so switching between them is an environment variable rather than a code change. The Anthropic adapter is implemented but has not yet been run against the live API.',
         'Memory uses the SQLite module built into Node, which avoids a native build step and an extra dependency entirely.',
         'Signal detection is deterministic rather than a second model call, so it is testable and costs nothing per message.',
       ],
       result:
-        '247 of 247 automated tests pass. The 16-case evaluation suite passes 16/16 in deterministic mock mode and 16/16 in a real run against the live model — the real run being what surfaced two genuine bugs a mocked run could not have found. These numbers describe this dataset on these runs, not a general accuracy claim.',
+        '349 of 349 automated tests pass. The 21-case evaluation suite passes 21/21 in deterministic mock mode, which replays scripted answers and checks the code around the model, not a model. A recorded run against a real model is still to be done: an earlier Gemini run was reported, but its output was not kept, so no real-model result is claimed. The Anthropic adapter is implemented and has not yet been run.',
     },
   },
   {
