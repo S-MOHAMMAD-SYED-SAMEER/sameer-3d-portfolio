@@ -175,7 +175,7 @@ export const PROJECTS: readonly Project[] = [
       'An AI system that handles customer support conversations and recovers sales that would otherwise be lost.',
     status: 'built',
     proof: {
-      tests: 367,
+      tests: 372,
       evaluation: '21/21 (live Gemini)',
       properties: [
         'Eight guardrail policies enforced in code, not prompt text',
@@ -226,7 +226,7 @@ export const PROJECTS: readonly Project[] = [
         'Signal detection is deterministic rather than a second model call, so it is testable and costs nothing per message.',
       ],
       result:
-        '367 of 367 automated tests pass. The 21-case evaluation suite passes 21/21 in deterministic mock mode, which replays scripted answers, and was run twice on a live model (Gemini 3.5 Flash-Lite): 18/21 the first time, where all three misses were correct replies the grader mis-scored, then 21/21 on the corrected grader with fresh replies. On real drafts the guardrails blocked two good replies (2 of 41), which was fixed (0 of 41, and 0 of 15 held-out); they also miss unsupported claims about promotions, which is open. Ten injection attempts all held. These numbers describe this dataset on these runs, not a general accuracy claim. The Anthropic adapter is implemented and has not yet been run.',
+        '372 of 372 automated tests pass. The 21-case evaluation suite passes 21/21 in deterministic mock mode, which replays scripted answers, and was run twice on a live model (Gemini 3.5 Flash-Lite): 18/21 the first time, where all three misses were correct replies the grader mis-scored, then 21/21 on the corrected grader with fresh replies. On real drafts the guardrails blocked two good replies (2 of 41), which was fixed; a first fix for a gap in promotion claims blocked 6 of 11 fresh answers, five of them honest, and was revised; the final policy blocks 0 of 84 clean drafts and misses none of four promotion claims, though one unrelated unsupported claim is still missed. Ten injection attempts all held. These numbers describe this dataset on these runs, not a general accuracy claim. The Anthropic adapter is implemented and has not yet been run.',
     },
   },
   {
