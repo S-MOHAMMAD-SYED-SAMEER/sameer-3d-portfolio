@@ -505,7 +505,7 @@ async function runCandidate(context: CandidateContext): Promise<CandidateRun> {
       actor: 'system',
       outcome: 'blocked',
       summary:
-        `${verification.rejected.length} quoted passage(s) could not be found in the resume and were rejected. ` +
+        `${verification.rejected.length} quoted passage(s) were rejected: not found in the resume, over a masked detail, or too short to count. ` +
         'Nothing that cannot be found in the document is shown or counted.',
       payload: { reasons: verification.rejected.map((item) => item.reason) },
       entityType: 'evaluation',

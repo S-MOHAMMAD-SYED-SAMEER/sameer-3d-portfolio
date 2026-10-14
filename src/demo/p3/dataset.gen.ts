@@ -96,7 +96,7 @@ export const DEMO_CANDIDATES: readonly DemoCandidate[] = [
     "reference": "demo-001",
     "displayName": "Rowan Ashfield",
     "assess": "scored",
-    "resume": "Name: Rowan Ashfield\nEmail: rowan.ashfield@example.invalid\nPhone: +44 20 7946 0102\nDate of birth: 12 June 1990\nNationality: British\nGender: Female\nAddress: 14 Foundry Lane, Bristol BS1 4TR\n\nSUMMARY\nBackend engineer, eight years on payment and booking systems.\n\nEXPERIENCE\nSenior Engineer, Halden Freight\nDesigned and shipped production Node.js services for a freight booking platform.\nRunning PostgreSQL at scale, moving a single instance to a replicated cluster.\nMentoring: mentored four junior engineers through their first releases.\n\nSKILLS\nTypeScript, Docker, Kubernetes, Terraform",
+    "resume": "Name: Rowan Ashfield\nEmail: rowan.ashfield@example.invalid\nPhone: +44 20 7946 0102\nDate of birth: 12 June 1990\nNationality: British\nGender: Female\nAddress: 14 Foundry Lane, Bristol BS1 4TR\n\nSUMMARY\nBackend engineer, eight years on payment and booking systems.\n\nEXPERIENCE\nSenior Engineer, Halden Freight\nDesigned and shipped production Node.js services for a freight booking platform.\nRun PostgreSQL at scale, moving a single instance to a replicated cluster.\nMentoring: mentored four junior engineers through their first releases.\n\nSKILLS\nTypeScript, Docker, Kubernetes, Terraform",
     "expected": {
       "tier": "qualified",
       "scoreBasisPoints": 10000,
@@ -112,7 +112,7 @@ export const DEMO_CANDIDATES: readonly DemoCandidate[] = [
     "reference": "demo-002",
     "displayName": "Devi Narayanan",
     "assess": "scored",
-    "resume": "Name: Devi Narayanan\nEmail: devi.narayanan@example.invalid\nPhone: +44 20 7946 0247\nDate of birth: 3 March 1992\nNationality: Indian\nGender: Female\nAddress: 8 Peartree Court, Manchester M4 5JW\n\nSUMMARY\nBackend engineer focused on billing and reconciliation.\n\nEXPERIENCE\nBackend Engineer, Corvid Systems\nDesigned and shipped production Node.js services behind a payments API.\nRunning PostgreSQL at scale for a multi-tenant billing system.\nReduced tail latency by tuning slow queries and adding read replicas.\n\nSKILLS\nTypeScript, Redis, Docker",
+    "resume": "Name: Devi Narayanan\nEmail: devi.narayanan@example.invalid\nPhone: +44 20 7946 0247\nDate of birth: 3 March 1992\nNationality: Indian\nGender: Female\nAddress: 8 Peartree Court, Manchester M4 5JW\n\nSUMMARY\nBackend engineer focused on billing and reconciliation.\n\nEXPERIENCE\nBackend Engineer, Corvid Systems\nDesigned and shipped production Node.js services behind a payments API.\nRun PostgreSQL at scale for a multi-tenant billing system.\nReduced tail latency by tuning slow queries and adding read replicas.\n\nSKILLS\nTypeScript, Redis, Docker",
     "expected": {
       "tier": "qualified",
       "scoreBasisPoints": 7142,
@@ -160,7 +160,7 @@ export const DEMO_CANDIDATES: readonly DemoCandidate[] = [
     "reference": "demo-005",
     "displayName": "Toby Kestrel",
     "assess": "queued",
-    "resume": "Name: Toby Kestrel\nEmail: toby.kestrel@example.invalid\nPhone: +44 20 7946 0519\nDate of birth: 5 September 1993\nNationality: Irish\nGender: Male\nAddress: 77 Ardwick Green, Liverpool L1 9BG\n\nSUMMARY\nBackend engineer, most recently on logistics tooling.\n\nEXPERIENCE\nEngineer, Northgate Logistics\nBuilt and shipped production Node.js services for depot scheduling.\nRunning PostgreSQL at scale behind a routing API.\n\nSKILLS\nTypeScript, Go, Docker",
+    "resume": "Name: Toby Kestrel\nEmail: toby.kestrel@example.invalid\nPhone: +44 20 7946 0519\nDate of birth: 5 September 1993\nNationality: Irish\nGender: Male\nAddress: 77 Ardwick Green, Liverpool L1 9BG\n\nSUMMARY\nBackend engineer, most recently on logistics tooling.\n\nEXPERIENCE\nEngineer, Northgate Logistics\nBuilt and shipped production Node.js services for depot scheduling.\nRun PostgreSQL at scale behind a routing API.\n\nSKILLS\nTypeScript, Go, Docker",
     "expected": {
       "tier": "not_evaluated",
       "scoreBasisPoints": null,
