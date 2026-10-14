@@ -355,7 +355,7 @@ export const PROJECTS: readonly Project[] = [
       approach:
         'Treat both as things to make structurally impossible rather than to ask a model to avoid. Quotes are checked against the submitted text and rejected if they are not there. Scoring is integer arithmetic a recruiter can redo on paper. Protected attributes are removed from the input before the model is called, so they cannot influence an extraction because they are not present.',
       architecture: [
-        'Ingest and parse the submitted CV',
+        'Ingest the submitted CV (plain text)',
         'Redact protected attributes, preserving exact character offsets',
         'Extract findings against the job requirements through a model adapter',
         'Verify every quoted finding against the original text',
