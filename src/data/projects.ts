@@ -398,10 +398,11 @@ export const PROJECTS: readonly Project[] = [
       'Retrieval-grounded answers over internal documents, with citation validation and honest abstention.',
     status: 'built',
     proof: {
-      tests: 1135,
-      evaluation: null,
+      tests: 1259,
+      evaluation: 'retrieval MRR 0.91 with reranking (0.74 without)',
       properties: [
         'Hybrid retrieval (PostgreSQL full-text + pgvector) fused by Reciprocal Rank Fusion, reranked by a local CrossEncoder',
+        'Retrieval measured offline with the real models and no API key, on a 30-chunk fixture corpus (45 of 52 questions scored): Recall@5 0.9333, Recall@10 0.9926, MRR 0.9081 and nDCG@10 0.9076 with the reranker, against 0.8667, 0.9519, 0.7375 and 0.7823 without it. Answer quality has not been measured: no Gemini call has succeeded yet',
         'Every citation checked in Python against the retrieved evidence before an answer is shown — an invalid citation rejects the answer rather than displaying it',
         'Two separate demo mechanisms exist: a standalone, deterministic demo (`demo/`) that replays real, precomputed BGE and CrossEncoder output from committed fixtures through the production query pipeline via dependency overrides; and a credential-free integrated demo mode inside the main application that runs the real BGE embedding and CrossEncoder reranking providers while using fixed scenario answers for the generation step',
       ],
@@ -433,7 +434,7 @@ export const PROJECTS: readonly Project[] = [
         'Retrieval and answer-quality evaluation each run as a separate offline harness against a labelled fixture corpus, kept apart from the deterministic citation and grounding checks',
       ],
       result:
-        'The full merged test suite — covering both demo mechanisms, the core retrieval/reranking/generation pipeline, and the citation and grounding checks — passes 1,135 of 1,139 collected tests in CI, with 4 skipped and 0 failed. The skips are a single, disclosed environment limitation: CI never downloads the real BGE and CrossEncoder model weights, so those specific real-model-inference tests are skipped rather than faked or force-passed. (On a machine with both models cached, 1,127 of the same 1,139 pass, with 11 failures — all pre-existing and environment-specific, none touching retrieval, reranking, generation, citation validation or abstention correctness.) Retrieval and answer-quality evaluation harnesses exist and are proven correct against fixtures, but neither has produced an official score yet — none is claimed here.',
+        'The full merged test suite — covering both demo mechanisms, the core retrieval/reranking/generation pipeline, and the citation and grounding checks — passes 1,259 of 1,263 collected tests in CI, with 4 skipped and 0 failed. The skips are the three tests that load the real BGE and CrossEncoder weights (CI never downloads them) and the opt-in Gemini smoke test: skipped rather than faked or counted as passing. On a laptop with both models cached, 1,261 of the same 1,263 pass, with 2 skipped and 0 failed; an earlier 11 failures there were all environmental, none were application bugs, and they are fixed. CI also builds the image, starts the demo stack and asks it a question. The retrieval evaluation ran on 2026-10-14 with the real models and no API key: on a 30-chunk corpus, the reranker lifts MRR from 0.7375 to 0.9081 and Recall@5 from 0.8667 to 0.9333. The questions were written by the same author against the same fixtures, and nothing has been measured at scale. Answer quality has not been measured: Gemini was tried twice and failed with a server error, and no call has succeeded since.',
     },
   },
   {
@@ -590,6 +591,11 @@ export function testsLabel(id: ProjectId): string {
   const project = getProject(id)
   if (project === undefined) throw new Error(`No project with id "${id}"`)
   return `${formatCount(project.proof.tests)} tests`
+}
+
+/** "1,259 tests passing (CI)": the same count, for a project whose figure is its CI run's. */
+export function testsPassingInCiLabel(id: ProjectId): string {
+  return `${testsLabel(id)} passing (CI)`
 }
 
 /**
