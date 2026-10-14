@@ -41,7 +41,7 @@ export const SERVICES: readonly Service[] = [
     id: 'recruitment',
     title: 'AI Recruitment Intelligence',
     summary: 'Screening decisions you can defend to the person they were made about.',
-    delivers: [testsLabel('p3'), '10-stage demo ending in Decision + Audit'],
+    delivers: [testsLabel('p3'), '10-stage demo from resume to audit trail'],
   },
   {
     // Generalises the Inbox-to-CRM agent's own machinery rather than being a

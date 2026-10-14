@@ -675,7 +675,7 @@ export function RankingStage({
 function TierChip({ entry }: { entry: RankedCandidate }) {
   const label =
     entry.tier === 'qualified'
-      ? 'Meets every essential'
+      ? 'Meets every must-have'
       : entry.tier === 'gated'
         ? 'Missing an essential'
         : entry.tier === 'needs_review'
