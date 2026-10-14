@@ -324,10 +324,10 @@ export const PROJECTS: readonly Project[] = [
       'An applicant tracking system that scores candidates with logic you can read back and audit.',
     status: 'built',
     proof: {
-      tests: 689,
+      tests: 693,
       evaluation: null,
       properties: [
-        'Deterministic integer scoring — no floating point in the scoring path',
+        'Deterministic integer scoring — integer arithmetic with one floor-division',
         'Every citation verified character-for-character against the submitted CV',
         'Protected attributes redacted before the model sees the text',
       ],
@@ -373,7 +373,7 @@ export const PROJECTS: readonly Project[] = [
         'Both database drivers are held to the same behaviour by driver-parity and schema-parity tests.',
       ],
       result:
-        '689 automated tests pass across the API and the dashboard. The build runs locally against a deterministic offline extractor by default, which is what makes the whole pipeline reproducible without a key or a spend; a Claude adapter is implemented behind the same interface but is not what the current build exercises.',
+        '693 automated tests pass across the API and the dashboard when the two portfolio repositories are checked out beside the project, as its CI does (in a standalone clone 681 pass and 12 skip). The build runs locally against a deterministic offline extractor by default, which is what makes the whole pipeline reproducible without a key or a spend; a Claude adapter is implemented behind the same interface but is not what the current build exercises.',
     },
   },
   {
