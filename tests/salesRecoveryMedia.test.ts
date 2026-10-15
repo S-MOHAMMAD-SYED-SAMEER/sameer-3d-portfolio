@@ -47,7 +47,11 @@ test('the player has controls, plays inline, loads metadata only, and gives a cr
   assert.match(source, /\bplaysInline\b/)
   assert.match(source, /preload="metadata"/)
   assert.match(source, /crossOrigin=\{isAbsolute\(video\.src\) \? 'anonymous' : undefined\}/)
-  assert.match(source, /<track kind="captions" src=\{video\.captions\} srcLang="en" label="English" default \/>/)
+  // Available, but off at first: no `default`, and the text track mode is set to hidden so a browser does not turn it on by itself.
+  assert.match(source, /<track kind="captions" src=\{video\.captions\} srcLang="en" label="English" \/>/)
+  assert.ok(!/<track[^>]*\bdefault\b/.test(source), 'the captions track is marked default')
+  assert.match(source, /track\.mode = 'hidden'/)
+  assert.match(source, /addEventListener\('addtrack', hide\)/)
 })
 
 test('the numbers are current and the old ones are gone', () => {
