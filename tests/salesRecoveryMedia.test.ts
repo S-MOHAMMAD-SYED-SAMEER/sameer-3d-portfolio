@@ -64,3 +64,10 @@ test('the numbers are current and the old ones are gone', () => {
   assert.match(p1.caseStudy?.result ?? '', /not a general accuracy claim/)
   assert.match(p1.caseStudy?.result ?? '', /Anthropic adapter is implemented and has not yet been run/)
 })
+
+test('the guardrail figures say who labelled the drafts: one AI reviewer, not a person by hand', () => {
+  const result = p1.caseStudy?.result ?? ''
+  assert.match(result, /labelled by one AI reviewer \(Claude Code; not independent, not human-verified\)/)
+  // (the problem text legitimately says a small team answers questions "by hand"; what must not appear is the drafts being)
+  assert.ok(!/checked by hand|drafts[^.]{0,80}by hand|by hand[^.]{0,80}drafts/i.test(result), 'the result says the drafts were checked by hand')
+})
