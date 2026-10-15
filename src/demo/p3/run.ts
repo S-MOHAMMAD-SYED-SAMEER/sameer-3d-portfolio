@@ -9,6 +9,7 @@ import {
 } from './vendored/agent/extractionSchema.ts'
 import { verifyEvidence } from './vendored/agent/verifyEvidence.ts'
 import { scoreEvaluation } from './vendored/agent/score.ts'
+import { DEFAULT_MATCH_MODE, type MatchMode } from './vendored/agent/matchRules.ts'
 import { rankCandidates } from './vendored/agent/rankRules.ts'
 import { createMockLlmProvider } from './vendored/adapters/llm/mock.ts'
 import { installDeterministicExtractor } from './vendored/agent/mockExtractor.ts'
@@ -164,6 +165,8 @@ export type DemoRunOptions = {
   candidates?: readonly DemoCandidate[]
   /** Passed straight to the vendored extractor. */
   maxPerRequirement?: number
+  /** How words are compared by the extractor stand-in and the matcher. Defaults to the pipeline's own default. */
+  matchMode?: MatchMode
 }
 
 // --- the run -----------------------------------------------------------------
@@ -228,16 +231,18 @@ export async function runDemo(options: DemoRunOptions = {}): Promise<DemoRunResu
   // stateless between calls apart from its `calls` log, and the extractor
   // registered on it is a pure function of the request.
   const provider = createMockLlmProvider()
-  installDeterministicExtractor(
-    provider,
-    options.maxPerRequirement === undefined ? {} : { maxPerRequirement: options.maxPerRequirement },
-  )
+  const matchMode = options.matchMode ?? DEFAULT_MATCH_MODE
+  installDeterministicExtractor(provider, {
+    matchMode,
+    ...(options.maxPerRequirement === undefined ? {} : { maxPerRequirement: options.maxPerRequirement }),
+  })
 
   const runs: CandidateRun[] = []
 
   for (const entry of candidates) {
     runs.push(
       await runCandidate({
+        matchMode,
         entry,
         job,
         requirements,
@@ -293,6 +298,7 @@ type CandidateContext = {
   knownRequirementIds: ReadonlySet<string>
   provider: ReturnType<typeof createMockLlmProvider>
   audit: ReturnType<typeof createAuditLog>
+  matchMode: MatchMode
 }
 
 async function runCandidate(context: CandidateContext): Promise<CandidateRun> {
@@ -557,7 +563,7 @@ async function runCandidate(context: CandidateContext): Promise<CandidateRun> {
   // list it was handed. Both locks are left in place: only verified rows are
   // passed in, and the rules check again.
 
-  const score = scoreEvaluation(requirements, verifiedEvidence)
+  const score = scoreEvaluation(requirements, verifiedEvidence, context.matchMode)
   const evidenceIgnored = evidence.length - verifiedEvidence.length
 
   const matches: RequirementMatch[] = score.rows.map((row, index) => ({
@@ -603,6 +609,7 @@ async function runCandidate(context: CandidateContext): Promise<CandidateRun> {
         confidence: row.decision.confidence,
       })),
       evidenceCounted: verifiedEvidence.length,
+      matchMode: context.matchMode,
     },
     entityType: 'evaluation',
     entityId: evaluationId,
