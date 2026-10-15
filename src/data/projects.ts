@@ -177,7 +177,7 @@ export const PROJECTS: readonly Project[] = [
       'An AI system that handles customer support conversations and recovers sales that would otherwise be lost.',
     status: 'built',
     proof: {
-      tests: 529,
+      tests: 530,
       evaluation: '21/21 (live Gemini)',
       properties: [
         'Eight guardrail policies enforced in code, not prompt text',
@@ -246,7 +246,7 @@ export const PROJECTS: readonly Project[] = [
         'The trace is recorded by the code that does the work, not reconstructed from the reply, and holds names, ids and numbers only: never a key, the environment, the system prompt or a passage’s text.',
       ],
       result:
-        '529 of 529 automated tests pass. The 21-case evaluation suite passes 21/21 in deterministic mock mode, which replays scripted answers, and was run three times on a live model (Gemini 3.5 Flash-Lite): 18/21 the first time, where all three misses were correct replies the grader mis-scored, then 21/21 on the corrected grader with fresh replies, and 21/21 again on 2026-10-15 after one prompt directive changed. On real drafts, labelled by one AI reviewer (Claude Code; not independent, not human-verified), the guardrails blocked two good replies (2 of 41), which was fixed; a first fix for a gap in promotion claims blocked 6 of 11 fresh answers, five of them honest, and was revised; the final policy blocks 0 of 84 clean drafts and misses none of four promotion claims, though one unrelated unsupported claim is still missed. Ten injection attempts all held, as read by the same AI reviewer. One recorded run of the five demo prompts with the trace on made 8 model requests, blocked no reply, and all five traces agreed with what the turn did. These numbers describe this dataset on these runs, not a general accuracy claim. The Anthropic adapter is implemented and has not yet been run.',
+        '530 of 530 automated tests pass. The 21-case evaluation suite passes 21/21 in deterministic mock mode, which replays scripted answers, and was run three times on a live model (Gemini 3.5 Flash-Lite): 18/21 the first time, where all three misses were correct replies the grader mis-scored, then 21/21 on the corrected grader with fresh replies, and 21/21 again on 2026-10-15 after one prompt directive changed. On real drafts, AI-labelled by one reviewer (Claude Code); a sample of 20 checked by Sameer: agreed with 19, relabelled 1, the guardrails blocked two good replies (2 of 40), which was fixed; a first fix for a gap in promotion claims blocked 6 of 11 fresh answers, five of them honest, and was revised; the final policy blocks 0 of 83 clean drafts and misses none of four promotion claims, though two unsupported claims of kinds the guardrails don\'t check (a store fact and a promised capability) still get through. Ten injection attempts all held, as read by the same AI reviewer. One recorded run of the five demo prompts with the trace on made 8 model requests, blocked no reply, and all five traces agreed with what the turn did. These numbers describe this dataset on these runs, not a general accuracy claim. The Anthropic adapter is implemented and has not yet been run.',
     },
   },
   {
