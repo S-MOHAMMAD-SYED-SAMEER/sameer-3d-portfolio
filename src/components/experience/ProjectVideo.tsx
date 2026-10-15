@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react'
+
 import type { ProjectVideo as ProjectVideoData } from '@/data/projects'
 
 /**
@@ -18,16 +20,43 @@ import type { ProjectVideo as ProjectVideoData } from '@/data/projects'
  * `loading="lazy"` matters on `ProjectEvidence` — the file is only fetched
  * once a visitor opens the project that owns it.
  *
+ * The captions track is available but OFF at first: it carries the full spoken
+ * text, and short captions are already burned into the picture, so showing both
+ * would put two sets of captions on screen. It has no `default` attribute, and
+ * the text track mode is set to "hidden" on mount so a browser that turns
+ * captions on by itself (a viewer's system setting, some browsers' auto
+ * selection) does not either. It stays in the player's captions menu, and a
+ * viewer who turns CC on gets the full text.
+ *
  * Renders nothing when no video has been captured yet.
  */
 const isAbsolute = (url: string) => /^https?:\/\//.test(url)
 
 export function ProjectVideo({ video }: { video: ProjectVideoData | undefined }) {
+  const player = useRef<HTMLVideoElement>(null)
+
+  // Hidden, not showing, until the viewer turns captions on. Re-applied when a
+  // track is added after mount; a track the viewer switches on is not "added",
+  // so their choice is never overridden.
+  useEffect(() => {
+    const element = player.current
+    if (element === null) return
+    const hide = () => {
+      for (const track of Array.from(element.textTracks)) {
+        if (track.mode !== 'hidden') track.mode = 'hidden'
+      }
+    }
+    hide()
+    element.textTracks.addEventListener('addtrack', hide)
+    return () => element.textTracks.removeEventListener('addtrack', hide)
+  }, [video])
+
   if (video === undefined) return null
 
   return (
     <div>
       <video
+        ref={player}
         src={video.src}
         poster={video.poster}
         width={video.width}
@@ -40,7 +69,7 @@ export function ProjectVideo({ video }: { video: ProjectVideoData | undefined })
         className="border-line block h-auto w-full overflow-hidden rounded-lg border"
       >
         {video.captions !== undefined && (
-          <track kind="captions" src={video.captions} srcLang="en" label="English" default />
+          <track kind="captions" src={video.captions} srcLang="en" label="English" />
         )}
       </video>
       <p className="text-mist mt-2 text-xs leading-relaxed">{video.caption}</p>
