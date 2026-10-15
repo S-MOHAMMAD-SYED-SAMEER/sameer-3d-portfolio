@@ -73,10 +73,12 @@ export interface ProjectShot {
  * panel can reserve the right box before the file arrives.
  */
 export interface ProjectVideo {
-  /** Served from public/, so root-relative. */
+  /** Root-relative (served from this site's public/), or an absolute https URL when the file is hosted by the portfolio site. */
   src: string
-  /** A still frame shown before playback starts. Served from public/, so root-relative. */
+  /** A still frame shown before playback starts. Same rule as `src`. */
   poster?: string
+  /** WebVTT captions for `src` (an English text track, on by default). Same rule as `src`; a cross-origin file needs CORS. */
+  captions?: string
   /** One line naming what the visitor is watching. */
   caption: string
   width: number
@@ -175,29 +177,45 @@ export const PROJECTS: readonly Project[] = [
       'An AI system that handles customer support conversations and recovers sales that would otherwise be lost.',
     status: 'built',
     proof: {
-      tests: 372,
+      tests: 529,
       evaluation: '21/21 (live Gemini)',
       properties: [
         'Eight guardrail policies enforced in code, not prompt text',
         'Evaluated on a live model (Gemini), not only mocked responses, with the first result and the grader fix both reported',
+        'Every reply carries a trace of what the server did, shown in an Operator view',
       ],
     },
     screenshots: [
       {
-        src: '/projects/p1-grounded-answer.png',
-        alt: 'The support assistant answering “Is the Ceramic Mug in stock?” with “Yes, the Ceramic Mug is currently in stock with 42 units available.”, tagged “Checked product availability”.',
-        caption: 'Every answer names the tool it checked first.',
-        width: 942,
-        height: 872,
+        src: '/projects/p1-hesitation-operator.png',
+        alt: 'A hesitant buyer’s reply stating the 30-day return window, with chips for the store information checked, the source file returns-policy.md and the hesitation noticed, beside an Activity panel listing the signal, the model call, the knowledge-base search and the guardrail policies.',
+        caption: 'Hesitation is noticed by a plain rule, the store’s own return policy is searched, and the panel shows the file it used. Live Gemini run, 2026-10-15, fictional store.',
+        width: 1920,
+        height: 960,
       },
       {
-        src: '/projects/p1-buying-signal-recovery.png',
-        alt: 'A real conversation with the live model: a stock question answered from a tool, then a hesitating buyer reassured with the store’s 30-day return policy, tagged “Checked store information” and “Noticed: hesitation”.',
-        caption: 'A real recovery: hesitation is noticed, the store’s own return policy is checked, and the customer is reassured without an invented discount.',
-        width: 940,
-        height: 433,
+        src: '/projects/p1-guardrail-provenance.png',
+        alt: 'A reply declining a 50% off code and mentioning only WELCOME10, beside the guardrail list where the discount-claim line reads: WELCOME10 verified by checkDiscount on question 2.',
+        caption: 'Asked for 50% off, it declines and mentions only a code it already verified; the guardrail records which question that was. Live Gemini run, 2026-10-15.',
+        width: 1920,
+        height: 960,
+      },
+      {
+        src: '/projects/p1-operator-steps.png',
+        alt: 'The Operator view for an order question: a model call, the getOrderStatus tool call with its arguments and result, a second model call, and the guardrail with its eight policies all passed.',
+        caption: 'The steps of one reply: model call, tool call, model call, then eight guardrail policies. Live Gemini run, 2026-10-15.',
+        width: 1920,
+        height: 960,
       },
     ],
+    video: {
+      src: 'https://portfolio-azure-six-79.vercel.app/videos/sales-recovery-agent-16x9.mp4',
+      poster: 'https://portfolio-azure-six-79.vercel.app/videos/sales-recovery-agent-poster.jpg',
+      captions: 'https://portfolio-azure-six-79.vercel.app/videos/sales-recovery-agent.vtt',
+      caption: 'A 90-second recording of the real app on a live Gemini run (2026-10-15): fictional store and data, nothing edited. AI-voice narration.',
+      width: 1920,
+      height: 1080,
+    },
     links: {
       github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/sales-recovery-agent',
       caseStudy:
@@ -216,6 +234,7 @@ export const PROJECTS: readonly Project[] = [
         'Retrieval over the knowledge base with Chroma and local embeddings',
         'Guardrail validation of the drafted reply before it is returned',
         'User message and final reply persisted back to SQLite',
+        'A per-turn trace recorded as the turn runs and returned with the reply, drawn in an Operator view',
       ],
       engineering: [
         'Guardrails are application code, not prompt text: eight pure policies run against the reply after generation, whether or not the model followed instructions.',
@@ -224,9 +243,10 @@ export const PROJECTS: readonly Project[] = [
         'Both model providers sit behind one interface, so switching between them is an environment variable rather than a code change. The Anthropic adapter is implemented but has not yet been run against the live API.',
         'Memory uses the SQLite module built into Node, which avoids a native build step and an extra dependency entirely.',
         'Signal detection is deterministic rather than a second model call, so it is testable and costs nothing per message.',
+        'The trace is recorded by the code that does the work, not reconstructed from the reply, and holds names, ids and numbers only: never a key, the environment, the system prompt or a passage’s text.',
       ],
       result:
-        '372 of 372 automated tests pass. The 21-case evaluation suite passes 21/21 in deterministic mock mode, which replays scripted answers, and was run twice on a live model (Gemini 3.5 Flash-Lite): 18/21 the first time, where all three misses were correct replies the grader mis-scored, then 21/21 on the corrected grader with fresh replies. On real drafts the guardrails blocked two good replies (2 of 41), which was fixed; a first fix for a gap in promotion claims blocked 6 of 11 fresh answers, five of them honest, and was revised; the final policy blocks 0 of 84 clean drafts and misses none of four promotion claims, though one unrelated unsupported claim is still missed. Ten injection attempts all held. These numbers describe this dataset on these runs, not a general accuracy claim. The Anthropic adapter is implemented and has not yet been run.',
+        '529 of 529 automated tests pass. The 21-case evaluation suite passes 21/21 in deterministic mock mode, which replays scripted answers, and was run three times on a live model (Gemini 3.5 Flash-Lite): 18/21 the first time, where all three misses were correct replies the grader mis-scored, then 21/21 on the corrected grader with fresh replies, and 21/21 again on 2026-10-15 after one prompt directive changed. On real drafts the guardrails blocked two good replies (2 of 41), which was fixed; a first fix for a gap in promotion claims blocked 6 of 11 fresh answers, five of them honest, and was revised; the final policy blocks 0 of 84 clean drafts and misses none of four promotion claims, though one unrelated unsupported claim is still missed. Ten injection attempts all held. One recorded run of the five demo prompts with the trace on made 8 model requests, blocked no reply, and all five traces agreed with what the turn did. These numbers describe this dataset on these runs, not a general accuracy claim. The Anthropic adapter is implemented and has not yet been run.',
     },
   },
   {
