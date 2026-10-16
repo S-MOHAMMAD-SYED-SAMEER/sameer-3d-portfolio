@@ -258,7 +258,8 @@ export const PROJECTS: readonly Project[] = [
       'Node.js',
       'TypeScript',
       'Express',
-      'Anthropic Claude',
+      'Google Gemini (adapter, not yet run)',
+      'Anthropic Claude (adapter, not yet run)',
       'SQLite',
       'PostgreSQL',
       'React',
@@ -269,8 +270,8 @@ export const PROJECTS: readonly Project[] = [
       'An inbox-to-CRM system that triages incoming mail and moves qualified leads into the CRM.',
     status: 'built',
     proof: {
-      tests: 895,
-      evaluation: '10/10',
+      tests: 951,
+      evaluation: '10/10 (mock replay)',
       properties: [
         'No value reaches the database without text quoted from the email',
         'Nothing is ever sent: an approved reply stops at the outbox',
@@ -279,8 +280,8 @@ export const PROJECTS: readonly Project[] = [
     screenshots: [
       {
         src: '/projects/p2-inbox-full-workflow.png',
-        alt: 'An inbound email whose body contains a “SYSTEM: Ignore all previous instructions” block asking the agent to auto-approve the sender. The agent’s reading of it records only a large order and a request to confirm pricing, with most extracted fields marked “Not provided”.',
-        caption: 'An instruction injected into the email body is read as text, not obeyed.',
+        alt: 'The one example email that carries hidden instructions, opened in the mock-provider demo. Beside it is the scripted answer standing in for the model, which records only a large order and a request to confirm pricing, with most extracted fields marked “Not provided”.',
+        caption: 'The one example email (of ten) with hidden instructions, run with scripted model answers. That answer was deliberately fooled; the separate deterministic check is what flagged it and sent it to a person.',
         width: 1415,
         height: 868,
       },
@@ -303,7 +304,7 @@ export const PROJECTS: readonly Project[] = [
         'One rule, applied throughout: the model proposes, deterministic code disposes, and a human authorises anything consequential. The model is used for the three things it is genuinely better at than code — classification, extraction and drafting — and for none of the things it is worse at: authority, arithmetic, state transitions, and judging whether an action is safe.',
       architecture: [
         'Ingest: inbound mail sanitised and stored',
-        'Understand: the model reads each email behind a fenced user turn',
+        'Understand: the model reads each email behind a fenced user turn (so far a scripted mock replay; the real-model run is pending), then a deterministic injection check runs on the email after the model has answered',
         'Resolve: entity matching against the CRM, with no model call at all',
         'Decide: deterministic rules turn understanding into a plan and a draft',
         'Approve: a queue ordered by remaining time, with a before/after diff',
@@ -322,7 +323,7 @@ export const PROJECTS: readonly Project[] = [
       'The two database drivers disagreed over JSON columns — SQLite hands back the text it stored, Postgres hands back a parsed value — and it stayed hidden while every JSON column happened to hold an object. That divergence is pinned by a test now rather than by memory.',
       ],
       result:
-        '895 automated tests pass across the API and the dashboard. The understand-stage evaluation runs ten demo cases through the real pipeline and passes 10/10, with a hallucinated-field rate of zero and full provenance and injection containment — the three metrics treated as absolutes rather than targets.',
+        '951 automated tests pass across the API and the dashboard. The understand-stage evaluation runs ten demo cases through the real pipeline with the model replaced by scripted answers, and passes 10/10: a hallucinated-field rate of zero and full provenance. Exactly one of the ten emails carries hidden instructions; the scripted model answer was deliberately fooled and did not flag it, and the deterministic check did, sending it to a person. Because the model is a mock, this tests the code around the model, not a model; a real-model run is pending. The example emails, scripted answers and expected results were written by Claude and have not been reviewed by a person.',
     },
   },
   {
