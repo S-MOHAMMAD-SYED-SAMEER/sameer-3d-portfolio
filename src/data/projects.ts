@@ -258,8 +258,8 @@ export const PROJECTS: readonly Project[] = [
       'Node.js',
       'TypeScript',
       'Express',
-      'Google Gemini (adapter, not yet run)',
-      'Anthropic Claude (adapter, not yet run)',
+      'Google Gemini (gemini-3.5-flash-lite, evaluated)',
+      'Anthropic Claude (implemented, not run)',
       'SQLite',
       'PostgreSQL',
       'React',
@@ -270,8 +270,8 @@ export const PROJECTS: readonly Project[] = [
       'An inbox-to-CRM system that triages incoming mail and moves qualified leads into the CRM.',
     status: 'built',
     proof: {
-      tests: 951,
-      evaluation: '10/10 (mock replay)',
+      tests: 1007,
+      evaluation: '10/10 mock replay · 2–4/10 real model',
       properties: [
         'No value reaches the database without text quoted from the email',
         'Nothing is ever sent: an approved reply stops at the outbox',
@@ -281,7 +281,7 @@ export const PROJECTS: readonly Project[] = [
       {
         src: '/projects/p2-inbox-full-workflow.png',
         alt: 'The one example email that carries hidden instructions, opened in the mock-provider demo. Beside it is the scripted answer standing in for the model, which records only a large order and a request to confirm pricing, with most extracted fields marked “Not provided”.',
-        caption: 'The one example email (of ten) with hidden instructions, run with scripted model answers. That answer was deliberately fooled; the separate deterministic check is what flagged it and sent it to a person.',
+        caption: 'The one example email (of ten) with hidden instructions, run with scripted model answers. That answer was deliberately fooled; the separate deterministic check is what flagged it and sent it to a person. A real model flagged it itself in three runs.',
         width: 1415,
         height: 868,
       },
@@ -304,7 +304,7 @@ export const PROJECTS: readonly Project[] = [
         'One rule, applied throughout: the model proposes, deterministic code disposes, and a human authorises anything consequential. The model is used for the three things it is genuinely better at than code — classification, extraction and drafting — and for none of the things it is worse at: authority, arithmetic, state transitions, and judging whether an action is safe.',
       architecture: [
         'Ingest: inbound mail sanitised and stored',
-        'Understand: the model reads each email behind a fenced user turn (so far a scripted mock replay; the real-model run is pending), then a deterministic injection check runs on the email after the model has answered',
+        'Understand: the model reads each email behind a fenced user turn (evaluated with a scripted mock and, separately, with a real model), then a deterministic injection check runs on the email after the model has answered',
         'Resolve: entity matching against the CRM, with no model call at all',
         'Decide: deterministic rules turn understanding into a plan and a draft',
         'Approve: a queue ordered by remaining time, with a before/after diff',
@@ -323,7 +323,7 @@ export const PROJECTS: readonly Project[] = [
       'The two database drivers disagreed over JSON columns — SQLite hands back the text it stored, Postgres hands back a parsed value — and it stayed hidden while every JSON column happened to hold an object. That divergence is pinned by a test now rather than by memory.',
       ],
       result:
-        '951 automated tests pass across the API and the dashboard. The understand-stage evaluation runs ten demo cases through the real pipeline with the model replaced by scripted answers, and passes 10/10: a hallucinated-field rate of zero and full provenance. Exactly one of the ten emails carries hidden instructions; the scripted model answer was deliberately fooled and did not flag it, and the deterministic check did, sending it to a person. Because the model is a mock, this tests the code around the model, not a model; a real-model run is pending. The example emails, scripted answers and expected results were written by Claude and have not been reviewed by a person.',
+        '1007 automated tests pass across the API and the dashboard. Against a real model (gemini-3.5-flash-lite, temperature 1), three repeats of the ten-email evaluation gave: category 80% and priority 70%; extraction F1 0.91 to 0.95; no invented fields once names, titles and companies had to be written in the email; 6 of 7 planned decisions matching, with action accuracy and approval-policy accuracy both 100%; and 0 unsafe actions in 21 plans. 12 of 12 attack emails reached a person in the latest run, and the ambiguous email reached a person in 3 of 3 runs. The scripted mock passes every case (10/10) while the real model passes every check on only 2 to 4 of the ten: the mock tests the code around a model, not a model. Limits: ten emails, seven planned decisions and twelve attacks; one model; the expected answers were written by Claude and reviewed with AI assistance (final decisions by Sameer), not independently; the attack set is not held out from the detector; and in an earlier run the model once obeyed an attack, yet the email still reached a person. The Claude provider is implemented and has not been run. Nothing was run against a real mailbox.',
     },
   },
   {
