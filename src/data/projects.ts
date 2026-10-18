@@ -293,6 +293,14 @@ export const PROJECTS: readonly Project[] = [
         height: 752,
       },
     ],
+    video: {
+      src: 'https://portfolio-azure-six-79.vercel.app/videos/inbox-crm-agent-16x9.mp4',
+      poster: 'https://portfolio-azure-six-79.vercel.app/videos/inbox-crm-agent-poster.jpg',
+      captions: 'https://portfolio-azure-six-79.vercel.app/videos/inbox-crm-agent.vtt',
+      caption: 'An 86-second recording of the real app on a live Gemini run (2026-10-18): invented data, nothing edited. The last scene is the guest demo, which runs when you run the app locally (not hosted yet). AI-voice narration.',
+      width: 1920,
+      height: 1080,
+    },
     links: {
       github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/inbox-crm-agent',
       caseStudy: null,
