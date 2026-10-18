@@ -52,7 +52,7 @@ test('the headline is computed, not written down', () => {
 })
 
 test('every count in a project\'s prose is that project\'s own count', () => {
-  // "247 of 247 automated tests pass", "1007 automated tests pass", "1,661 tests
+  // "247 of 247 automated tests pass", "1074 automated tests pass", "1,661 tests
   // collected" — a number followed by the word tests. A count of anything else
   // ("73/73 pass", "16/16") is not a test count and is not matched.
   const claim = /\b([0-9][0-9,]*)(?: of ([0-9][0-9,]*))? (?:automated )?tests\b/g
