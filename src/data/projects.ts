@@ -270,7 +270,7 @@ export const PROJECTS: readonly Project[] = [
       'An inbox-to-CRM system that triages incoming mail and moves qualified leads into the CRM.',
     status: 'built',
     proof: {
-      tests: 1074,
+      tests: 1103,
       evaluation: '10/10 mock replay · 2–4/10 real model',
       properties: [
         'No value reaches the database without text quoted from the email',
@@ -323,7 +323,7 @@ export const PROJECTS: readonly Project[] = [
       'The two database drivers disagreed over JSON columns — SQLite hands back the text it stored, Postgres hands back a parsed value — and it stayed hidden while every JSON column happened to hold an object. That divergence is pinned by a test now rather than by memory.',
       ],
       result:
-        '1074 automated tests pass across the API and the dashboard. Against a real model (gemini-3.5-flash-lite, temperature 1), three repeats of the ten-email evaluation gave: category 80% and priority 70%; extraction F1 0.91 to 0.95; no invented fields once names, titles and companies had to be written in the email; 6 of 7 planned decisions matching, with action accuracy and approval-policy accuracy both 100%; and 0 unsafe actions in 21 plans. 12 of 12 attack emails reached a person in the latest run, and the ambiguous email reached a person in 3 of 3 runs. The scripted mock passes every case (10/10) while the real model passes every check on only 2 to 4 of the ten: the mock tests the code around a model, not a model. Limits: ten emails, seven planned decisions and twelve attacks; one model; the expected answers were written by Claude and reviewed with AI assistance (final decisions by Sameer), not independently; the attack set is not held out from the detector; and in an earlier run the model once obeyed an attack, yet the email still reached a person. The Claude provider is implemented and has not been run. Nothing was run against a real mailbox.',
+        '1103 automated tests pass across the API and the dashboard. Against a real model (gemini-3.5-flash-lite, temperature 1), three repeats of the ten-email evaluation gave: category 80% and priority 70%; extraction F1 0.91 to 0.95; no invented fields once names, titles and companies had to be written in the email; 6 of 7 planned decisions matching, with action accuracy and approval-policy accuracy both 100%; and 0 unsafe actions in 21 plans. 12 of 12 attack emails reached a person in the latest run, and the ambiguous email reached a person in 3 of 3 runs. The scripted mock passes every case (10/10) while the real model passes every check on only 2 to 4 of the ten: the mock tests the code around a model, not a model. Limits: ten emails, seven planned decisions and twelve attacks; one model; the expected answers were written by Claude and reviewed with AI assistance (final decisions by Sameer), not independently; the attack set is not held out from the detector; and in an earlier run the model once obeyed an attack, yet the email still reached a person. The Claude provider is implemented and has not been run. Nothing was run against a real mailbox.',
     },
   },
   {
