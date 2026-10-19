@@ -135,6 +135,16 @@ export function AtsDemo() {
         code running in your browser, with a deterministic offline extractor in place of a language
         model. No data leaves this page. Production deployments connect the same workflow to live
         models and real applicant systems.
+        <span className="mt-2 block">
+          This demo runs an offline stand-in. The full application was evaluated once with Claude
+          Haiku 4.5 on invented data.{' '}
+          <a
+            href="https://portfolio-azure-six-79.vercel.app/case-study-explainable-ats.html"
+            className="underline underline-offset-4"
+          >
+            See the case study.
+          </a>
+        </span>
       </DemoModeBanner>
 
       <CandidatePicker

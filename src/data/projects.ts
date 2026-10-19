@@ -353,10 +353,11 @@ export const PROJECTS: readonly Project[] = [
       'An applicant tracking system that scores candidates with logic you can read back and audit.',
     status: 'built',
     proof: {
-      tests: 697,
-      evaluation: null,
+      tests: 880,
+      evaluation: '86.8% verdict agreement (one run, AI-drafted labels)',
       properties: [
         'Deterministic integer scoring — integer arithmetic with one floor-division',
+        'A model proposes each verdict; the code lowers any verdict whose quote is not in the CV',
         'Every citation verified character-for-character against the submitted CV',
         'Protected attributes redacted before the model sees the text',
       ],
@@ -382,13 +383,13 @@ export const PROJECTS: readonly Project[] = [
       problem:
         'A candidate score is only worth anything if the person reading it can see where it came from. Two failures make that impossible: a model that produces a citation which reads perfectly and does not exist in the CV, and a score whose parts do not add up to the number at the top of the page.',
       approach:
-        'Treat both as things to make structurally impossible rather than to ask a model to avoid. Quotes are checked against the submitted text and rejected if they are not there. Scoring is integer arithmetic a recruiter can redo on paper. Protected attributes are removed from the input before the model is called, so they cannot influence an extraction because they are not present.',
+        'Treat both as things to make structurally impossible rather than to ask a model to avoid. Quotes are checked against the submitted text and rejected if they are not there. Scoring is integer arithmetic a recruiter can redo on paper. A model proposes each verdict and the code checks it: a verdict with no verified quote is lowered to not demonstrated, and a rule-based second opinion is shown and never changes the score. Protected attributes are removed from the input before the model is called, so they cannot influence an extraction because they are not present.',
       architecture: [
         'Ingest the submitted CV (plain text)',
         'Redact protected attributes, preserving exact character offsets',
-        'Extract findings against the job requirements through a model adapter',
-        'Verify every quoted finding against the original text',
-        'Match findings to requirements by fixed rules',
+        'Extract a verdict and its quotes for each requirement through a model adapter',
+        'Verify every quote against the original text, and lower any verdict left without one',
+        'Check each verdict against its quotes; a fixed rule gives a second opinion that changes no score',
         'Score by weighted integer arithmetic, then rank',
         'Two database drivers behind one interface, with an append-only audit log',
       ],
@@ -400,9 +401,10 @@ export const PROJECTS: readonly Project[] = [
         'Per-requirement contributions are apportioned by largest remainder in a fixed order, so the column on the explanation screen sums exactly to the headline figure.',
         'Ranking issues five queries regardless of candidate count, writes nothing, and never reads evidence — it is a view of events, not an event.',
         'Both database drivers are held to the same behaviour by driver-parity and schema-parity tests.',
+        'The model proposes the verdict and the code checks it because rules alone agreed with the labels only 35 to 40% of the time, even when handed perfect quotes. A first attempt that let the rules overrule the model cost nine points on the same rows, and was removed.',
       ],
       result:
-        '697 automated tests pass across the API and the dashboard when the two portfolio repositories are checked out beside the project, as its CI does (in a standalone clone 685 pass and 12 skip). The build runs locally against a deterministic offline extractor by default, which is what makes the whole pipeline reproducible without a key or a spend; a Claude adapter is implemented behind the same interface but is not what the current build exercises.',
+        '880 automated tests pass across the API and the dashboard when the two portfolio repositories are checked out beside the project, as its CI does (in a standalone clone 868 pass and 12 skip). Against a real model (Claude Haiku 4.5, temperature 0, one run on 2026-10-19), 59 of 68 verdicts (86.8%) matched the labels, 17 of 20 candidates landed in the right tier, 92.5% of the labelled passages were found, and 2 of 77 quotes were not in the CV and were rejected; the code lowered 2 verdicts that had no verified quote and flagged 6 credited verdicts whose quote shared no word with the requirement, which sent 1 of 20 candidates to review. A rule-based check alone, on the same quotes, matched 38.2%. Limits: twenty CVs written by an AI and 68 labels that are not an independent human labelling (drafted by ChatGPT, reviewed independently by ChatGPT and Claude, who agreed on 64 of 68 rows; final decisions approved by Sameer); one model, one run; the rules were chosen on those same rows, so this is not a held-out figure; five more CVs were written to be held out and were never labelled or run. Of eight hostile CVs, the seven with hidden instructions did not fool the real model; the one stuffed with keywords was credited in full, which is a known limit. The public demo runs a deterministic offline extractor, not the model.',
     },
   },
   {
