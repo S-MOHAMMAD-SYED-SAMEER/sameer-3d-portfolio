@@ -9,7 +9,7 @@ import {
 } from './vendored/agent/extractionSchema.ts'
 import { verifyEvidence } from './vendored/agent/verifyEvidence.ts'
 import { scoreEvaluation } from './vendored/agent/score.ts'
-import { DEFAULT_MATCH_MODE, type MatchMode } from './vendored/agent/matchRules.ts'
+import { type MatchMode } from './vendored/agent/matchRules.ts'
 import { rankCandidates } from './vendored/agent/rankRules.ts'
 import { createMockLlmProvider } from './vendored/adapters/llm/mock.ts'
 import { installDeterministicExtractor } from './vendored/agent/mockExtractor.ts'
@@ -73,6 +73,13 @@ import type {
 // server uses UUIDs from `lib/ids.ts`, which is Node-only and deliberately not
 // vendored; nothing in the pipeline parses an id, so a readable string is a
 // strictly better choice here.
+
+/**
+ * How words are compared when nothing says otherwise: the application's own default and the setting its evaluation used. Plural, -ing and
+ * -ed endings are reduced first, so "Running" meets "run". (The vendored library default is `strict`; the demo passes this explicitly,
+ * as the application's demo mode does.)
+ */
+export const DEMO_MATCH_MODE: MatchMode = 'folded'
 
 const JOB_ID = 'demo-job'
 const RESUME_MODEL = 'mock'
@@ -165,7 +172,7 @@ export type DemoRunOptions = {
   candidates?: readonly DemoCandidate[]
   /** Passed straight to the vendored extractor. */
   maxPerRequirement?: number
-  /** How words are compared by the extractor stand-in and the matcher. Defaults to the pipeline's own default. */
+  /** How words are compared by the extractor stand-in and the matcher. Defaults to `DEMO_MATCH_MODE` (folded), as the application does. */
   matchMode?: MatchMode
 }
 
@@ -231,7 +238,7 @@ export async function runDemo(options: DemoRunOptions = {}): Promise<DemoRunResu
   // stateless between calls apart from its `calls` log, and the extractor
   // registered on it is a pure function of the request.
   const provider = createMockLlmProvider()
-  const matchMode = options.matchMode ?? DEFAULT_MATCH_MODE
+  const matchMode = options.matchMode ?? DEMO_MATCH_MODE
   installDeterministicExtractor(provider, {
     matchMode,
     ...(options.maxPerRequirement === undefined ? {} : { maxPerRequirement: options.maxPerRequirement }),

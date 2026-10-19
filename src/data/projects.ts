@@ -353,7 +353,7 @@ export const PROJECTS: readonly Project[] = [
       'An applicant tracking system that scores candidates with logic you can read back and audit.',
     status: 'built',
     proof: {
-      tests: 880,
+      tests: 883,
       evaluation: '86.8% verdict agreement (one run, AI-drafted labels)',
       properties: [
         'Deterministic integer scoring — integer arithmetic with one floor-division',
@@ -404,7 +404,7 @@ export const PROJECTS: readonly Project[] = [
         'The model proposes the verdict and the code checks it because rules alone agreed with the labels only 35 to 40% of the time, even when handed perfect quotes. A first attempt that let the rules overrule the model cost nine points on the same rows, and was removed.',
       ],
       result:
-        '880 automated tests pass across the API and the dashboard when the two portfolio repositories are checked out beside the project, as its CI does (in a standalone clone 868 pass and 12 skip). Against a real model (Claude Haiku 4.5, temperature 0, one run on 2026-10-19), 59 of 68 verdicts (86.8%) matched the labels, 17 of 20 candidates landed in the right tier, 92.5% of the labelled passages were found, and 2 of 77 quotes were not in the CV and were rejected; the code lowered 2 verdicts that had no verified quote and flagged 6 credited verdicts whose quote shared no word with the requirement, which sent 1 of 20 candidates to review. A rule-based check alone, on the same quotes, matched 38.2%. Limits: twenty CVs written by an AI and 68 labels that are not an independent human labelling (drafted by ChatGPT, reviewed independently by ChatGPT and Claude, who agreed on 64 of 68 rows; final decisions approved by Sameer); one model, one run; the rules were chosen on those same rows, so this is not a held-out figure; five more CVs were written to be held out and were never labelled or run. Of eight hostile CVs, the seven with hidden instructions did not fool the real model; the one stuffed with keywords was credited in full, which is a known limit. The public demo runs a deterministic offline extractor, not the model.',
+        '883 automated tests pass across the API and the dashboard when the two portfolio repositories are checked out beside the project, as its CI does (in a standalone clone 871 pass and 12 skip). Against a real model (Claude Haiku 4.5, temperature 0, one run on 2026-10-19), 59 of 68 verdicts (86.8%) matched the labels, 17 of 20 candidates landed in the right tier, 92.5% of the labelled passages were found, and 2 of 77 quotes were not in the CV and were rejected; the code lowered 2 verdicts that had no verified quote and flagged 6 credited verdicts whose quote shared no word with the requirement, which sent 1 of 20 candidates to review. A rule-based check alone, on the same quotes, matched 38.2%. Limits: twenty CVs written by an AI and 68 labels that are not an independent human labelling (drafted by ChatGPT, reviewed independently by ChatGPT and Claude, who agreed on 64 of 68 rows; final decisions approved by Sameer); one model, one run; the rules were chosen on those same rows, so this is not a held-out figure; five more CVs were written to be held out and were never labelled or run. Of eight hostile CVs, the seven with hidden instructions did not fool the real model; the one stuffed with keywords was credited in full, which is a known limit. The public demo runs a deterministic offline extractor, not the model.',
     },
   },
   {
