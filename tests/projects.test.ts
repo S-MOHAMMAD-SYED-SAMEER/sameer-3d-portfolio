@@ -66,6 +66,11 @@ test('the Explainable ATS has no live-demo link', () => {
   }
 })
 
+/** A demo of this site's own, or one on the normal portfolio. */
+function hasDemo(project: (typeof PROJECTS)[number]): boolean {
+  return project.interactiveDemo === true || project.interactiveDemoUrl !== undefined
+}
+
 test('a project with an interactive demo leads with it, and one without leads with its case study', () => {
   for (const project of PROJECTS) {
     const actions = projectActions(project)
@@ -73,7 +78,7 @@ test('a project with an interactive demo leads with it, and one without leads wi
       actions.find((action) => action.id === 'interactiveDemo') ??
       actions.find((action) => action.id === 'caseStudy')
 
-    if (project.interactiveDemo === true) assert.equal(lead?.id, 'interactiveDemo')
+    if (hasDemo(project)) assert.equal(lead?.id, 'interactiveDemo')
     else assert.ok(lead === undefined || lead.id === 'caseStudy')
   }
 })
@@ -109,7 +114,7 @@ test('an interactive demo is offered only where one is hosted', () => {
   for (const project of PROJECTS) {
     const offered = projectActions(project).some((action) => action.id === 'interactiveDemo')
 
-    assert.equal(offered, project.interactiveDemo === true, `${project.id} disagrees about its demo`)
+    assert.equal(offered, hasDemo(project), `${project.id} disagrees about its demo`)
   }
 })
 

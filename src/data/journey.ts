@@ -34,7 +34,11 @@ export const CHARACTER_MARKS: Record<CharacterMarkId, CharacterMark> = {
  * is off to the left of the board. He does not walk anywhere; he turns.
  */
 export const ABOUT_MARK: CharacterMark = {
-  position: CHARACTER_MARKS.studio.position,
+  // Seven tenths of a metre to the left of where he stands in the room, as About's camera sees it, so
+  // that the board beside him does not stand over his arm and his whole body, the raised hand
+  // included, is in the picture. The left is along the camera's own right-to-left, which is (-0.62, -0.78)
+  // in the floor plane: the camera sits at the left of the board, looking across it.
+  position: [CHARACTER_MARKS.studio.position[0] - 0.435, 0, CHARACTER_MARKS.studio.position[2] - 0.548],
   facing: -0.65,
 }
 
