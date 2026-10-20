@@ -99,7 +99,10 @@ npm run build      # tsc -b && vite build
 npm run preview    # serve the production build
 ```
 
-There is no test runner in this repository. The Explainable ATS tests,
+`npm test` runs this repository's own tests (`node --test`, no browser): the
+camera poses, the surface geometry, the entrance rules, the character's
+proportions and blink schedule, the copy against each project's README when the
+READMEs are beside this repo, and the rest. The Explainable ATS tests,
 including the parity test that covers the vendored demo, live in the
 `explainable-ats` repository and run there with `npm test`.
 
@@ -115,8 +118,11 @@ src/
     camera/           the cinematic rig
     character/        the host figure
     entrance/         the hall, portal, door and name board
+    surfaces/         pins each in-room page to its object, every frame
     workshop/         the space beyond the door
   components/experience/   overlay, panels, dialogue, WebGL boundary
+    surfaces/         the pages that sit on the monitors, the drawing, the
+                      boards and the rack (real DOM, warped onto the object)
   components/navigation/   mode switch
   components/normal/       the Normal portfolio's project surfaces
   data/               single source of truth — projects, profile, copy,
