@@ -124,12 +124,12 @@ export const RACK_CONSOLE = {
  */
 export const ABOUT_BOARD = {
   position: [2.75, 0, -27.2] as Vec3,
-  /** Turned a little toward the visitor's side of the room. */
-  yaw: 0.1,
-  width: 1.7,
-  height: 1.3,
+  /** Turned to face the camera About stands at, which is to the left of the host, away from the far glazing. */
+  yaw: -0.9,
+  width: 2.1,
+  height: 1.5,
   /** Height of the board's centre above the floor. */
-  y: 1.25,
+  y: 1.35,
   depth: 0.05,
 } as const
 

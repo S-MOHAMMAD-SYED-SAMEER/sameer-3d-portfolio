@@ -116,7 +116,7 @@ export const SURFACES: Record<SurfaceId, Surface> = {
   skills: { id: 'skills', spec: SKILLS_SPEC, css: { width: 1052, height: 572 } },
   services: { id: 'services', spec: SERVICES_SPEC, css: { width: 870, height: 568 } },
   contact: { id: 'contact', spec: CONTACT_SPEC, css: { width: 520, height: 380 } },
-  about: { id: 'about', spec: ABOUT_SPEC, css: { width: 640, height: 480 } },
+  about: { id: 'about', spec: ABOUT_SPEC, css: { width: 640, height: 448 } },
 }
 
 export const MONITOR_SURFACES = ['monitor-0', 'monitor-1', 'monitor-2'] as const satisfies readonly SurfaceId[]

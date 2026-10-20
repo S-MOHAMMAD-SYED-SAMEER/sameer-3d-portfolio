@@ -46,7 +46,7 @@ export const AREA_FILL: Record<WorkshopArea, number> = {
   projects: 0.72,
   skills: 0.68,
   services: 0.62,
-  about: 0.66,
+  about: 0.62,
   contact: 0.64,
 }
 
@@ -58,7 +58,7 @@ const CONTACT = SURFACES.contact.spec
 /** The host's chest and the middle of his board: About frames the two together. */
 const ABOUT_CENTRE: Vec3 = [
   (CHARACTER_MARKS.studio.position[0] + ABOUT_BOARD.position[0]) / 2,
-  1.25,
+  1.05,
   (CHARACTER_MARKS.studio.position[2] + ABOUT_BOARD.position[2]) / 2,
 ]
 
@@ -68,7 +68,8 @@ export const AREA_FRAMES: Record<WorkshopArea, AreaFrame> = {
     centre: MONITOR.position,
     width: 3.3,
     height: 0.62,
-    yaw: MONITOR.yaw,
+    // A little off square, so the view swings away from the far glazing.
+    yaw: MONITOR.yaw + 0.18,
     eyeY: 1.5,
     fill: AREA_FILL.projects,
   },
@@ -93,10 +94,11 @@ export const AREA_FRAMES: Record<WorkshopArea, AreaFrame> = {
   /** The host and his board, together. */
   about: {
     centre: ABOUT_CENTRE,
-    width: 2.8,
-    height: 1.95,
+    width: 3.2,
+    height: 2.3,
+    // Along the board's own normal, from the left of the host: the far glazing falls out of shot.
     yaw: ABOUT_BOARD.yaw,
-    eyeY: 1.45,
+    eyeY: 1.4,
     fill: AREA_FILL.about,
   },
   /** The console in the rack. */
@@ -104,7 +106,8 @@ export const AREA_FRAMES: Record<WorkshopArea, AreaFrame> = {
     centre: CONTACT.position,
     width: CONTACT.width,
     height: CONTACT.height,
-    yaw: CONTACT.yaw,
+    // Seen a little from the right of the rack, which turns the view away from the far glazing.
+    yaw: CONTACT.yaw + 0.33,
     eyeY: 1.45,
     fill: AREA_FILL.contact,
   },
