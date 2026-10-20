@@ -1,4 +1,4 @@
-import { testsLabel, testsPassingInCiLabel } from './projects.ts'
+import { evaluationOf, testsLabel, testsPassingInCiLabel } from './projects.ts'
 
 /**
  * What gets built for other people.
@@ -28,14 +28,14 @@ export const SERVICES: readonly Service[] = [
     title: 'AI Customer Support & Sales Recovery',
     summary:
       'Answer customer questions from your own policies and live data — and notice the buyer who is about to leave.',
-    delivers: [testsLabel('p1'), '21/21 eval (live Gemini)', '8 guardrail policies enforced in code'],
+    delivers: [testsLabel('p1'), evaluationOf('p1'), '8 guardrail policies enforced in code'],
   },
   {
     id: 'inbox-crm',
     title: 'AI Inbox & Lead Management',
     summary:
       'Turn the enquiries sitting in your inbox into tracked CRM records with drafted replies — nothing sent without your approval.',
-    delivers: [testsLabel('p2'), '10/10 mock · 2–4/10 real model', 'interactive in-browser demo'],
+    delivers: [testsLabel('p2'), evaluationOf('p2'), 'interactive in-browser demo'],
   },
   {
     id: 'recruitment',
