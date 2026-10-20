@@ -271,8 +271,9 @@ export const PROJECTS: readonly Project[] = [
     status: 'built',
     proof: {
       tests: 1103,
-      evaluation: '10/10 mock replay · 2–4/10 real model',
+      evaluation: '0 unsafe actions planned in 21 real-model plans',
       properties: [
+        'On the ten demo emails the scripted mock passes 10 of 10 full cases and the real model 2 to 4 of 10 (three runs, one model, one temperature): the mock measures the code around a model, not the model',
         'No value reaches the database without text quoted from the email',
         'Nothing is ever sent: an approved reply stops at the outbox',
       ],
@@ -552,7 +553,7 @@ export const PROJECTS: readonly Project[] = [
     status: 'built',
     proof: {
       tests: 1666,
-      evaluation: '18/18',
+      evaluation: '18/18 scripted calls (no real model)',
       properties: [
         'Double-booking prevented by a PostgreSQL exclusion constraint, not application logic alone',
         'A deterministic evaluation suite scripts eighteen calls through the real system and scores tool-calling, escalation and final database state against structured ground truth',
@@ -622,6 +623,17 @@ export function testsLabel(id: ProjectId): string {
   const project = getProject(id)
   if (project === undefined) throw new Error(`No project with id "${id}"`)
   return `${formatCount(project.proof.tests)} tests`
+}
+
+/**
+ * A project's evaluation headline, exactly as its `proof.evaluation` says it, for a services line that
+ * restates it. Read from the project rather than written again, so the two cannot drift.
+ */
+export function evaluationOf(id: ProjectId): string {
+  const project = getProject(id)
+  if (project === undefined) throw new Error(`No project with id "${id}"`)
+  if (project.proof.evaluation === null) throw new Error(`Project ${id} records no evaluation`)
+  return project.proof.evaluation
 }
 
 /** "1,259 tests passing (CI)": the same count, for a project whose figure is its CI run's. */
