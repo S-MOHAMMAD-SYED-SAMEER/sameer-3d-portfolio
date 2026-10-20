@@ -140,6 +140,7 @@ export function ExperiencePage() {
             onHighlightArea={workshop.highlight}
             onSelectArea={workshop.select}
             cameraOverride={workshop.pose}
+            skips={journey.skips}
             surfacesActive={placement === 'in-scene' ? activeSurfaces(workshop.open) : []}
           />
         </SceneCanvas>

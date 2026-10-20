@@ -58,6 +58,27 @@ export function EntranceLighting({ doorOpen = 1 }: { doorOpen?: number }) {
         color={ENTRANCE_PALETTE.fillLight}
       />
 
+      {/* Lamps down the corridor. */}
+      {LIGHTING.lamps.positions.map((position) => (
+        <pointLight
+          key={position.join(',')}
+          position={position}
+          intensity={LIGHTING.lamps.intensity}
+          distance={LIGHTING.lamps.distance}
+          decay={2}
+          color={LIGHTING.lamps.colour}
+        />
+      ))}
+
+      {/* The door and its surround, lit from the front. */}
+      <pointLight
+        position={LIGHTING.doorWash.position}
+        intensity={LIGHTING.doorWash.intensity}
+        distance={LIGHTING.doorWash.distance}
+        decay={2}
+        color={LIGHTING.doorWash.colour}
+      />
+
       {/* Stands in for the bounce a doorway of daylight would throw back
           into the room. Without it the near faces of the stone go flat. */}
       <pointLight

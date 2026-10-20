@@ -44,9 +44,9 @@ export function ExperienceOverlay({
   const copy = STAGE_COPY[journey.stage]
   const isAuto = journey.mode === 'auto'
 
-  // Dialogue mid-beat is advanced by Continue; the stage's own wording is
-  // saved for the step that actually leaves the room.
-  const actionLabel = journey.hasMoreLines ? 'Continue' : copy.action
+  // The host's lines play themselves, so there is no Continue: the action is the stage's own wording,
+  // and pressing it in the middle of the greeting skips the rest of what he is saying.
+  const actionLabel = copy.action
 
   const showAction = !isAuto && !journey.isTransition && actionLabel !== undefined
   const showPause = isAuto && !journey.isFinal
@@ -186,6 +186,13 @@ export function ExperienceOverlay({
           )}
 
           {showAction && <ActionButton onClick={journey.advance}>{actionLabel}</ActionButton>}
+
+          {/* Available at every beat of the arrival, in either mode. */}
+          {!inWorkshop && (
+            <ActionButton onClick={journey.skip} variant="secondary">
+              Skip intro
+            </ActionButton>
+          )}
 
           {showPause && (
             <ActionButton onClick={journey.togglePause} variant="secondary">

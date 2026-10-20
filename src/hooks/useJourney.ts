@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { dialogueFor, type DialogueLine } from '@/data/dialogue'
 import { STAGE_GESTURE } from '@/data/journey'
-import { AUTO_STAGE_HOLD, INTRINSIC_HOLD, LINE_GAP, REDUCED_MOTION_BEAT } from '@/data/pacing'
+import { AUTO_STAGE_HOLD, INTRINSIC_HOLD, REDUCED_MOTION_BEAT } from '@/data/pacing'
 import type { CharacterGesture } from '@/systems/character'
 import {
   FIRST_STAGE,
@@ -11,6 +11,7 @@ import {
   previousCheckpoint,
   type ExperienceStage,
 } from '@/systems/experienceStage'
+import { holdFor } from '@/systems/journeyRules'
 import { DEFAULT_PLAYBACK_MODE, type PlaybackMode } from '@/systems/playbackMode'
 
 export interface Journey {
@@ -21,7 +22,7 @@ export interface Journey {
   dialogue: DialogueLine | null
   /** True on the first line of a stage that has any — when to name the speaker. */
   isFirstLine: boolean
-  /** The action advances dialogue rather than the stage. */
+  /** Further lines follow the one on screen. They play themselves; nothing needs a click. */
   hasMoreLines: boolean
   /** Nothing waits on the visitor here: a walk, two raps, a door swinging. */
   isTransition: boolean
@@ -30,6 +31,10 @@ export interface Journey {
   canGoBack: boolean
   gesture: CharacterGesture
   advance: () => void
+  /** Goes straight to the workshop, from any beat of the arrival. */
+  skip: () => void
+  /** Counts up each time the arrival is skipped, so the host and the camera can jump rather than walk. */
+  skips: number
   back: () => void
   setMode: (mode: PlaybackMode) => void
   togglePause: () => void
@@ -50,6 +55,7 @@ export function useJourney(reducedMotion: boolean): Journey {
   const [line, setLine] = useState(0)
   const [mode, setModeState] = useState<PlaybackMode>(DEFAULT_PLAYBACK_MODE)
   const [paused, setPaused] = useState(false)
+  const [skips, setSkips] = useState(0)
 
   const lines = dialogueFor(stage)
   const dialogue = lines[line] ?? null
@@ -58,18 +64,27 @@ export function useJourney(reducedMotion: boolean): Journey {
   const isTransition = intrinsic || stage === 'approachDoor'
   const isFinal = nextStage(stage) === null && !hasMoreLines
 
+  // A click always moves to the next beat. The host's lines play themselves, so a click in the middle
+  // of the greeting skips the rest of it rather than stepping through it line by line.
   const advance = useCallback(() => {
-    if (hasMoreLines) {
-      setLine((current) => current + 1)
-      return
-    }
-
     const next = nextStage(stage)
     if (next === null) return
 
     setStage(next)
     setLine(0)
-  }, [hasMoreLines, stage])
+  }, [stage])
+
+  // The lines move on by themselves; this is the timer's step, not the visitor's.
+  const nextLine = useCallback(() => {
+    setLine((current) => current + 1)
+  }, [])
+
+  const skip = useCallback(() => {
+    setStage('workshop')
+    setLine(0)
+    setPaused(false)
+    setSkips((count) => count + 1)
+  }, [])
 
   const back = useCallback(() => {
     const target = previousCheckpoint(stage)
@@ -97,30 +112,27 @@ export function useJourney(reducedMotion: boolean): Journey {
    * How long this beat holds before moving on, or `null` if it is waiting
    * for the visitor or for the host to arrive.
    */
-  const hold = useMemo<number | null>(() => {
-    if (isFinal) return null
-    if (intrinsic) {
-      return reducedMotion
-        ? REDUCED_MOTION_BEAT
-        : INTRINSIC_HOLD[stage as keyof typeof INTRINSIC_HOLD]
-    }
-    if (stage === 'approachDoor') return null
-    if (mode === 'controlled') return null
-    if (dialogue !== null) return dialogue.hold + LINE_GAP
-    return AUTO_STAGE_HOLD[stage] ?? null
-  }, [dialogue, intrinsic, isFinal, mode, reducedMotion, stage])
+  const hold = useMemo<number | null>(
+    () =>
+      holdFor(
+        { stage, auto: mode === 'auto', isFinal, reducedMotion, line: dialogue, hasMoreLines },
+        { intrinsic: INTRINSIC_HOLD, reducedMotionBeat: REDUCED_MOTION_BEAT, autoStage: AUTO_STAGE_HOLD },
+      ),
+    [dialogue, hasMoreLines, isFinal, mode, reducedMotion, stage],
+  )
 
   // Held in a ref so the timer effect does not need to re-run every time a
-  // new `advance` identity is produced.
-  const advanceRef = useRef(advance)
+  // new callback identity is produced.
+  const stepRef = useRef(() => {})
   useEffect(() => {
-    advanceRef.current = advance
+    // Mid-greeting the timer moves to the next line; at the end of a beat it moves to the next beat.
+    stepRef.current = hasMoreLines ? nextLine : advance
   })
 
   useEffect(() => {
     if (paused || hold === null) return
 
-    const timer = setTimeout(() => advanceRef.current(), hold * 1000)
+    const timer = setTimeout(() => stepRef.current(), hold * 1000)
     return () => clearTimeout(timer)
     // `line` is a dependency in spirit: each line restarts the clock.
   }, [hold, paused, stage, line])
@@ -139,6 +151,8 @@ export function useJourney(reducedMotion: boolean): Journey {
     canGoBack: previousCheckpoint(stage) !== null,
     gesture,
     advance,
+    skip,
+    skips,
     back,
     setMode,
     togglePause,
