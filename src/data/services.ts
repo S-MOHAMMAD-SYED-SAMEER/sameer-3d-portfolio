@@ -61,7 +61,7 @@ export const SERVICES: readonly Service[] = [
       'Answers grounded in your own documents, with every citation checked before it reaches you — never a guess dressed up as a source.',
     delivers: [
       testsPassingInCiLabel('p4'),
-      'deterministic, credential-free demo',
+      'real model: 32 of 33 answers passed the citation check; 12 of 45 answerable questions got no answer',
       'citations checked in Python before display',
     ],
   },
