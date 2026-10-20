@@ -1,3 +1,5 @@
+import { MOBILE_POSTER } from '@/data/experienceCopy'
+
 /**
  * Shown while the 3D chunk is on its way down.
  *
@@ -13,12 +15,26 @@
  * Same restraint as everything else: a tracked line on the same dark ground,
  * no spinner, no progress bar it could not honestly fill in.
  */
-export function ExperienceLoading({ label = 'Entering experience' }: { label?: string }) {
+export function ExperienceLoading({
+  label = 'Entering experience',
+  poster = false,
+}: {
+  label?: string
+  /** On the way into the 3D experience, a phone is shown a still of the corridor rather than black. */
+  poster?: boolean
+}) {
   return (
     <div className="bg-void relative flex h-dvh w-full items-center justify-center">
+      {poster && (
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-cover bg-center md:hidden"
+          style={{ backgroundImage: `url(${MOBILE_POSTER})` }}
+        />
+      )}
       <p
         role="status"
-        className="experience-loading text-mist text-[11px] tracking-[0.4em] uppercase"
+        className="experience-loading text-mist relative text-[11px] tracking-[0.4em] uppercase"
       >
         {label}
       </p>

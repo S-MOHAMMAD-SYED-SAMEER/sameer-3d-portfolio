@@ -16,6 +16,18 @@ export interface StageCopy {
   action?: string
 }
 
+/**
+ * Shown on a phone at the start, under the scene: the experience is built for a larger screen, and the
+ * normal portfolio is one tap away. The link text is `link`; the line reads `before` + link.
+ */
+export const MOBILE_HINT = {
+  before: 'Best on a larger screen — or use ',
+  link: 'the normal portfolio',
+} as const
+
+/** The still shown on a phone while the scene loads and at the first beat. Served from `public/`. */
+export const MOBILE_POSTER = '/images/start-poster-mobile.jpg'
+
 export const STAGE_COPY: Record<ExperienceStage, StageCopy> = {
   intro: {
     action: 'Step inside',

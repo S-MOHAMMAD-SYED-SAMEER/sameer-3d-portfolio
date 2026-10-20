@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 
 import { CanonicalUrl } from '@/components/CanonicalUrl'
 import { ExperienceLoading } from '@/components/experience/ExperienceLoading'
@@ -50,12 +50,18 @@ const ProjectDemoPage = lazy(() =>
   import('@/pages/ProjectDemoPage').then((module) => ({ default: module.ProjectDemoPage })),
 )
 
+/** The loading state for a route: the 3D route gets the corridor still on a phone, the rest get the plain line. */
+function RouteFallback() {
+  const { pathname } = useLocation()
+  return <ExperienceLoading poster={pathname === ROUTES.experience} />
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <ExperienceModeProvider>
         <CanonicalUrl />
-        <Suspense fallback={<ExperienceLoading />}>
+        <Suspense fallback={<RouteFallback />}>
           <Routes>
             <Route path={ROUTES.landing} element={<LandingPage />} />
             <Route

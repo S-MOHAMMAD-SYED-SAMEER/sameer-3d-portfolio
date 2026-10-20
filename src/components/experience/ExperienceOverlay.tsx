@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import { ActionButton } from '@/components/ActionButton'
 import { ModeSwitch } from '@/components/navigation/ModeSwitch'
 import { DialoguePanel } from '@/components/experience/DialoguePanel'
@@ -5,7 +7,10 @@ import { PlaybackSwitch } from '@/components/experience/PlaybackSwitch'
 import { WorkshopNav } from '@/components/experience/WorkshopNav'
 import { WorkshopPanel } from '@/components/experience/WorkshopPanel'
 import { SceneSurfaces } from '@/components/experience/surfaces/SceneSurfaces'
-import { STAGE_COPY } from '@/data/experienceCopy'
+import { MOBILE_HINT, MOBILE_POSTER, STAGE_COPY } from '@/data/experienceCopy'
+import { useNarrowViewport } from '@/hooks/useNarrowViewport'
+import { cn } from '@/lib/cn'
+import { ROUTES } from '@/lib/routes'
 import type { Journey } from '@/hooks/useJourney'
 import type { Workshop } from '@/hooks/useWorkshop'
 import { PAGE_COUNT } from '@/systems/projectNavigation'
@@ -42,6 +47,8 @@ export function ExperienceOverlay({
   placement,
 }: ExperienceOverlayProps) {
   const copy = STAGE_COPY[journey.stage]
+  const narrow = useNarrowViewport()
+  const atStart = journey.stage === 'intro'
   const isAuto = journey.mode === 'auto'
 
   // The host's lines play themselves, so there is no Continue: the action is the stage's own wording,
@@ -66,6 +73,21 @@ export function ExperienceOverlay({
       data-area={workshop.open ?? ''}
       className="pointer-events-none absolute inset-0 flex flex-col justify-between p-6 sm:p-10"
     >
+      {/* A still of the corridor, for a phone. It is there before the scene has drawn a frame, and it is what
+          stands behind "Step inside" if the scene is slow or dark on the device; it fades out as the
+          visitor steps in, over the live scene. */}
+      {narrow && (
+        <div
+          aria-hidden
+          data-start-poster
+          className={cn(
+            'pointer-events-none absolute inset-0 bg-cover bg-center transition-opacity duration-700',
+            atStart ? 'opacity-100' : 'opacity-0',
+          )}
+          style={{ backgroundImage: `url(${MOBILE_POSTER})` }}
+        />
+      )}
+
       {/* Scrims. The scene is high contrast and the daylight moves through
           the frame, so DOM text needs its own ground to stay readable. */}
       <div
@@ -125,6 +147,15 @@ export function ExperienceOverlay({
 
         {copy.heading !== undefined && journey.dialogue === null && (
           <p className="mt-2 text-3xl leading-snug font-medium sm:text-4xl">{copy.heading}</p>
+        )}
+
+        {narrow && atStart && (
+          <p data-mobile-hint className="text-mist/90 mt-3 text-[13px] leading-snug">
+            {MOBILE_HINT.before}
+            <Link to={ROUTES.normal} className="focus-ring text-accent pointer-events-auto underline underline-offset-4">
+              {MOBILE_HINT.link}
+            </Link>
+          </p>
         )}
 
         {!inWorkshop && (
