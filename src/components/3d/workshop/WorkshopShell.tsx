@@ -1,4 +1,4 @@
-import { DaylightPortal } from '@/components/3d/entrance/DaylightPortal'
+import { NightWindow } from '@/components/3d/workshop/NightWindow'
 import { ENTRANCE_PALETTE } from '@/data/entranceScene'
 import { WORKSHOP, WORKSHOP_LIGHT, WORKSHOP_PALETTE } from '@/data/workshop'
 
@@ -98,14 +98,7 @@ export function WorkshopShell() {
           <meshStandardMaterial color={WORKSHOP_PALETTE.wall} roughness={0.95} />
         </mesh>
 
-        <group position={[0, W.daylight.y, -W.daylight.distance]}>
-          <DaylightPortal
-            width={W.daylight.width}
-            height={W.daylight.height}
-            top={W.daylight.top}
-            bottom={W.daylight.bottom}
-          />
-        </group>
+        <NightWindow />
       </group>
 
       {/* Floor joints, carried through from the hall so the two rooms read

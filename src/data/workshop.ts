@@ -26,15 +26,30 @@ export const WORKSHOP = {
   /** Glazed to the roof: the entrance transom sights straight through the
    *  hall and into this wall, so anything solid up here darkens the door. */
   window: { halfWidth: 4.5, sill: 1.3, head: 12 },
-  /** The lit plane behind the glazing. */
-  daylight: {
-    width: 20,
+  /**
+   * What is outside the glazing: a night sky over a distant city. It is the dimmest thing that is
+   * lit in the room on purpose — a window that is the brightest object in every view, which is what
+   * a flat daylight plane was, pulls the eye off whatever is being read.
+   */
+  night: {
+    /** The painted plane, a good deal wider than the opening so no angle sees its edge. */
+    width: 16,
     height: 18,
-    y: 6.6,
+    /** Centre height, set so the skyline lands just above the sill. */
+    y: 9.5,
     distance: 2.4,
-    /** Softer than the sky over the hall. Glazing, not an open roof. */
-    top: '#d9d0bf',
-    bottom: '#b5aa96',
+    /** Multiplies the painted sky. Below 1 so it sits well under the content on every surface. */
+    brightness: 0.55,
+  },
+  /**
+   * The frame in the opening: a perimeter, vertical mullions and horizontal transoms. Heights are
+   * metres above the floor.
+   */
+  glazing: {
+    frame: 0.26,
+    bar: 0.09,
+    mullions: [-3, -1.5, 0, 1.5, 3],
+    transoms: [3.9, 6.9, 9.9],
   },
   /**
    * Open sky over the roof slot. Not decoration: the entrance transom looks
