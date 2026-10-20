@@ -1,7 +1,7 @@
 import { framingDistance } from '../lib/surface.ts'
 import { rotateY, type Vec3 } from '../lib/vec3.ts'
 import type { CameraPose } from './cameraPoses.ts'
-import { CHARACTER_MARKS } from './journey.ts'
+import { ABOUT_MARK } from './journey.ts'
 import { SURFACES } from './surfaces.ts'
 import { ABOUT_BOARD } from './workshop.ts'
 import type { WorkshopArea } from '../systems/workshopArea.ts'
@@ -57,9 +57,9 @@ const CONTACT = SURFACES.contact.spec
 
 /** The host's chest and the middle of his board: About frames the two together. */
 const ABOUT_CENTRE: Vec3 = [
-  (CHARACTER_MARKS.studio.position[0] + ABOUT_BOARD.position[0]) / 2,
+  (ABOUT_MARK.position[0] + ABOUT_BOARD.position[0]) / 2,
   1.05,
-  (CHARACTER_MARKS.studio.position[2] + ABOUT_BOARD.position[2]) / 2,
+  (ABOUT_MARK.position[2] + ABOUT_BOARD.position[2]) / 2,
 ]
 
 export const AREA_FRAMES: Record<WorkshopArea, AreaFrame> = {
@@ -94,7 +94,7 @@ export const AREA_FRAMES: Record<WorkshopArea, AreaFrame> = {
   /** The host and his board, together. */
   about: {
     centre: ABOUT_CENTRE,
-    width: 3.2,
+    width: 3.4,
     height: 2.3,
     // Along the board's own normal, from the left of the host: the far glazing falls out of shot.
     yaw: ABOUT_BOARD.yaw,

@@ -156,6 +156,12 @@ export interface Project {
    * one built.
    */
   interactiveDemo?: boolean
+  /**
+   * An interactive demo that lives on the normal portfolio rather than here: the same address that
+   * site uses for it. Offered as "Try interactive demo" and opened in a new tab. Absent where this site
+   * has its own demo (`interactiveDemo`) or there is none.
+   */
+  interactiveDemoUrl?: string
 }
 
 export const PROJECTS: readonly Project[] = [
@@ -221,6 +227,7 @@ export const PROJECTS: readonly Project[] = [
       caseStudy:
         'https://github.com/S-MOHAMMAD-SYED-SAMEER/sales-recovery-agent/blob/main/PROJECT-1.md',
     },
+    interactiveDemoUrl: 'https://portfolio-azure-six-79.vercel.app/demo-sales-recovery.html',
     caseStudy: {
       problem:
         'A small D2C store loses sales in ways that each look minor: a shipping question left unanswered, a return policy unclear enough to make someone hesitate, a customer on the fence who gets a generic reply. Individually none of them are dramatic. Together they are a steady leak, and unlike a redesign they are fixable with support that is simply faster and more consistent than a small team can be by hand.',
@@ -306,6 +313,7 @@ export const PROJECTS: readonly Project[] = [
       github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/inbox-crm-agent',
       caseStudy: null,
     },
+    interactiveDemoUrl: 'https://portfolio-azure-six-79.vercel.app/demo-inbox-crm.html',
     caseStudy: {
       problem:
         'Inbound business mail arrives faster than anyone keeps up with, and the cost is not the reading — it is that the CRM quietly drifts out of date. Handing the whole job to a model trades one problem for a worse one, because a confusing or hostile email then decides what gets written to the database.',
@@ -658,6 +666,35 @@ export function projectHighlights(project: Project): string[] {
 }
 
 /**
+ * The interactive-demo action, if this project has a demo: this site's own (opens a tab inside the
+ * experience, and navigates in place outside it) or the normal portfolio's, which is always a new tab.
+ */
+function demoAction(project: Project): ProjectAction | null {
+  if (project.interactiveDemoUrl !== undefined) {
+    return {
+      id: 'interactiveDemo',
+      label: 'Try interactive demo',
+      href: project.interactiveDemoUrl,
+      emphasis: 'primary',
+      external: true,
+      accessibleName: `Open the interactive demo of ${project.title} on the portfolio site in a new tab`,
+    }
+  }
+
+  if (project.interactiveDemo !== true) return null
+
+  return {
+    id: 'interactiveDemo',
+    label: 'Try interactive demo',
+    // Built here rather than imported from `lib/routes`, which imports `ProjectId` from this file.
+    href: `/projects/${project.id}/demo`,
+    emphasis: 'primary',
+    external: false,
+    accessibleName: `Open the interactive demo of ${project.title}`,
+  }
+}
+
+/**
  * The actions a project can actually offer.
  *
  * Built from the links that exist, so a missing URL produces no button at
@@ -667,19 +704,7 @@ export function projectHighlights(project: Project): string[] {
  */
 export function projectActions(project: Project): ProjectAction[] {
   const candidates: (ProjectAction | null)[] = [
-    project.interactiveDemo !== true
-      ? null
-      : {
-          id: 'interactiveDemo',
-          label: 'Try interactive demo',
-          // Built here rather than imported from `lib/routes`, which imports
-          // `ProjectId` from this file — the same reason the case-study action
-          // below writes its path out by hand.
-          href: `/projects/${project.id}/demo`,
-          emphasis: 'primary',
-          external: false,
-          accessibleName: `Open the interactive demo of ${project.title}`,
-        },
+    demoAction(project),
     project.links.github === null
       ? null
       : {

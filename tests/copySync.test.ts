@@ -94,3 +94,21 @@ test("each project's evaluation headline carries a figure its README states (whe
   }
   if (checked === 0) t.skip('no project README beside this repository')
 })
+
+test("a demo that lives on the normal portfolio links to the address that site uses (when it is beside this repo)", (t) => {
+  const path = join(ROOT, '..', 'portfolio', 'src', 'data', 'projects.ts')
+  const withUrl = PROJECTS.filter((project) => project.interactiveDemoUrl !== undefined)
+  assert.deepEqual(withUrl.map((project) => project.id), ['p1', 'p2'])
+  for (const project of withUrl) {
+    assert.match(project.interactiveDemoUrl!, /^https:\/\/portfolio-azure-six-79\.vercel\.app\/demo-[a-z-]+\.html$/)
+  }
+  if (!existsSync(path)) return t.skip('the normal portfolio is not beside this repository')
+
+  const source = readFileSync(path, 'utf8')
+  for (const project of withUrl) {
+    const block = source.slice(source.indexOf(`id: "${project.id}"`))
+    const href = /interactiveDemoHref: "([^"]+)"/.exec(block)?.[1]
+    assert.ok(href, `the normal portfolio has no demo for ${project.id}`)
+    assert.equal(project.interactiveDemoUrl, `https://portfolio-azure-six-79.vercel.app${href}`)
+  }
+})
