@@ -1,6 +1,6 @@
-import { HALL } from '@/data/entranceScene'
-import type { Vec3 } from '@/lib/vec3'
-import type { ExperienceStage } from '@/systems/experienceStage'
+import { HALL } from './entranceScene.ts'
+import type { Vec3 } from '../lib/vec3.ts'
+import type { ExperienceStage } from '../systems/experienceStage.ts'
 
 /**
  * Camera behaviour, kept apart from scene geometry and from experience

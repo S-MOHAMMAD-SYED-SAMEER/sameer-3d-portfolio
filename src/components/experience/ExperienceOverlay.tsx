@@ -4,9 +4,12 @@ import { DialoguePanel } from '@/components/experience/DialoguePanel'
 import { PlaybackSwitch } from '@/components/experience/PlaybackSwitch'
 import { WorkshopNav } from '@/components/experience/WorkshopNav'
 import { WorkshopPanel } from '@/components/experience/WorkshopPanel'
+import { SceneSurfaces } from '@/components/experience/surfaces/SceneSurfaces'
 import { STAGE_COPY } from '@/data/experienceCopy'
 import type { Journey } from '@/hooks/useJourney'
 import type { Workshop } from '@/hooks/useWorkshop'
+import { PAGE_COUNT } from '@/systems/projectNavigation'
+import type { ContentPlacement } from '@/systems/contentPlacement'
 
 interface ExperienceOverlayProps {
   journey: Journey
@@ -14,11 +17,12 @@ interface ExperienceOverlayProps {
   inWorkshop: boolean
   /** Closes an open destination first, and only then steps back a beat. */
   onBack: () => void
-  /** The Projects panel's mount point — kept lined up with the physical
-      projector screen by `ProjectorDisplay`, inside the Canvas tree, every
-      frame. The panel itself still renders here, in the normal DOM tree, so
-      it keeps the Router context it needs for `ProjectActions`. */
-  projectorAnchorRef: React.RefObject<HTMLDivElement | null>
+  /**
+   * Where an open destination's content goes: on the object in the room, or in the flat panel.
+   * The panel is the phone view, the reduced-motion view, and the fallback; on a desktop the content
+   * is on the object and the panel is not shown alongside it.
+   */
+  placement: ContentPlacement
 }
 
 /**
@@ -35,7 +39,7 @@ export function ExperienceOverlay({
   workshop,
   inWorkshop,
   onBack,
-  projectorAnchorRef,
+  placement,
 }: ExperienceOverlayProps) {
   const copy = STAGE_COPY[journey.stage]
   const isAuto = journey.mode === 'auto'
@@ -49,7 +53,10 @@ export function ExperienceOverlay({
   // With a destination open the panel carries its own Close, so the bottom
   // row stands down rather than offering a second button that does the same
   // thing. Escape and Backspace still close it.
+  const inScene = placement === 'in-scene'
   const showBack = journey.canGoBack && !workshop.isOpen
+  // In the room there is no panel with a Close of its own, so the bottom row carries it.
+  const showCloseArea = inScene && workshop.isOpen
 
   return (
     <div
@@ -70,6 +77,17 @@ export function ExperienceOverlay({
         className="from-void/95 via-void/65 absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t to-transparent"
       />
 
+      {/* Content that sits on the objects in the room. Placed by `SurfaceTracker`, in the Canvas. */}
+      {inScene && (
+        <SceneSurfaces
+          open={workshop.open}
+          project={workshop.project}
+          page={workshop.page}
+          onSelectProject={workshop.selectProject}
+          onOpenArea={workshop.select}
+        />
+      )}
+
       <header className="relative flex items-start justify-between gap-4">
         <h1 className="text-mist text-[10px] tracking-[0.35em] uppercase">3D Experience</h1>
         <div className="pointer-events-auto flex flex-col items-end gap-2">
@@ -78,52 +96,25 @@ export function ExperienceOverlay({
         </div>
       </header>
 
-      {/* The panel is a column beside the room on a wide screen and a sheet
-          above the controls on a phone; in both the environment stays
-          visible. Positioned out of the flow so a tall panel can never push
-          the controls off the bottom of the viewport.
-
-          Projects is the one exception: it renders the same way, in this
-          same DOM tree (so `ProjectActions`'s `useLocation()` keeps its
-          Router context), but anchored to the physical projector screen
-          instead of this fixed corner — so it is skipped here and rendered
-          in its own anchored wrapper below. */}
-      <div className="pointer-events-none absolute inset-x-6 bottom-44 flex justify-end sm:inset-x-auto sm:top-1/2 sm:right-10 sm:bottom-auto sm:-translate-y-1/2">
-        {workshop.open !== null && workshop.open !== 'projects' && (
-          <WorkshopPanel
-            area={workshop.open}
-            onClose={workshop.close}
-            onOpen={workshop.select}
-            project={workshop.project}
-            highlightedProject={workshop.highlightedProject}
-            onSelectProject={workshop.selectProject}
-            onHighlightProject={workshop.highlightProject}
-            onClearProject={workshop.clearProject}
-            onStepProject={workshop.stepProject}
-          />
-        )}
-      </div>
-
-      {/* `ProjectorDisplay` (inside the Canvas) keeps this element's left/top
-          lined up with the projector screen's on-screen position every
-          frame, by direct style mutation — never React state. */}
-      {workshop.open === 'projects' && (
-        <div
-          ref={projectorAnchorRef}
-          className="pointer-events-none fixed left-0 top-0"
-          style={{ transform: 'translate(-50%, -50%)' }}
-        >
-          <WorkshopPanel
-            area="projects"
-            onClose={workshop.close}
-            onOpen={workshop.select}
-            project={workshop.project}
-            highlightedProject={workshop.highlightedProject}
-            onSelectProject={workshop.selectProject}
-            onHighlightProject={workshop.highlightProject}
-            onClearProject={workshop.clearProject}
-            onStepProject={workshop.stepProject}
-          />
+      {/* The flat panel: a column beside the room on a wide screen and a sheet above the controls on a
+          phone. It is what a phone, a reduced-motion visitor and anyone without the in-room pages
+          sees, and it is never shown alongside them. Out of the flow so a tall panel can never push
+          the controls off the bottom of the viewport. */}
+      {!inScene && (
+        <div className="pointer-events-none absolute inset-x-6 bottom-44 flex justify-end sm:inset-x-auto sm:top-1/2 sm:right-10 sm:bottom-auto sm:-translate-y-1/2">
+          {workshop.open !== null && (
+            <WorkshopPanel
+              area={workshop.open}
+              onClose={workshop.close}
+              onOpen={workshop.select}
+              project={workshop.project}
+              highlightedProject={workshop.highlightedProject}
+              onSelectProject={workshop.selectProject}
+              onHighlightProject={workshop.highlightProject}
+              onClearProject={workshop.clearProject}
+              onStepProject={workshop.stepProject}
+            />
+          )}
         </div>
       )}
 
@@ -169,6 +160,29 @@ export function ExperienceOverlay({
             <ActionButton onClick={onBack} variant="secondary">
               Back
             </ActionButton>
+          )}
+
+          {showCloseArea && (
+            <ActionButton onClick={onBack} variant="secondary">
+              {workshop.project !== null ? 'All projects' : 'Back to the room'}
+            </ActionButton>
+          )}
+
+          {inScene && workshop.open === 'projects' && workshop.project === null && (
+            <ActionButton onClick={() => workshop.turnPage(1)} variant="secondary">
+              {`More projects (${workshop.page + 1} of ${PAGE_COUNT})`}
+            </ActionButton>
+          )}
+
+          {inScene && workshop.open === 'projects' && workshop.project !== null && (
+            <>
+              <ActionButton onClick={() => workshop.stepProject(-1)} variant="secondary">
+                Previous
+              </ActionButton>
+              <ActionButton onClick={() => workshop.stepProject(1)} variant="secondary">
+                Next
+              </ActionButton>
+            </>
           )}
 
           {showAction && <ActionButton onClick={journey.advance}>{actionLabel}</ActionButton>}

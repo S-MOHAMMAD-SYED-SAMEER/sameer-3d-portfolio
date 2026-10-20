@@ -1,5 +1,5 @@
-import { PORTAL_WALL } from '@/data/entranceScene'
-import type { Vec3 } from '@/lib/vec3'
+import { PORTAL_WALL } from './entranceScene.ts'
+import type { Vec3 } from '../lib/vec3.ts'
 
 /**
  * The workshop: Sameer's studio, on the far side of the entrance door.
@@ -75,7 +75,8 @@ export const WORKSTATION = {
 /** A slim rack against the left wall. Engineering, not decoration. */
 export const RACK = {
   position: [-6.1, 0, -33.4] as Vec3,
-  width: 0.9,
+  /** Wide enough to carry the contact console on its front. */
+  width: 1.5,
   depth: 1,
   height: 2.1,
   units: 7,
@@ -96,12 +97,43 @@ export const BUILD_STATION = {
   bench: { width: 2.4, depth: 0.72, height: 0.9, top: 0.06 },
   /** Distance from the bench centre back to the wall, in local Z. */
   wallOffset: -1.02,
-  patch: { width: 1.8, height: 0.8, y: 1.62, strips: 5 },
+  /**
+   * The board on the wall behind the bench. It was a patch panel; it is now the
+   * display Services is written on, so it is larger and sits higher.
+   */
+  patch: { width: 3, height: 2, y: 2.2, strips: 0 },
   terminal: { width: 0.62, height: 0.38, x: -0.6, y: 1.17, tilt: 0.22 },
-  tray: { length: 2.7, y: 2.25 },
+  tray: { length: 3.1, y: 3.45 },
 } as const
 
-/** An etched systems drawing on the right wall, in place of any signage. */
+/**
+ * The contact console: a screen set into the front of the rack, where the
+ * channels are written as buttons.
+ */
+export const RACK_CONSOLE = {
+  width: 1.3,
+  height: 0.95,
+  /** Centre height of the screen face. */
+  y: 1.35,
+  bezel: 0.07,
+} as const
+
+/**
+ * The board beside the host. Freestanding, like an easel: About is his
+ * words, so they sit next to him rather than on a wall behind.
+ */
+export const ABOUT_BOARD = {
+  position: [2.75, 0, -27.2] as Vec3,
+  /** Turned a little toward the visitor's side of the room. */
+  yaw: 0.1,
+  width: 1.7,
+  height: 1.3,
+  /** Height of the board's centre above the floor. */
+  y: 1.25,
+  depth: 0.05,
+} as const
+
+/** An etched systems drawing on the left wall, in place of any signage. */
 export const SYSTEMS_PANEL = {
   position: [-6.95, 3, -30] as Vec3,
   width: 5.4,

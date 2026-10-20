@@ -5,8 +5,7 @@ import { Character } from '@/components/3d/character/Character'
 import { EntranceHall } from '@/components/3d/entrance/EntranceHall'
 import { BuildStation } from '@/components/3d/workshop/BuildStation'
 import { WorkshopFittings } from '@/components/3d/workshop/WorkshopFittings'
-import { ProjectHotspots } from '@/components/3d/workshop/ProjectHotspots'
-import { ProjectorDisplay } from '@/components/3d/workshop/ProjectorDisplay'
+import { SurfaceTracker } from '@/components/3d/surfaces/SurfaceTracker'
 import { WorkshopHotspots } from '@/components/3d/workshop/WorkshopHotspots'
 import { WorkshopShell } from '@/components/3d/workshop/WorkshopShell'
 import { Workstation } from '@/components/3d/workshop/Workstation'
@@ -14,7 +13,7 @@ import { ENTRANCE_PALETTE, FOG } from '@/data/entranceScene'
 import { CHARACTER_MARKS, STAGE_MARK, STAGE_REVEAL } from '@/data/journey'
 import type { CameraPose } from '@/data/cameraPoses'
 import type { CharacterGesture } from '@/systems/character'
-import type { ProjectId } from '@/data/projects'
+import type { SurfaceId } from '@/data/surfaces'
 import type { WorkshopArea } from '@/systems/workshopArea'
 import type { ExperienceStage } from '@/systems/experienceStage'
 
@@ -28,18 +27,12 @@ interface ExperienceSceneProps {
   workshopActive: boolean
   highlightedArea: WorkshopArea | null
   openArea: WorkshopArea | null
-  openProject: ProjectId | null
-  highlightedProject: ProjectId | null
-  onHighlightProject: (id: ProjectId | null) => void
-  onSelectProject: (id: ProjectId) => void
   onHighlightArea: (area: WorkshopArea | null) => void
   onSelectArea: (area: WorkshopArea) => void
   /** Overrides the stage pose while a destination is open. */
   cameraOverride: CameraPose | null
-  /** The DOM element `ExperienceOverlay` renders the Projects panel into —
-      `ProjectorDisplay` keeps it lined up with the physical projector
-      screen every frame. */
-  projectorAnchorRef: React.RefObject<HTMLDivElement | null>
+  /** The faces whose pages are showing; `SurfaceTracker` pins each to its object. */
+  surfacesActive: readonly SurfaceId[]
 }
 
 /**
@@ -62,14 +55,10 @@ export function ExperienceScene({
   workshopActive,
   highlightedArea,
   openArea,
-  openProject,
-  highlightedProject,
-  onHighlightProject,
-  onSelectProject,
   onHighlightArea,
   onSelectArea,
   cameraOverride,
-  projectorAnchorRef,
+  surfacesActive,
 }: ExperienceSceneProps) {
   const reveal = STAGE_REVEAL[stage]
 
@@ -108,17 +97,10 @@ export function ExperienceScene({
         onSelect={onSelectArea}
       />
 
-      <ProjectHotspots
-        active={openArea === 'projects'}
-        highlighted={highlightedProject}
-        selected={openProject}
-        onHighlight={onHighlightProject}
-        onSelect={onSelectProject}
-      />
-
-      <ProjectorDisplay active={openArea === 'projects'} anchorRef={projectorAnchorRef} />
-
       <CinematicRig stage={stage} override={cameraOverride} />
+
+      {/* After the rig, so it reads the camera as it is this frame. */}
+      <SurfaceTracker active={surfacesActive} />
     </>
   )
 }

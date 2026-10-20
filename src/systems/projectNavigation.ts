@@ -20,3 +20,27 @@ export function clampProjectStep(current: ProjectId | null, direction: 1 | -1): 
   const next = Math.min(Math.max(index + direction, 0), PROJECTS.length - 1)
   return PROJECTS[next]!.id
 }
+
+/** The three monitors on the bench show three projects at a time. */
+export const MONITOR_COUNT = 3
+
+/** How many sets of three there are. Six projects make two. */
+export const PAGE_COUNT = Math.ceil(PROJECTS.length / MONITOR_COUNT)
+
+/** Which set of three a project is in. */
+export function pageOfProject(id: ProjectId): number {
+  const index = PROJECTS.findIndex((project) => project.id === id)
+  return Math.floor(Math.max(index, 0) / MONITOR_COUNT)
+}
+
+/** The projects shown on the monitors for one set, left to right. */
+export function projectsOnPage(page: number) {
+  const start = Math.min(Math.max(page, 0), PAGE_COUNT - 1) * MONITOR_COUNT
+  return PROJECTS.slice(start, start + MONITOR_COUNT)
+}
+
+/** Which monitor, left to right, a project is on within its set. */
+export function monitorOfProject(id: ProjectId): number {
+  const index = PROJECTS.findIndex((project) => project.id === id)
+  return Math.max(index, 0) % MONITOR_COUNT
+}

@@ -1,6 +1,6 @@
-import type { Vec3 } from '@/lib/vec3'
-import type { CharacterGesture } from '@/systems/character'
-import type { ExperienceStage } from '@/systems/experienceStage'
+import type { Vec3 } from '../lib/vec3.ts'
+import type { CharacterGesture } from '../systems/character.ts'
+import type { ExperienceStage } from '../systems/experienceStage.ts'
 
 /**
  * Where the host stands and what each beat of the arrival is doing.

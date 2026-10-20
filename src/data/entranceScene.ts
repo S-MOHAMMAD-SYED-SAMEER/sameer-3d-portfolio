@@ -9,7 +9,7 @@
  * camera looks from inside it toward a portal in the far wall.
  */
 
-import type { Vec3 } from '@/lib/vec3'
+import type { Vec3 } from '../lib/vec3.ts'
 
 /*
  * Warm daylight against cool shadow. Deliberately no saturated accent —
