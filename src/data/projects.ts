@@ -532,7 +532,7 @@ export const PROJECTS: readonly Project[] = [
         'An autouse test fixture patches the Anthropic client to raise on any call, with a dedicated test asserting the guard fires — no test can reach the real API',
         'The container runs as a non-root user with a health check; Alembic migrations are verified to upgrade, downgrade and re-upgrade cleanly',
         'An offline evaluation harness runs a committed, deterministic synthetic invoice dataset through the real pipeline with a stub provider, proving the harness itself works without needing model credentials',
-        'The demo provider matches an uploaded document by the SHA-256 of its rendered page images against three committed fixtures — an unrecognised document fails closed with the same error path a real provider failure takes, never a silent guess',
+        'The demo provider matches an uploaded document by the SHA-256 of the uploaded PDF’s own bytes against three committed fixtures — an unrecognised document fails closed with the same error path a real provider failure takes, never a silent guess',
         'Docker Compose packages the demo alongside production: a shared `migrate` service runs once, and both `app` and a dedicated `demo` service (serving `demo.app:app` on host port 8001) depend on it completing before either starts — `docker compose config` validates the merged graph, though the image has not yet been built or run against a live Docker daemon',
       ],
       result:
