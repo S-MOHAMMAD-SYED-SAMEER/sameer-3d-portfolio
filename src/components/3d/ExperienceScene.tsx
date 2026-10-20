@@ -10,7 +10,7 @@ import { WorkshopHotspots } from '@/components/3d/workshop/WorkshopHotspots'
 import { WorkshopShell } from '@/components/3d/workshop/WorkshopShell'
 import { Workstation } from '@/components/3d/workshop/Workstation'
 import { ENTRANCE_PALETTE, FOG } from '@/data/entranceScene'
-import { CHARACTER_MARKS, STAGE_MARK, STAGE_REVEAL } from '@/data/journey'
+import { ABOUT_MARK, CHARACTER_MARKS, STAGE_MARK, STAGE_REVEAL } from '@/data/journey'
 import type { CameraPose } from '@/data/cameraPoses'
 import type { CharacterGesture } from '@/systems/character'
 import type { SurfaceId } from '@/data/surfaces'
@@ -68,7 +68,9 @@ export function ExperienceScene({
   // face someone who has come to read about you.
   const isAbout = openArea === 'about'
   const characterReveal = isAbout ? 1 : reveal.character
-  const hostGesture = isAbout ? 'none' : gesture
+  // He waves when About opens, then lets his arm down; and he turns to the visitor's side of the board.
+  const hostGesture = isAbout ? (reducedMotion ? 'none' : 'wave') : gesture
+  const hostMark = isAbout ? ABOUT_MARK : CHARACTER_MARKS[STAGE_MARK[stage]]
 
   return (
     <>
@@ -82,7 +84,7 @@ export function ExperienceScene({
       <StaticWorkshop />
 
       <Character
-        mark={CHARACTER_MARKS[STAGE_MARK[stage]]}
+        mark={hostMark}
         reveal={characterReveal}
         gesture={hostGesture}
         onArrive={onCharacterArrive}

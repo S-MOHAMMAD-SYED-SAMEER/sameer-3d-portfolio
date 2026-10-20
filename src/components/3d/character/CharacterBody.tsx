@@ -21,6 +21,7 @@ import {
   GESTURE_POSE,
 } from '@/data/characterDesign'
 import { MAX_FRAME_DELTA } from '@/lib/motion'
+import { blinkAmount } from '@/systems/blink'
 import type { CharacterMotionState } from '@/systems/character'
 
 const F = FIGURE
@@ -54,6 +55,19 @@ function piece(geometry: BufferGeometry, scale: Vec, at: Vec): BufferGeometry {
   geometry.translate(...at)
   return geometry
 }
+
+/** Turn a piece about Z before it is scaled and placed, for a fringe that sweeps rather than sits. */
+function swept(geometry: BufferGeometry, radians: number): BufferGeometry {
+  geometry.rotateZ(radians)
+  return geometry
+}
+
+/** How far down the eye a lid reaches when it is open (a sliver) and shut. */
+const LID_OPEN = 0.16
+const LID_SHUT = 1.12
+
+/** Where the eyes sit on the head, in the head's own frame. */
+const EYE = { y: 0.1, z: 0.083 } as const
 
 /**
  * The head, hair, hands and shoes, each merged into a single buffer.
@@ -90,25 +104,47 @@ function buildParts() {
   ])
 
   /*
-   * Hair. Tipping the crown back is what stops it reading as a helmet: the
-   * rim rises above the brow at the front and drops toward the nape at the
-   * back, which is a hairline rather than a circle drawn round the head.
+   * Hair: short, with a side part. A cap tipped back so the hairline rises at the front, a fringe that
+   * sweeps across one side of the forehead, a little height on top, sideburns down to the ears, and
+   * fullness at the back and the nape. A single bowl round the skull is what makes a procedural head
+   * read as a helmet; the asymmetry of the fringe is what makes it read as hair.
    */
-  const crown = new SphereGeometry(F.hairRadius, 20, 14, 0, Math.PI * 2, 0, Math.PI * 0.55)
-  crown.scale(1, 1.13, 1.06)
-  crown.rotateX(-0.52)
-  crown.translate(0, skull * 0.94, -0.008)
+  const crown = new SphereGeometry(F.hairRadius, 22, 16, 0, Math.PI * 2, 0, Math.PI * 0.52)
+  crown.scale(1, 1.14, 1.07)
+  crown.rotateX(-0.66)
+  crown.translate(0, skull * 0.93, -0.012)
 
   const hair = mergeGeometries([
     crown,
-    // Volume behind the temple and at the back of the skull. Set back, so it
-    // does not pile onto the ear and turn the pair into one knob.
+    // The fringe: flat masses laid forward over the brow, parted left of centre.
+    piece(swept(sphere(0.05, 12, 8), -0.22), [1.55, 0.42, 1.05], [0.03, skull * 1.7, 0.074]),
+    piece(swept(sphere(0.04, 10, 8), 0.3), [1.3, 0.4, 0.95], [-0.044, skull * 1.66, 0.068]),
+    // Height on top, pushed forward.
+    piece(sphere(0.058, 14, 10), [1.1, 0.4, 1.35], [0.004, skull * 1.9, 0.034]),
+    // Sideburns, down to the ear.
     ...SIDES.map((side) =>
-      piece(sphere(0.045, 10, 8), [0.45, 1.05, 1.15], [side * 0.094, skull * 1.14, -0.03]),
+      piece(sphere(0.022, 8, 8), [0.5, 2.0, 0.8], [side * 0.087, skull * 1.02, 0.02]),
     ),
-    piece(sphere(0.096, 14, 10), [0.92, 0.62, 0.55], [0, skull * 1.05, -0.058]),
-    piece(sphere(0.062, 10, 8), [0.86, 0.5, 0.5], [0, skull * 0.5, -0.062]),
+    // Fullness behind the temple and at the back of the skull, then the nape.
+    ...SIDES.map((side) =>
+      piece(sphere(0.045, 10, 8), [0.45, 1.05, 1.15], [side * 0.094, skull * 1.5, -0.03]),
+    ),
+    piece(sphere(0.096, 14, 10), [0.92, 0.7, 0.58], [0, skull * 1.2, -0.06]),
+    piece(sphere(0.066, 10, 8), [0.9, 0.55, 0.5], [0, skull * 0.58, -0.066]),
   ])
+
+  /*
+   * Eyes: a pale ball and a dark iris each, merged as two buffers (one per material). The lid is a
+   * separate mesh in the body below, because it moves.
+   */
+  const eyeballs = mergeGeometries(
+    SIDES.map((side) => piece(sphere(F.eyeRadius, 12, 10), [1, 0.82, 0.7], [side * F.eyeSpacing, EYE.y, EYE.z])),
+  )
+  const irises = mergeGeometries(
+    SIDES.map((side) =>
+      piece(sphere(F.irisRadius, 10, 8), [1, 1, 0.5], [side * F.eyeSpacing, EYE.y - 0.0005, EYE.z + 0.0075]),
+    ),
+  )
 
   /*
    * Hands, built from the wrist down: a wrist, a palm, the fingers as one
@@ -145,6 +181,8 @@ function buildParts() {
   return {
     head,
     hair,
+    eyeballs,
+    irises,
     hands,
     shoe,
     material: {
@@ -154,6 +192,8 @@ function buildParts() {
       shoes: cloth(FIGURE_PALETTE.shoes, FIGURE_FINISH.shoes),
       hair: cloth(FIGURE_PALETTE.hair, FIGURE_FINISH.hair),
       skin: cloth(FIGURE_PALETTE.skin, FIGURE_FINISH.skin),
+      eye: cloth(FIGURE_PALETTE.eye, 0.4),
+      iris: cloth(FIGURE_PALETTE.iris, 0.3),
       mouth: cloth(FIGURE_PALETTE.mouth, FIGURE_FINISH.skin),
     },
   }
@@ -184,6 +224,7 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
   const hips = useRef<Group>(null)
   const chest = useRef<Group>(null)
   const head = useRef<Group>(null)
+  const lids = useRef<(Group | null)[]>([])
   const legs = useRef<(Group | null)[]>([])
   const knees = useRef<(Group | null)[]>([])
   const shoulders = useRef<(Group | null)[]>([])
@@ -196,6 +237,8 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
     () => () => {
       parts.head.dispose()
       parts.hair.dispose()
+      parts.eyeballs.dispose()
+      parts.irises.dispose()
       parts.shoe.dispose()
       for (const hand of parts.hands) hand.dispose()
       for (const material of Object.values(parts.material)) material.dispose()
@@ -235,6 +278,21 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
 
     if (chest.current !== null) {
       chest.current.rotation.y = pose.torsoY * gesturePhase
+
+      // Breathing: the chest rises and widens a little, slowly. Gives way to the gait.
+      const breath = Math.sin(time * M.breathSpeed) * M.chestBreath * still
+      chest.current.scale.set(1 + breath * 0.45, 1 + breath, 1 + breath * 0.7)
+    }
+
+    // A blink closes both lids together.
+    const shut = blinkAmount(time)
+    for (const lid of lids.current) {
+      if (lid === null || lid === undefined) continue
+      const mesh = lid.children[0]
+      if (mesh === undefined) continue
+      const lidScale = MathUtils.lerp(LID_OPEN, LID_SHUT, shut)
+      mesh.scale.y = lidScale
+      mesh.position.y = -F.eyeRadius * 1.1 * lidScale
     }
 
     if (head.current !== null) {
@@ -270,7 +328,8 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
        * gesture is currently named, so an ending gesture releases the arm over
        * the same envelope it arrived on instead of dropping it in one frame.
        */
-      const blend = side === 1 ? gesturePhase : 0
+      // The right arm gestures; the wave uses the left, which is the one away from the board.
+      const blend = side === (gesture === 'wave' ? -1 : 1) ? gesturePhase : 0
       const rap = gesture === 'knock' ? knockTap * M.knockRap * blend : 0
       // Idle posture belongs to an arm that is neither walking nor gesturing.
       const idle = still * (1 - blend)
@@ -280,7 +339,12 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
 
         shoulder.rotation.x =
           walking * (1 - blend) + (pose.shoulderX * blend - rap) + (M.idleShoulderX + sway) * idle
-        shoulder.rotation.z = side * (M.armRest + pose.shoulderZ * blend + sway * 0.5 * idle)
+        // The raised hand swings side to side: the wave.
+        const wave = gesture === 'wave' ? Math.sin(time * M.waveSpeed) * M.waveWidth * blend * side : 0
+
+        shoulder.rotation.z = side * (M.armRest + pose.shoulderZ * blend + sway * 0.5 * idle) + wave
+        // The shoulders rise a touch on the in-breath.
+        shoulder.position.y = J.shoulderY - J.chestY + Math.sin(time * M.breathSpeed) * M.shoulderBreath * still
       }
 
       if (elbow !== null && elbow !== undefined) {
@@ -299,7 +363,7 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
         material={parts.material.trousers}
         castShadow
       >
-        <cylinderGeometry args={[F.pelvisRadius * 0.88, F.pelvisRadius, F.pelvisHeight, 12]} />
+        <cylinderGeometry args={[F.pelvisRadius * 0.88, F.pelvisRadius, F.pelvisHeight, 28]} />
       </mesh>
 
       <group ref={chest} position-y={J.chestY}>
@@ -310,7 +374,7 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
           castShadow
         >
           <cylinderGeometry
-            args={[F.torsoShoulder, F.torsoWaist, F.torsoLength + 0.003, 14]}
+            args={[F.torsoShoulder, F.torsoWaist, F.torsoLength + 0.003, 32]}
           />
         </mesh>
 
@@ -321,7 +385,7 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
           material={parts.material.jacket}
           castShadow
         >
-          <sphereGeometry args={[F.torsoShoulder * 1.03, 16, 12]} />
+          <sphereGeometry args={[F.torsoShoulder * 1.03, 32, 18]} />
         </mesh>
 
         {/* The shirt, showing down the open front of the jacket. An arc of a
@@ -337,7 +401,7 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
               F.torsoShoulder * 1.025,
               F.torsoWaist * 1.025,
               F.torsoLength + 0.003,
-              8,
+              16,
               1,
               true,
               -0.09,
@@ -379,6 +443,23 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
           </mesh>
 
           <mesh geometry={parts.hair} material={parts.material.hair} castShadow />
+
+          {/* Eyes. The lid is skin, hung from the top of the eye; `useFrame` scales it shut on a blink. */}
+          <mesh geometry={parts.eyeballs} material={parts.material.eye} />
+          <mesh geometry={parts.irises} material={parts.material.iris} />
+          {SIDES.map((side, index) => (
+            <group
+              key={`lid-${side}`}
+              ref={(node) => {
+                lids.current[index] = node
+              }}
+              position={[side * F.eyeSpacing, EYE.y + F.eyeRadius * 0.9, EYE.z + 0.002]}
+            >
+              <mesh material={parts.material.skin} scale={[1.08, LID_OPEN, 0.8]} position-y={-F.eyeRadius * 1.1 * LID_OPEN}>
+                <sphereGeometry args={[F.eyeRadius * 1.12, 12, 9]} />
+              </mesh>
+            </group>
+          ))}
         </group>
 
         {SIDES.map((side, index) => (
@@ -390,11 +471,11 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
             position={[side * F.shoulderHalfWidth, J.shoulderY - J.chestY, 0]}
           >
             <mesh material={parts.material.jacket} castShadow>
-              <sphereGeometry args={[F.deltoidRadius, 12, 10]} />
+              <sphereGeometry args={[F.deltoidRadius, 18, 14]} />
             </mesh>
 
             <mesh position-y={-F.upperArmLength / 2} material={parts.material.jacket} castShadow>
-              <cylinderGeometry args={[F.upperArmTop, F.upperArmBottom, F.upperArmLength, 10]} />
+              <cylinderGeometry args={[F.upperArmTop, F.upperArmBottom, F.upperArmLength, 18]} />
             </mesh>
 
             <group
@@ -404,11 +485,11 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
               position-y={J.elbowY}
             >
               <mesh material={parts.material.jacket} castShadow>
-                <sphereGeometry args={[F.elbowRadius, 10, 8]} />
+                <sphereGeometry args={[F.elbowRadius, 16, 12]} />
               </mesh>
 
               <mesh position-y={-F.forearmLength / 2} material={parts.material.jacket} castShadow>
-                <cylinderGeometry args={[F.forearmTop, F.forearmBottom, F.forearmLength, 10]} />
+                <cylinderGeometry args={[F.forearmTop, F.forearmBottom, F.forearmLength, 18]} />
               </mesh>
 
               {/* Cuff, where the jacket ends and the hand begins. */}
@@ -436,7 +517,7 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
           position={[side * F.legSpread, 0, 0]}
         >
           <mesh position-y={-F.thighLength / 2} material={parts.material.trousers} castShadow>
-            <cylinderGeometry args={[F.thighTop, F.thighBottom, F.thighLength, 10]} />
+            <cylinderGeometry args={[F.thighTop, F.thighBottom, F.thighLength, 18]} />
           </mesh>
 
           <group
@@ -446,11 +527,11 @@ export function CharacterBody({ motion }: CharacterBodyProps) {
             position-y={J.kneeY}
           >
             <mesh material={parts.material.trousers} castShadow>
-              <sphereGeometry args={[F.kneeRadius, 10, 8]} />
+              <sphereGeometry args={[F.kneeRadius, 16, 12]} />
             </mesh>
 
             <mesh position-y={-F.shinLength / 2} material={parts.material.trousers} castShadow>
-              <cylinderGeometry args={[F.shinTop, F.shinBottom, F.shinLength, 10]} />
+              <cylinderGeometry args={[F.shinTop, F.shinBottom, F.shinLength, 18]} />
             </mesh>
 
             {/* Feet turn out a few degrees. Parallel feet read as a dummy. */}

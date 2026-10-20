@@ -29,6 +29,15 @@ export const CHARACTER_MARKS: Record<CharacterMarkId, CharacterMark> = {
   studio: { position: [1.4, 0, -27.5], facing: 0.35 },
 }
 
+/**
+ * Where he stands for About: the same spot, turned to face the camera that About looks from, which
+ * is off to the left of the board. He does not walk anywhere; he turns.
+ */
+export const ABOUT_MARK: CharacterMark = {
+  position: CHARACTER_MARKS.studio.position,
+  facing: -0.65,
+}
+
 /** The mark the host occupies, or walks to, at each beat. */
 export const STAGE_MARK: Record<ExperienceStage, CharacterMarkId> = {
   intro: 'plinth',
