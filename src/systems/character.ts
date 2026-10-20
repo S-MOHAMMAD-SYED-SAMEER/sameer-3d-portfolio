@@ -19,6 +19,8 @@ export type CharacterGesture =
   | 'present'
   /** Arm swept out, showing the way in. */
   | 'invite'
+  /** Hand raised and waving, for a visitor who has come to read about him. */
+  | 'wave'
 
 export interface CharacterMotionState {
   /** 0 standing, 1 at full walking speed. */

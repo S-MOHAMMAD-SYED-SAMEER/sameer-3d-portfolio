@@ -27,29 +27,29 @@ export const FIGURE = {
   /** Pelvis sits at the hips; the jacket starts just above it. */
   pelvisHeight: 0.19,
   /** Hips are as wide as the outside of the thighs, and widest low down. */
-  pelvisRadius: 0.174,
+  pelvisRadius: 0.16,
 
   torsoLength: 0.46,
-  torsoShoulder: 0.188,
-  torsoWaist: 0.148,
+  torsoShoulder: 0.168,
+  torsoWaist: 0.136,
   /**
    * Chest depth as a fraction of its width. Too flat and the figure reads as
    * a board seen edge-on the moment the camera comes off axis.
    */
   torsoDepth: 0.72,
 
-  shoulderHalfWidth: 0.178,
+  shoulderHalfWidth: 0.158,
   /** The joint sits below the top of the yoke, so the deltoid tucks under
    * it rather than standing above it like an epaulette. */
   shoulderDrop: 0.05,
 
   upperArmLength: 0.29,
-  upperArmTop: 0.056,
-  upperArmBottom: 0.047,
+  upperArmTop: 0.047,
+  upperArmBottom: 0.04,
 
   forearmLength: 0.27,
-  forearmTop: 0.047,
-  forearmBottom: 0.039,
+  forearmTop: 0.04,
+  forearmBottom: 0.033,
 
   /**
    * Wrist to fingertip. A hand that stops at the wrist-plus-a-ball leaves
@@ -59,19 +59,19 @@ export const FIGURE = {
   handLength: 0.17,
 
   /** Caps over the joints. Without these the limbs read as detached rods. */
-  deltoidRadius: 0.062,
-  elbowRadius: 0.05,
+  deltoidRadius: 0.051,
+  elbowRadius: 0.042,
   kneeRadius: 0.063,
   jawRadius: 0.082,
   earRadius: 0.026,
 
-  neckRadius: 0.056,
-  neckLength: 0.075,
+  neckRadius: 0.05,
+  neckLength: 0.09,
 
   headRadius: 0.101,
   /** A head is taller than it is wide, and narrower than it is deep. */
   headScale: [0.94, 1.14, 1.02] as const,
-  hairRadius: 0.108,
+  hairRadius: 0.107,
 
   /**
    * Face structure. Every one of these is small on purpose: at the closest
@@ -84,6 +84,15 @@ export const FIGURE = {
   noseTipRadius: 0.0155,
   mouthWidth: 0.037,
   chinRadius: 0.031,
+
+  /**
+   * Eyes. Small, but there: a pale ball, a dark iris, and a lid that closes. At the closest camera the
+   * head is about sixty pixels tall, so each eye is a few pixels — enough to read as looking at you
+   * and to blink, which is what takes the face out of mannequin.
+   */
+  eyeRadius: 0.0125,
+  irisRadius: 0.0074,
+  eyeSpacing: 0.037,
 
   /** Wrist and fingers, so the hand is not one lump. */
   wristRadius: 0.034,
@@ -119,6 +128,19 @@ export const FIGURE_MOTION = {
   swayAmplitude: 0.022,
   swaySpeed: 0.31,
   knockRap: 0.26,
+  /** The chest rises and falls a little, and the shoulders with it. */
+  chestBreath: 0.011,
+  shoulderBreath: 0.004,
+  /**
+   * Blinking. A blink lasts a sixth of a second and comes every few seconds, spaced by a fixed
+   * sequence rather than random numbers, so the figure blinks the same on every visit and a test can
+   * pin it.
+   */
+  blinkSeconds: 0.17,
+  blinkGaps: [3.6, 4.4, 2.9, 5.2, 3.8, 4.7] as const,
+  /** Wave: how fast and how wide the raised hand swings. */
+  waveSpeed: 6.2,
+  waveWidth: 0.3,
   /** Idle is never perfectly still: the head drifts, slowly. */
   headDrift: 0.09,
   headDriftSpeed: 0.23,
@@ -182,6 +204,8 @@ export const GESTURE_POSE = {
   welcome: { shoulderX: -0.5, shoulderZ: 0.5, elbowX: -0.62, torsoY: 0.12, headY: 0.05 },
   present: { shoulderX: -0.6, shoulderZ: 0.1, elbowX: -1.6, torsoY: 0.05, headY: 0 },
   invite: { shoulderX: -0.45, shoulderZ: 0.95, elbowX: -0.3, torsoY: -0.22, headY: -0.34 },
+  /** The upper arm is lifted forward and up; the swing in the shoulder's z is the wave. */
+  wave: { shoulderX: -2.5, shoulderZ: 0.25, elbowX: -0.4, torsoY: -0.08, headY: 0.14 },
 } as const
 
 /**
@@ -195,7 +219,10 @@ export const FIGURE_PALETTE = {
   shirt: '#2a3040',
   trousers: '#15171c',
   shoes: '#0a0b0e',
-  hair: '#141519',
+  hair: '#1c1d22',
+  /** The white of the eye, dimmed so it never glints. */
+  eye: '#c9c3b8',
+  iris: '#1b130f',
   skin: '#6d5849',
   /** A shade under the skin: enough to find the mouth, never a drawn line. */
   mouth: '#4e3d33',
