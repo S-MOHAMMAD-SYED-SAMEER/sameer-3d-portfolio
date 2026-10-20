@@ -36,8 +36,8 @@ export const NAME_BOARD = {
   light: {
     offset: [0, 0.66, 0.55] as Vec3,
     colour: '#ffe7c8',
-    intensity: 3.4,
-    distance: 2.8,
+    intensity: 14,
+    distance: 3.6,
     angle: 0.5,
     penumbra: 0.5,
   },

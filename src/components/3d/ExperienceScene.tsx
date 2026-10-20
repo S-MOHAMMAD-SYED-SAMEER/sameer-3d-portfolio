@@ -29,6 +29,8 @@ interface ExperienceSceneProps {
   openArea: WorkshopArea | null
   onHighlightArea: (area: WorkshopArea | null) => void
   onSelectArea: (area: WorkshopArea) => void
+  /** Counts up when the arrival is skipped: the host and the camera jump to where they would be. */
+  skips: number
   /** Overrides the stage pose while a destination is open. */
   cameraOverride: CameraPose | null
   /** The faces whose pages are showing; `SurfaceTracker` pins each to its object. */
@@ -57,6 +59,7 @@ export function ExperienceScene({
   openArea,
   onHighlightArea,
   onSelectArea,
+  skips,
   cameraOverride,
   surfacesActive,
 }: ExperienceSceneProps) {
@@ -88,6 +91,7 @@ export function ExperienceScene({
         reveal={characterReveal}
         gesture={hostGesture}
         onArrive={onCharacterArrive}
+        jump={skips}
         reducedMotion={reducedMotion}
       />
 
@@ -99,7 +103,7 @@ export function ExperienceScene({
         onSelect={onSelectArea}
       />
 
-      <CinematicRig stage={stage} override={cameraOverride} />
+      <CinematicRig stage={stage} override={cameraOverride} jump={skips} />
 
       {/* After the rig, so it reads the camera as it is this frame. */}
       <SurfaceTracker active={surfacesActive} />

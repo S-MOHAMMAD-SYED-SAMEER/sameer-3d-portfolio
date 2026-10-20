@@ -1,4 +1,4 @@
-import type { ExperienceStage } from '@/systems/experienceStage'
+import type { ExperienceStage } from '../systems/experienceStage.ts'
 
 /**
  * What the overlay says at each beat — which is as little as possible.
@@ -22,7 +22,6 @@ export const STAGE_COPY: Record<ExperienceStage, StageCopy> = {
   },
   entrance: {
     label: 'Entrance',
-    action: 'Approach the door',
   },
   approachDoor: {
     label: 'Entrance',

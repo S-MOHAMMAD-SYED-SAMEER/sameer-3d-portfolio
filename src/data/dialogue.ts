@@ -1,6 +1,6 @@
-import { PROFILE } from '@/data/profile'
-import type { CharacterGesture } from '@/systems/character'
-import type { ExperienceStage } from '@/systems/experienceStage'
+import { PROFILE } from './profile.ts'
+import type { CharacterGesture } from '../systems/character.ts'
+import type { ExperienceStage } from '../systems/experienceStage.ts'
 
 /**
  * What the host says, and what he does while he says it.

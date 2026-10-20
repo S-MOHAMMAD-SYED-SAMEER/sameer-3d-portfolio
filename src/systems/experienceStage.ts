@@ -1,14 +1,14 @@
 /**
  * How far the visitor has progressed through the arrival.
  *
- * Four beats belong to the visitor — step inside, approach, knock, come in.
- * Everything between them plays on its own: the walk, the raps, the door
- * swinging, the turn. Later areas extend this union and the ordered list.
+ * Three beats belong to the visitor — step inside, knock, come in. Everything
+ * between them plays on its own: the walk to the door, the raps, the door
+ * swinging, the greeting. Later areas extend this union and the ordered list.
  */
 export type ExperienceStage =
   /** Establishing wide. The hall introduces itself. */
   | 'intro'
-  /** Inside, holding on the door and the board beside it. */
+  /** Inside, holding on the door and the board beside it, as he says he will get you in. */
   | 'entrance'
   /** Walking the length of the hall to the door. */
   | 'approachDoor'
@@ -56,17 +56,17 @@ export function isStageAtOrAfter(stage: ExperienceStage, other: ExperienceStage)
  */
 export const CHECKPOINTS: readonly ExperienceStage[] = [
   'intro',
-  'entrance',
   'knock',
   'welcome',
   'workshop',
 ]
 
 /**
- * Beats that always run themselves, in either mode. Two raps and a door
- * swinging are not decisions, so nothing waits on the visitor for them.
+ * Beats that always run themselves, in either mode. Being led to the door, two
+ * raps and a door swinging are not decisions, so nothing waits on the visitor
+ * for them.
  */
-export const INTRINSIC_STAGES: readonly ExperienceStage[] = ['knocking', 'doorOpen']
+export const INTRINSIC_STAGES: readonly ExperienceStage[] = ['entrance', 'knocking', 'doorOpen']
 
 export function isIntrinsic(stage: ExperienceStage): boolean {
   return INTRINSIC_STAGES.includes(stage)

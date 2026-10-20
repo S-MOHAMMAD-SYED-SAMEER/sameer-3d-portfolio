@@ -34,7 +34,7 @@ export const ENTRANCE_PALETTE = {
   bounceLight: '#16181e',
 } as const
 
-export const FOG = { near: 26, far: 96 } as const
+export const FOG = { near: 34, far: 110 } as const
 
 /**
  * The hall itself. Enclosing the space is what stops the architecture
@@ -149,7 +149,24 @@ export const CHARACTER = {
  */
 export const LIGHTING = {
   key: { position: [3, 18, -38] as Vec3, intensity: 7.2 },
-  fill: { position: [-9, 8, 16] as Vec3, intensity: 1.9 },
+  fill: { position: [-9, 8, 16] as Vec3, intensity: 3.1 },
   spill: { position: [0, 4.5, -17] as Vec3, intensity: 55, distance: 30 },
-  hemisphere: { intensity: 1.7 },
+  hemisphere: { intensity: 2.7 },
+  /**
+   * Lamps along the corridor, warm, high and out of the way of the shaft of daylight. They are what
+   * lets the walls, the floor and the door read before the door is open; without them the hall was a
+   * black tunnel and the door and the board were hard to find.
+   */
+  lamps: {
+    positions: [
+      [0, 6.2, 12],
+      [0, 6.2, 2],
+      [0, 6.2, -7],
+    ] as readonly Vec3[],
+    intensity: 95,
+    distance: 20,
+    colour: '#ffe2bd',
+  },
+  /** A wash on the front of the door and its surround, so the way in is the brightest thing at the far end. */
+  doorWash: { position: [0, 3.9, -13.2] as Vec3, intensity: 55, distance: 11, colour: '#ffe6c4' },
 } as const

@@ -1,4 +1,4 @@
-import type { ExperienceStage } from '@/systems/experienceStage'
+import type { ExperienceStage } from '../systems/experienceStage.ts'
 
 /**
  * Every duration in the experience, in seconds, in one place.
@@ -9,7 +9,9 @@ import type { ExperienceStage } from '@/systems/experienceStage'
  */
 
 /** Beats that always time out, whichever mode is running. */
-export const INTRINSIC_HOLD: Record<'knocking' | 'doorOpen', number> = {
+export const INTRINSIC_HOLD: Record<'entrance' | 'knocking' | 'doorOpen', number> = {
+  /** One line, "Let me get you inside", and a beat to read the door and the board before he sets off. */
+  entrance: 2.6,
   knocking: 3.4,
   doorOpen: 3.2,
 }
@@ -21,7 +23,6 @@ export const INTRINSIC_HOLD: Record<'knocking' | 'doorOpen', number> = {
  */
 export const AUTO_STAGE_HOLD: Partial<Record<ExperienceStage, number>> = {
   intro: 3,
-  entrance: 1.2,
   knock: 1.6,
   welcome: 1,
 }

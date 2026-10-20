@@ -13,6 +13,8 @@ interface CharacterProps {
   mark: CharacterMark
   /** 0 silhouette, 1 readable. Damped, never switched. */
   reveal: number
+  /** Changes each time the arrival is skipped: he is placed on his mark rather than walking to it. */
+  jump?: number
   /** Fired once each time the character reaches a new mark. */
   onArrive?: () => void
   /** The cinematic gesture the host is performing, if any. */
@@ -69,6 +71,7 @@ function smoothstep(t: number): number {
 export function Character({
   mark,
   reveal,
+  jump = 0,
   onArrive,
   gesture = 'none',
   reducedMotion = false,
@@ -80,6 +83,7 @@ export function Character({
   const walk = useRef<Walk | null>(null)
   const gestureStart = useRef(-1)
   const placed = useRef(false)
+  const lastJump = useRef(jump)
   const arrived = useRef(false)
 
   // Held in a ref so a fresh inline callback each render cannot restart a walk.
@@ -96,9 +100,10 @@ export function Character({
     if (group === null) return
 
     // The first mark is where the character already is, not somewhere to
-    // walk in from.
-    if (!placed.current) {
+    // walk in from. Skipping the arrival is the same: he is simply there.
+    if (!placed.current || lastJump.current !== jump) {
       placed.current = true
+      lastJump.current = jump
       group.position.set(...mark.position)
       group.rotation.y = mark.facing
       walk.current = null
@@ -122,7 +127,7 @@ export function Character({
       ),
     }
     arrived.current = false
-  }, [mark])
+  }, [mark, jump])
 
   useFrame((state, delta) => {
     const group = groupRef.current

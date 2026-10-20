@@ -32,9 +32,11 @@ interface CinematicRigProps {
    * advancing — so the rig still has exactly one thing to ease toward.
    */
   override?: CameraPose | null
+  /** Changes each time the arrival is skipped: the camera jumps to its pose instead of easing to it. */
+  jump?: number
 }
 
-export function CinematicRig({ stage, override = null }: CinematicRigProps) {
+export function CinematicRig({ stage, override = null, jump = 0 }: CinematicRigProps) {
   const initialCamera = useThree((state) => state.camera)
   const prefersReducedMotion = usePrefersReducedMotion()
 
@@ -51,6 +53,18 @@ export function CinematicRig({ stage, override = null }: CinematicRigProps) {
     lookAtRef.current.set(...start.lookAt)
     initialCamera.lookAt(lookAtRef.current)
   }, [initialCamera, prefersReducedMotion])
+
+  // Skipping the arrival puts the camera where it would have ended up, rather than flying it there.
+  const lastJump = useRef(jump)
+  useLayoutEffect(() => {
+    if (lastJump.current === jump) return
+    lastJump.current = jump
+
+    const pose = override ?? CAMERA_POSES[stage]
+    initialCamera.position.set(...pose.position)
+    lookAtRef.current.set(...pose.lookAt)
+    initialCamera.lookAt(lookAtRef.current)
+  }, [initialCamera, jump, override, stage])
 
   useFrame((state, delta) => {
     const { camera, pointer } = state
