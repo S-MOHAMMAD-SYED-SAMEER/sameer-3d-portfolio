@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import { ExperienceScene } from '@/components/3d/ExperienceScene'
 import { SceneCanvas } from '@/components/3d/SceneCanvas'
 import { ExperienceOverlay } from '@/components/experience/ExperienceOverlay'
+import { activeSurfaces } from '@/systems/activeSurfaces'
 import { WebGLBoundary } from '@/components/experience/WebGLBoundary'
 import { useJourney } from '@/hooks/useJourney'
+import { useContentPlacement } from '@/hooks/useContentPlacement'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { useWorkshop } from '@/hooks/useWorkshop'
 
@@ -23,11 +25,7 @@ export function ExperiencePage() {
   const inWorkshop = journey.stage === 'workshop'
   const workshop = useWorkshop(inWorkshop)
 
-  /** Shared between the Canvas tree and the DOM overlay: `ProjectorDisplay`
-      writes this element's on-screen position every frame (direct style
-      mutation, never React state); `ExperienceOverlay` mounts the actual
-      Projects panel into it, in the normal DOM tree. */
-  const projectorAnchorRef = useRef<HTMLDivElement>(null)
+  const placement = useContentPlacement()
 
   const { advance, back, isTransition, mode } = journey
   const { isOpen, close, step, highlighted, select, project, clearProject, stepProject } = workshop
@@ -139,14 +137,10 @@ export function ExperiencePage() {
             workshopActive={inWorkshop}
             highlightedArea={workshop.highlighted}
             openArea={workshop.open}
-            openProject={workshop.project}
-            highlightedProject={workshop.highlightedProject}
-            onHighlightProject={workshop.highlightProject}
-            onSelectProject={workshop.selectProject}
             onHighlightArea={workshop.highlight}
             onSelectArea={workshop.select}
             cameraOverride={workshop.pose}
-            projectorAnchorRef={projectorAnchorRef}
+            surfacesActive={placement === 'in-scene' ? activeSurfaces(workshop.open) : []}
           />
         </SceneCanvas>
 
@@ -158,7 +152,7 @@ export function ExperiencePage() {
           workshop={workshop}
           inWorkshop={inWorkshop}
           onBack={goBack}
-          projectorAnchorRef={projectorAnchorRef}
+          placement={placement}
         />
       </main>
     </WebGLBoundary>

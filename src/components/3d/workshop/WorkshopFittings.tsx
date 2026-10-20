@@ -1,6 +1,13 @@
 import { useEffect, useMemo } from 'react'
 
-import { PROJECTOR_SCREEN, RACK, SYSTEMS_PANEL, WORKSHOP_PALETTE } from '@/data/workshop'
+import {
+  ABOUT_BOARD,
+  PROJECTOR_SCREEN,
+  RACK,
+  RACK_CONSOLE,
+  SYSTEMS_PANEL,
+  WORKSHOP_PALETTE,
+} from '@/data/workshop'
 import { createCanvasTexture } from '@/lib/canvasTexture'
 
 /**
@@ -99,6 +106,42 @@ export function WorkshopFittings() {
             />
           </mesh>
         ))}
+
+        {/* The console set into the front: the screen Contact is written on. */}
+        <group position={[0, RACK_CONSOLE.y, RACK.depth / 2 + 0.012]}>
+          <mesh castShadow>
+            <boxGeometry args={[RACK_CONSOLE.width, RACK_CONSOLE.height, 0.04]} />
+            <meshStandardMaterial color={WORKSHOP_PALETTE.screenFrame} roughness={0.55} metalness={0.3} />
+          </mesh>
+          <mesh position-z={0.021}>
+            <planeGeometry args={[RACK_CONSOLE.width - RACK_CONSOLE.bezel, RACK_CONSOLE.height - RACK_CONSOLE.bezel]} />
+            <meshStandardMaterial color="#0b0e13" emissive="#0b0e13" emissiveIntensity={0.6} roughness={0.5} />
+          </mesh>
+        </group>
+      </group>
+
+      {/* The board standing beside the host, like an easel: About is his words, so they sit next to him. */}
+      <group position={ABOUT_BOARD.position} rotation-y={ABOUT_BOARD.yaw}>
+        {[-1, 1].map((side) => (
+          <mesh
+            key={side}
+            position={[side * (ABOUT_BOARD.width / 2 - 0.12), (ABOUT_BOARD.y - ABOUT_BOARD.height / 2) / 2, -0.03]}
+            castShadow
+          >
+            <boxGeometry args={[0.05, ABOUT_BOARD.y - ABOUT_BOARD.height / 2, 0.05]} />
+            <meshStandardMaterial color={WORKSHOP_PALETTE.metal} roughness={0.5} metalness={0.5} />
+          </mesh>
+        ))}
+        <group position-y={ABOUT_BOARD.y}>
+          <mesh castShadow>
+            <boxGeometry args={[ABOUT_BOARD.width, ABOUT_BOARD.height, ABOUT_BOARD.depth]} />
+            <meshStandardMaterial color={WORKSHOP_PALETTE.screenFrame} roughness={0.55} metalness={0.3} />
+          </mesh>
+          <mesh position-z={ABOUT_BOARD.depth / 2 + 0.002}>
+            <planeGeometry args={[ABOUT_BOARD.width - 0.1, ABOUT_BOARD.height - 0.1]} />
+            <meshStandardMaterial color="#111621" emissive="#111621" emissiveIntensity={0.5} roughness={0.5} />
+          </mesh>
+        </group>
       </group>
 
       <group position={SYSTEMS_PANEL.position} rotation-y={Math.PI / 2}>

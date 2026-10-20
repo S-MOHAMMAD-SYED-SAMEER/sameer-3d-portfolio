@@ -1,10 +1,14 @@
 import { useCallback, useMemo, useState } from 'react'
 
-import { AREA_POSES } from '@/data/workshopAreas'
+import { AREA_POSES, MONITOR_FOCUS_POSES } from '@/data/workshopAreas'
 import type { CameraPose } from '@/data/cameraPoses'
-import { PROJECTOR_POSE } from '@/data/projectDisplays'
 import type { ProjectId } from '@/data/projects'
-import { clampProjectStep } from '@/systems/projectNavigation'
+import {
+  PAGE_COUNT,
+  clampProjectStep,
+  monitorOfProject,
+  pageOfProject,
+} from '@/systems/projectNavigation'
 import { WORKSHOP_AREAS, type WorkshopArea } from '@/systems/workshopArea'
 
 export interface Workshop {
@@ -16,6 +20,10 @@ export interface Workshop {
   project: ProjectId | null
   /** The display the pointer or keyboard is currently on. */
   highlightedProject: ProjectId | null
+  /** Which set of three projects the monitors show. */
+  page: number
+  /** Shows the next or the previous set of three; wraps. */
+  turnPage: (direction: 1 | -1) => void
   /** Camera pose to hand the rig, or `null` to leave the stage pose alone. */
   pose: CameraPose | null
   isOpen: boolean
@@ -47,6 +55,7 @@ export function useWorkshop(active: boolean): Workshop {
   const [highlighted, setHighlighted] = useState<WorkshopArea | null>(null)
   const [project, setProject] = useState<ProjectId | null>(null)
   const [highlightedProject, setHighlightedProject] = useState<ProjectId | null>(null)
+  const [page, setPage] = useState(0)
 
   // Leaving the workshop closes whatever was open, so coming back in starts
   // from the room rather than mid-panel. Adjusted during render rather than
@@ -58,6 +67,7 @@ export function useWorkshop(active: boolean): Workshop {
     setHighlighted(null)
     setProject(null)
     setHighlightedProject(null)
+    setPage(0)
   }
 
   const select = useCallback((area: WorkshopArea) => {
@@ -75,6 +85,12 @@ export function useWorkshop(active: boolean): Workshop {
   const selectProject = useCallback((id: ProjectId) => {
     setProject(id)
     setHighlightedProject(id)
+    // The monitor that shows it has to be on the bench.
+    setPage(pageOfProject(id))
+  }, [])
+
+  const turnPage = useCallback((direction: 1 | -1) => {
+    setPage((current) => (current + direction + PAGE_COUNT) % PAGE_COUNT)
   }, [])
 
   const highlightProject = useCallback((id: ProjectId | null) => setHighlightedProject(id), [])
@@ -86,6 +102,7 @@ export function useWorkshop(active: boolean): Workshop {
       const next = clampProjectStep(project, direction)
       setProject(next)
       setHighlightedProject(next)
+      setPage(pageOfProject(next))
     },
     [project],
   )
@@ -102,20 +119,20 @@ export function useWorkshop(active: boolean): Workshop {
 
   const pose = useMemo<CameraPose | null>(() => {
     if (!active || open === null) return null
-    // Projects always faces the projector screen now — the list and a
-    // selected project are two views of the same destination, and the
-    // projector is the one authoritative place either is presented. The
-    // desk's own `AREA_POSES.projects` pose is no longer used; everything
-    // else still keeps its destination's own pose.
-    if (open === 'projects') return PROJECTOR_POSE
+    // Projects shows three monitors; choosing one moves the camera onto it.
+    if (open === 'projects' && project !== null) {
+      return MONITOR_FOCUS_POSES[monitorOfProject(project)] ?? AREA_POSES.projects
+    }
     return AREA_POSES[open]
-  }, [active, open])
+  }, [active, open, project])
 
   return {
     open,
     highlighted,
     project,
     highlightedProject,
+    page,
+    turnPage,
     pose,
     isOpen: open !== null,
     select,

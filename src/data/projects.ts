@@ -751,3 +751,8 @@ export function caseStudySections(project: Project): CaseStudySection[] {
 export function projectById(id: ProjectId): Project | undefined {
   return PROJECTS.find((project) => project.id === id)
 }
+
+/** The one line a monitor in the workshop leads with: the project's evaluation result, else the first thing its repository records. */
+export function outcomeLine(project: Project): string {
+  return project.proof.evaluation ?? project.proof.properties[0] ?? project.shortDescription
+}

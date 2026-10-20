@@ -6,6 +6,8 @@ import { createCanvasTexture } from '@/lib/canvasTexture'
 const S = BUILD_STATION
 const TOP_Y = S.bench.height - S.bench.top / 2
 const LEG_X = S.bench.width / 2 - 0.16
+/** Where the board's top edge is, so the drops from the tray stop there rather than crossing its face. */
+const BOARD_TOP = S.patch.y + S.patch.height / 2
 
 /**
  * A short run queue. Rows with a state marker and a bar, nothing legible —
@@ -45,8 +47,6 @@ function paintTerminal(ctx: CanvasRenderingContext2D, w: number, h: number): voi
 export function BuildStation() {
   const terminal = useMemo(() => createCanvasTexture(320, 200, paintTerminal), [])
   useEffect(() => () => terminal.dispose(), [terminal])
-
-  const stripHeight = (S.patch.height - 0.16) / S.patch.strips
 
   return (
     <>
@@ -110,32 +110,24 @@ export function BuildStation() {
         <meshStandardMaterial color={WORKSHOP_PALETTE.metal} roughness={0.5} metalness={0.5} />
       </mesh>
 
-      {/* Patch panel on the wall behind, with its connector strips. */}
+      {/* The board on the wall behind: the screen Services is written on. A dark
+          face for the page to sit on, and four status ticks along its foot. */}
       <group position={[0, S.patch.y, S.wallOffset]}>
         <mesh castShadow receiveShadow>
           <boxGeometry args={[S.patch.width, S.patch.height, 0.07]} />
           <meshStandardMaterial color={WORKSHOP_PALETTE.screenFrame} roughness={0.7} />
         </mesh>
 
-        {Array.from({ length: S.patch.strips }, (_, index) => (
-          <mesh
-            key={index}
-            position={[0, S.patch.height / 2 - 0.11 - index * stripHeight, 0.04]}
-          >
-            <planeGeometry args={[S.patch.width - 0.16, stripHeight * 0.5]} />
-            <meshStandardMaterial
-              color={WORKSHOP_PALETTE.metal}
-              roughness={0.45}
-              metalness={0.5}
-            />
-          </mesh>
-        ))}
+        <mesh position-z={0.037}>
+          <planeGeometry args={[S.patch.width - 0.12, S.patch.height - 0.12]} />
+          <meshStandardMaterial color="#0b0e13" emissive="#0b0e13" emissiveIntensity={0.6} roughness={0.5} />
+        </mesh>
 
         {/* Four status ticks. Warm, low, and not a light source. */}
         {[0, 1, 2, 3].map((index) => (
           <mesh
             key={`tick-${index}`}
-            position={[-S.patch.width / 2 + 0.14 + index * 0.1, -S.patch.height / 2 + 0.07, 0.04]}
+            position={[-S.patch.width / 2 + 0.14 + index * 0.1, -S.patch.height / 2 + 0.03, 0.04]}
           >
             <planeGeometry args={[0.035, 0.035]} />
             <meshStandardMaterial
@@ -153,8 +145,8 @@ export function BuildStation() {
         <meshStandardMaterial color={WORKSHOP_PALETTE.metal} roughness={0.55} metalness={0.45} />
       </mesh>
       {[-0.95, 0.85].map((x) => (
-        <mesh key={x} position={[x, (S.tray.y + S.patch.y) / 2, S.wallOffset + 0.1]}>
-          <boxGeometry args={[0.035, S.tray.y - S.patch.y, 0.035]} />
+        <mesh key={x} position={[x, (S.tray.y + BOARD_TOP) / 2, S.wallOffset + 0.1]}>
+          <boxGeometry args={[0.035, S.tray.y - BOARD_TOP, 0.035]} />
           <meshStandardMaterial color={WORKSHOP_PALETTE.screenFrame} roughness={0.8} />
         </mesh>
       ))}
