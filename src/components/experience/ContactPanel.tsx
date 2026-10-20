@@ -2,7 +2,6 @@ import {
   CONTACT_INTRO,
   CONTACT_PROMPT,
   contactActions,
-  unlinkedChannels,
   type ContactAction,
 } from '@/data/contact'
 import { cn } from '@/lib/cn'
@@ -11,13 +10,13 @@ import { cn } from '@/lib/cn'
  * The last station in the workshop.
  *
  * One idea, then the ways to act on it. A channel becomes a link only when it
- * has a real destination; the rest are named quietly so the panel says what
- * exists without inventing an address to fill the row. Same restraint as
- * every other destination — no cards, one accent, nothing that pulses.
+ * has a real destination; one without a destination (the résumé, until there is
+ * a file to point at) is left out altogether rather than named as missing.
+ * Same restraint as every other destination — no cards, one accent, nothing
+ * that pulses.
  */
 export function ContactPanel() {
   const actions = contactActions()
-  const unlinked = unlinkedChannels()
 
   return (
     <div>
@@ -29,15 +28,6 @@ export function ContactPanel() {
           {actions.map((action) => (
             <ContactLink key={action.id} action={action} />
           ))}
-        </div>
-      )}
-
-      {unlinked.length > 0 && (
-        <div className="mt-6">
-          <p className="text-mist/70 text-[10px] tracking-[0.3em] uppercase">Not linked yet</p>
-          <p className="text-mist/45 mt-2 text-sm">
-            {unlinked.map((channel) => channel.label).join(' · ')}
-          </p>
         </div>
       )}
     </div>

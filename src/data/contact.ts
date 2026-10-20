@@ -1,11 +1,11 @@
-import { PROFILE } from '@/data/profile'
+import { PROFILE } from './profile.ts'
 
 /**
  * Ways to get in touch.
  *
  * Every destination is `null` until a real one is added. Nothing here is
- * fabricated to fill a row — the panel renders a channel as a live action
- * only when it has somewhere to go, and names it quietly when it does not.
+ * fabricated to fill a row — a channel is shown as a live action only when it
+ * has somewhere to go, and while its value is `null` it is not shown at all.
  */
 export type ContactChannelId = 'email' | 'linkedin' | 'github' | 'resume'
 
@@ -106,7 +106,3 @@ export function contactActions(): ContactAction[] {
   return actions.map((action) => (action === lead ? { ...action, emphasis: 'primary' } : action))
 }
 
-/** Channels with nowhere to point yet. Named, never linked. */
-export function unlinkedChannels(): ContactChannel[] {
-  return CONTACT_CHANNELS.filter((channel) => channel.value === null)
-}
