@@ -43,6 +43,7 @@ const RESULT_IN_README: Partial<Record<ProjectId, string>> = {
   p2: '(21 plans)',
   p3: '86.8%',
   p4: '0.9081',
+  p5: '387 of 390',
   p6: '(18/18)',
 }
 
@@ -111,4 +112,17 @@ test("a demo that lives on the normal portfolio links to the address that site u
     assert.ok(href, `the normal portfolio has no demo for ${project.id}`)
     assert.equal(project.interactiveDemoUrl, `https://portfolio-azure-six-79.vercel.app${href}`)
   }
+})
+
+test('the DocIntel accuracy figure is never shown without its unflagged-error count and its limits', () => {
+  const docintel = PROJECTS.find((project) => project.id === 'p5')!
+  const shown = [docintel.proof.evaluation ?? '', ...docintel.proof.properties, docintel.caseStudy?.result ?? '']
+  for (const text of shown.filter((line) => line.includes('387 of 390'))) {
+    assert.match(text, /not flagged/, `"${text.slice(0, 60)}" gives the accuracy figure without the unflagged count`)
+    assert.match(text, /synthetic/, `"${text.slice(0, 60)}" gives the accuracy figure without saying the data is synthetic`)
+    assert.match(text, /one run/, `"${text.slice(0, 60)}" gives the accuracy figure without saying it is one run`)
+  }
+  assert.match(docintel.proof.evaluation ?? '', /after the checker fix: 2/)
+  assert.match(docintel.caseStudy?.result ?? '', /barely harder/)
+  assert.ok(!(docintel.caseStudy?.result ?? '').includes('No real-model benchmark has been run'))
 })
