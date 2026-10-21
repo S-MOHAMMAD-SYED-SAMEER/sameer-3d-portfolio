@@ -72,7 +72,7 @@ export const SERVICES: readonly Service[] = [
       'Structured data out of invoices and purchase orders, with every field checked outside the model and anything uncertain sent to a person — never silently guessed.',
     delivers: [
       testsPassingInCiLabel('p5'),
-      'real model: 387 of 390 fields correct on 30 synthetic invoices (one run); 2 wrong values not flagged for review (after the checker fix: 2)',
+      'real model: 387 of 390 fields correct on 30 synthetic invoices (one run); 2 wrong values not flagged for review',
       'confidence-scored human review queue',
     ],
   },

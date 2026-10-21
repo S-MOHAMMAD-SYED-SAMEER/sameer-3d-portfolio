@@ -122,7 +122,8 @@ test('the DocIntel accuracy figure is never shown without its unflagged-error co
     assert.match(text, /synthetic/, `"${text.slice(0, 60)}" gives the accuracy figure without saying the data is synthetic`)
     assert.match(text, /one run/, `"${text.slice(0, 60)}" gives the accuracy figure without saying it is one run`)
   }
-  assert.match(docintel.proof.evaluation ?? '', /after the checker fix: 2/)
+  assert.match(docintel.proof.evaluation ?? '', /2 wrong values not flagged for review$/)
+  assert.ok(!(docintel.proof.evaluation ?? '').includes('after the checker fix'))
   assert.match(docintel.caseStudy?.result ?? '', /barely harder/)
   assert.ok(!(docintel.caseStudy?.result ?? '').includes('No real-model benchmark has been run'))
 })

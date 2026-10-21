@@ -497,7 +497,7 @@ export const PROJECTS: readonly Project[] = [
     status: 'built',
     proof: {
       tests: 658,
-      evaluation: 'real model: 387 of 390 fields correct on 30 synthetic invoices (one run); 2 wrong values not flagged for review (after the checker fix: 2)',
+      evaluation: 'real model: 387 of 390 fields correct on 30 synthetic invoices (one run); 2 wrong values not flagged for review',
       properties: [
         'Deterministic validation runs outside the model — arithmetic, dates and currency codes are checked in Python, not trusted to generation',
         'Confidence scoring combines the model’s own signal with independent deterministic-check outcomes',
