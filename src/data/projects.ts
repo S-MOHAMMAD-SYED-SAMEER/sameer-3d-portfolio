@@ -561,7 +561,7 @@ export const PROJECTS: readonly Project[] = [
       'Answers a business phone line, understands the caller, books or reschedules appointments in a real calendar, and hands off to a human when it should.',
     status: 'built',
     proof: {
-      tests: 1666,
+      tests: 1833,
       evaluation: '18/18 scripted calls (no real model)',
       properties: [
         'Double-booking prevented by a PostgreSQL exclusion constraint, not application logic alone',
@@ -579,7 +579,7 @@ export const PROJECTS: readonly Project[] = [
       problem:
         'A missed call is a lost booking. Clinics, salons and trades businesses lose revenue to calls nobody could answer in time, and the hard part is not recognising speech — it is knowing when to stop talking and hand off to a person.',
       approach:
-        'Six tools mediate every action the model can take on a call: check_availability, book_appointment, reschedule, cancel, take_message and transfer_to_human. The dialogue layer was built and tested as text in, text out — no audio involved — before telephony was added, so the logic was stable before the hardest engineering (streaming speech, barge-in, latency) had to work at the same time. Double-booking is prevented at the database layer, not trusted to application code.',
+        'Seven tools mediate every action the model can take on a call: check_availability, find_appointments, book_appointment, reschedule, cancel, take_message and transfer_to_human. The dialogue layer was built and tested as text in, text out — no audio involved — before telephony was added, so the logic was stable before the hardest engineering (streaming speech, barge-in, latency) had to work at the same time. Double-booking is prevented at the database layer, not trusted to application code.',
       architecture: [
         'Caller → Twilio Media Stream (WS) → audio buffer → streaming speech-to-text → turn manager',
         'LLM turn with tool use → tool executor → CalendarService → PostgreSQL',
@@ -590,13 +590,13 @@ export const PROJECTS: readonly Project[] = [
       engineering: [
         'Double-booking is enforced by a PostgreSQL exclusion constraint ahead of any booking code, so two callers who both pass an availability check cannot both win the race',
         'The dialogue layer is testable with text in, text out and no audio anywhere near it — audio is an adapter, not the product',
-        '`transfer_to_human` records the intent and reason to escalate; actually connecting the caller to a person is not implemented',
+        '`transfer_to_human` stores a request that the team call the caller back, shown in a read-only staff view; actually connecting the caller to a person is not implemented, and the assistant is told never to say it is',
         'Speech-to-text, text-to-speech and the dialogue model each sit behind a provider interface, so swapping one is an adapter, not a config change',
         'A browser harness (`/harness`, `/ws/harness`) runs the identical `Conversation` → tool layer → `CalendarService` → PostgreSQL pipeline a phone call runs, with speech providers defaulting to a deterministic offline mode — a fixed transcript and a tone — so it needs no STT/TTS credential; real dialogue still needs an Anthropic key, and telephony itself is untouched and stays off by default',
         'Two harness-only bounds — a 300-second session limit and a 20-turn cap, neither a rate limit nor authentication — close a demo session cleanly through the same admission and cleanup path a hung-up call already uses',
       ],
       result:
-        '1,666 collected, with a PostgreSQL database available; 1,666 pass. The deterministic evaluation suite — eighteen scripted call scenarios run against the real system — scores 18/18 task success, covering straightforward booking, rescheduling, ambiguous dates and four adversarial scenarios that must be refused. This measures VoiceDesk’s own tool-calling, escalation and database behaviour against structured ground truth; the scenario model answers from a script, so the suite does not measure a real model’s conversational quality. A browser demo is documented and runnable through the existing Docker Compose stack, exercising the real pipeline end to end without a phone number; production telephony behaviour is unchanged.',
+        '1,833 collected, 1,833 pass in CI on Linux with PostgreSQL. The deterministic evaluation suite — eighteen scripted call scenarios run against the real system — scores 18/18 task success, covering straightforward booking, rescheduling, an ambiguous service name and four adversarial scenarios that must be refused. This measures VoiceDesk’s own tool-calling, escalation and database behaviour against structured ground truth; the scenario model answers from a script, so the suite does not measure a real model’s conversational quality. A browser demo is documented and runnable through the existing Docker Compose stack, exercising the real pipeline end to end without a phone number; production telephony behaviour is unchanged.',
     },
   },
 ] as const

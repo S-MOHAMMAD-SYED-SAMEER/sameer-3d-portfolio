@@ -127,3 +127,10 @@ test('the DocIntel accuracy figure is never shown without its unflagged-error co
   assert.match(docintel.caseStudy?.result ?? '', /barely harder/)
   assert.ok(!(docintel.caseStudy?.result ?? '').includes('No real-model benchmark has been run'))
 })
+
+test('the VoiceDesk evaluation is described as it is: an ambiguous service name, not ambiguous dates', () => {
+  const voice = PROJECTS.find((project) => project.id === 'p6')!
+  const text = voice.caseStudy?.result ?? ''
+  assert.ok(!/ambiguous dates/i.test(text), 'no scenario in the dataset is about a date')
+  assert.match(text, /ambiguous service name/)
+})
