@@ -496,14 +496,15 @@ export const PROJECTS: readonly Project[] = [
       'Extracts structured data from invoices and purchase orders, validates it deterministically outside the model, scores per-field confidence, and routes anything uncertain to a human review queue.',
     status: 'built',
     proof: {
-      tests: 521,
-      evaluation: null,
+      tests: 658,
+      evaluation: 'real model: 387 of 390 fields correct on 30 synthetic invoices (one run); 2 wrong values not flagged for review (after the checker fix: 2)',
       properties: [
         'Deterministic validation runs outside the model — arithmetic, dates and currency codes are checked in Python, not trusted to generation',
         'Confidence scoring combines the model’s own signal with independent deterministic-check outcomes',
         'A failed deterministic check routes a field to human review regardless of how confident the model was',
         'Human corrections preserve the model’s original answer in an audit trail rather than overwriting it',
         'A deterministic, credential-free demo replays committed, hand-verified invoice answers through the same production extraction, validation, confidence-scoring and review pipeline via a FastAPI dependency override — never a separate implementation',
+        'Real-model runs of 2026-10-21 (claude-haiku-4-5, 64 requests, USD 0.51, synthetic documents, labels by construction, one run of each prompt): 387 of 390 fields correct with the default prompt, 3 wrong, 2 of those not flagged for review, both on image-only documents where the model\'s own confidence is the only signal; 384 of 390 with the first prompt, 4 wrong values not flagged as run and 2 after the text-layer check was fixed and the saved outputs re-scored. The harder 10-invoice set is a smoke test, barely harder: both prompts missed the same 3 of 130 fields',
       ],
     },
     screenshots: [],
@@ -533,10 +534,10 @@ export const PROJECTS: readonly Project[] = [
         'The container runs as a non-root user with a health check; Alembic migrations are verified to upgrade, downgrade and re-upgrade cleanly',
         'An offline evaluation harness runs a committed, deterministic synthetic invoice dataset through the real pipeline with a stub provider, proving the harness itself works without needing model credentials',
         'The demo provider matches an uploaded document by the SHA-256 of the uploaded PDF’s own bytes against three committed fixtures — an unrecognised document fails closed with the same error path a real provider failure takes, never a silent guess',
-        'Docker Compose packages the demo alongside production: a shared `migrate` service runs once, and both `app` and a dedicated `demo` service (serving `demo.app:app` on host port 8001) depend on it completing before either starts — `docker compose config` validates the merged graph, though the image has not yet been built or run against a live Docker daemon',
+        'CI runs ruff and the full suite on Linux with PostgreSQL, the no-database tests on Windows and a dependency audit, builds the Docker image, starts the stack (database, migration, app, seed, demo), extracts a seeded invoice through the demo and reads the record back',
       ],
       result:
-        '521 tests are collected; 521 pass, with PostgreSQL available. No real-model benchmark has been run: the evaluation harness is proven correct against a stub provider and a committed synthetic dataset, but extraction accuracy, cost and latency require an Anthropic API key and credits that were not available, so none of those numbers are claimed here. A deterministic, credential-free demo now exists, reusing the real pipeline end to end, and is packaged in Docker Compose alongside the production service; the Compose configuration itself has been validated, but building and running the container has not yet been verified against a live Docker daemon.',
+        '658 tests pass in CI on Linux with PostgreSQL (391 pass and 267 skip without a database). Real-model runs on 2026-10-21 (claude-haiku-4-5, 64 requests and USD 0.51 of an 80-request, USD 2.00 cap; one run of each prompt on 30 synthetic invoices whose labels are the values they were rendered from, plus a 3-document purchase-order smoke test): the default prompt got 387 of 390 fields correct, 3 wrong, and 2 of those 3 were not flagged for review; the first prompt got 384 of 390, with 4 wrong values not flagged as run. The text-layer check had accepted a truncated value and one with an invisible character; it was replaced after the runs and the saved outputs re-scored offline, which left 2 unflagged wrong values for the first prompt and 2 for the default. Both unflagged values are on image-only documents, where there is no text layer and the model\'s own confidence is the only signal; the 0.85 review threshold is unchanged and has a boundary case (a score of exactly 0.850 passes). All of the default prompt\'s gain is on the 20 easy invoices it was written from; on the 10 harder invoices (a smoke test, barely harder) both prompts missed the same 3 of 130 fields. A date read month-first was caught by the deterministic date check and sent to review. These numbers describe these documents on these runs, not accuracy on real invoices, other models, or production use.',
     },
   },
   {
