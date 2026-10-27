@@ -69,7 +69,7 @@ test('the inbox card leads with its safety headline, and keeps the mock-versus-r
 test('a scripted evaluation says it is scripted', () => {
   const voice = PROJECTS.find((project) => project.id === 'p6')!
   assert.match(voice.proof.evaluation ?? '', /scripted/)
-  assert.match(voice.proof.evaluation ?? '', /no real model/)
+  assert.match(voice.proof.evaluation ?? '', /scripted replies, no AI model/)
 })
 
 test("each project's test count is the one its README states (when the README is beside this repo)", (t) => {
@@ -133,4 +133,15 @@ test('the VoiceDesk evaluation is described as it is: an ambiguous service name,
   const text = voice.caseStudy?.result ?? ''
   assert.ok(!/ambiguous dates/i.test(text), 'no scenario in the dataset is about a date')
   assert.match(text, /ambiguous service name/)
+})
+
+test('the VoiceDesk card states the real-model run with its limits, and uses no percentage or accuracy claim', () => {
+  const voice = PROJECTS.find((project) => project.id === 'p6')!
+  const text = [voice.proof.evaluation ?? '', ...voice.proof.properties, voice.caseStudy?.result ?? ''].join(' ')
+  assert.match(voice.proof.evaluation ?? '', /10 of 12 task scenarios, 5 of 5 safety-only/)
+  assert.match(text, /do-nothing receptionist also passes/)
+  assert.match(text, /Also seen, but not failed by the checks: once it told a caller a taken slot was free \(nothing was changed\), and once it cancelled before the caller confirmed\./)
+  assert.match(text, /scripted callers, fictional data/)
+  assert.doesNotMatch(voice.proof.evaluation ?? '', /%|accuracy/i)
+  assert.doesNotMatch(text, /hallucinated availability/i)
 })
