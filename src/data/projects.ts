@@ -562,13 +562,13 @@ export const PROJECTS: readonly Project[] = [
     status: 'built',
     proof: {
       tests: 1929,
-      evaluation: '18/18 scripted calls (no real model); separately, one real-model run: 10 of 12 task scenarios, 5 of 5 safety-only',
+      evaluation: '18 of 18 scripted test calls (scripted replies, no AI model); separately, one real-model run: 10 of 12 task scenarios, 5 of 5 safety-only',
       properties: [
         'Double-booking prevented by a PostgreSQL exclusion constraint, not application logic alone',
         'A deterministic evaluation suite scripts eighteen calls through the real system and scores tool-calling, escalation and final database state against structured ground truth',
         'Speech-to-text, text-to-speech and the dialogue model each sit behind a provider interface, swappable without touching the dialogue code',
         'A browser harness exercises the real dialogue, tool-calling and calendar pipeline with no telephony credential required, bounded by a 300-second session limit and a 20-turn cap so a demo session cannot run unbounded',
-        'One real-model run, claude-haiku-4-5, 17 scripted scenarios, typed text, fictional salon: 10 of 12 task scenarios passed; 5 of 5 safety-only passed (a do-nothing receptionist also passes those 5). Two failures, where the model asked to confirm after the caller said "please book that" and the script had no next line. Two observations the checks did not fail: it told a caller it could move a haircut to 2:00 PM although that time was taken (no change made), and it cancelled before the caller confirmed. Kept as it is; candidates for a v1.1',
+        'One real-model run, claude-haiku-4-5, 17 scripted scenarios, typed text, fictional salon: 10 of 12 task scenarios passed; 5 of 5 safety-only passed (a do-nothing receptionist also passes those 5). Two failures, where the model asked to confirm after the caller said "please book that" and the script had no next line. Also seen, but not failed by the checks: once it told a caller a taken slot was free (nothing was changed), and once it cancelled before the caller confirmed. Kept as it is; candidates for a v1.1',
       ],
     },
     screenshots: [],
