@@ -134,3 +134,13 @@ test('the VoiceDesk evaluation is described as it is: an ambiguous service name,
   assert.ok(!/ambiguous dates/i.test(text), 'no scenario in the dataset is about a date')
   assert.match(text, /ambiguous service name/)
 })
+
+test('the VoiceDesk card states the real-model run with its limits, and uses no percentage or accuracy claim', () => {
+  const voice = PROJECTS.find((project) => project.id === 'p6')!
+  const text = [voice.proof.evaluation ?? '', ...voice.proof.properties, voice.caseStudy.result].join(' ')
+  assert.match(voice.proof.evaluation ?? '', /10 of 12 task scenarios, 5 of 5 safety-only/)
+  assert.match(text, /do-nothing receptionist also passes/)
+  assert.match(text, /scripted callers, fictional data/)
+  assert.doesNotMatch(voice.proof.evaluation ?? '', /%|accuracy/i)
+  assert.doesNotMatch(text, /hallucinated availability/i)
+})
