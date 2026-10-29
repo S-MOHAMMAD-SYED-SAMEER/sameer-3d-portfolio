@@ -244,7 +244,7 @@ export const PROJECTS: readonly Project[] = [
         'A per-turn trace recorded as the turn runs and returned with the reply, drawn in an Operator view',
       ],
       engineering: [
-        'Guardrails are application code, not prompt text: eight pure policies run against the reply after generation, whether or not the model followed instructions.',
+        'Guardrails are application code, not prompt text: eight policies run against the reply after generation, whether or not the model followed instructions.',
         'Four of those policies cross-reference the reply against the tools that actually ran that turn, so a discount, stock or order-status claim with no matching tool call is blocked.',
         'Validation is fail-safe rather than silent — a failed policy returns a fixed fallback that says the support team can help, never the unverified reply. Nothing in the system actually hands the customer to a person.',
         'Both model providers sit behind one interface, so switching between them is an environment variable rather than a code change. The Anthropic adapter is implemented but has not yet been run against the live API.',
@@ -282,7 +282,7 @@ export const PROJECTS: readonly Project[] = [
       properties: [
         'On the ten demo emails the scripted mock passes 10 of 10 full cases and the real model 2 to 4 of 10 (three runs, one model, one temperature): the mock measures the code around a model, not the model',
         'No value reaches the database without text quoted from the email',
-        'Nothing is ever sent: an approved reply stops at the outbox',
+        'No real email is ever sent: by default an approved reply stops at the outbox, and the only sender is a mock',
       ],
     },
     screenshots: [
@@ -528,10 +528,10 @@ export const PROJECTS: readonly Project[] = [
       ],
       engineering: [
         'Deterministic checks run entirely outside the model; the prompt explicitly instructs it not to compute totals, so arithmetic is never trusted to generation',
-        'Model confidence carries under half the weight of the final score, and a failed deterministic check forces review regardless of the model’s own confidence',
+        'Model confidence carries 0.40 of the weight when all four signals apply (more when fewer do, all of it on an image-only field), and a failed deterministic check forces review regardless of the model’s own confidence',
         'Corrections preserve the model’s original answer rather than overwriting it, so human and model judgment stay comparable',
         'An autouse test fixture patches the Anthropic client to raise on any call, with a dedicated test asserting the guard fires — no test can reach the real API',
-        'The container runs as a non-root user with a health check; Alembic migrations are verified to upgrade, downgrade and re-upgrade cleanly',
+        'The container runs as a non-root user with a health check; Alembic migrations are tested as a whole chain: up, down to base and up again',
         'An offline evaluation harness runs a committed, deterministic synthetic invoice dataset through the real pipeline with a stub provider, proving the harness itself works without needing model credentials',
         'The demo provider matches an uploaded document by the SHA-256 of the uploaded PDF’s own bytes against three committed fixtures — an unrecognised document fails closed with the same error path a real provider failure takes, never a silent guess',
         'CI runs ruff and the full suite on Linux with PostgreSQL, the no-database tests on Windows and a dependency audit, builds the Docker image, starts the stack (database, migration, app, seed, demo), extracts a seeded invoice through the demo and reads the record back',
@@ -558,7 +558,7 @@ export const PROJECTS: readonly Project[] = [
       'Anthropic SDK',
     ],
     shortDescription:
-      'Answers a business phone line, understands the caller, books or reschedules appointments in a real calendar, and hands off to a human when it should.',
+      'Answers a business phone line, understands the caller, books or reschedules appointments in a real calendar, and takes a callback request for the team when it should (it cannot transfer a call).',
     status: 'built',
     proof: {
       tests: 1929,
@@ -582,7 +582,7 @@ export const PROJECTS: readonly Project[] = [
       approach:
         'Seven tools mediate every action the model can take on a call: check_availability, find_appointments, book_appointment, reschedule, cancel, take_message and transfer_to_human. The dialogue layer was built and tested as text in, text out — no audio involved — before telephony was added, so the logic was stable before the hardest engineering (streaming speech, barge-in, latency) had to work at the same time. Double-booking is prevented at the database layer, not trusted to application code.',
       architecture: [
-        'Caller → Twilio Media Stream (WS) → audio buffer → streaming speech-to-text → turn manager',
+        'Designed path (the speech and phone legs have only been run against simulated providers): Caller → Twilio Media Stream (WS) → audio buffer → streaming speech-to-text → turn manager',
         'LLM turn with tool use → tool executor → CalendarService → PostgreSQL',
         'Text-to-speech → audio back to the caller, with full transcript, tool calls, latency and cost persisted per call',
         'A PostgreSQL exclusion constraint (EXCLUDE USING gist) prevents two callers from ever double-booking the same slot',

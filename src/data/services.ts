@@ -80,7 +80,7 @@ export const SERVICES: readonly Service[] = [
     id: 'voice-ai',
     title: 'Voice AI',
     summary:
-      'A phone line that checks the calendar before it promises a slot, and hands off to a person when it should.',
+      'A phone line that checks the calendar before it promises a slot, and takes a callback request for the team when it should.',
     delivers: [
       testsLabel('p6'),
       'double-booking prevented at the database layer',
