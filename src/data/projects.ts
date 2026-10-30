@@ -81,6 +81,8 @@ export interface ProjectVideo {
   captions?: string
   /** One line naming what the visitor is watching. */
   caption: string
+  /** A second line under the caption, for what is specific to this recording. */
+  detail?: string
   width: number
   height: number
 }
@@ -215,10 +217,11 @@ export const PROJECTS: readonly Project[] = [
       },
     ],
     video: {
-      src: 'https://portfolio-azure-six-79.vercel.app/videos/sales-recovery-agent-16x9.mp4',
-      poster: 'https://portfolio-azure-six-79.vercel.app/videos/sales-recovery-agent-poster.jpg',
+      src: 'https://portfolio-azure-six-79.vercel.app/videos/sales-recovery-agent-clean-16x9.mp4',
+      poster: 'https://portfolio-azure-six-79.vercel.app/videos/sales-recovery-agent-clean-poster.jpg',
       captions: 'https://portfolio-azure-six-79.vercel.app/videos/sales-recovery-agent.vtt',
-      caption: 'A 90-second recording of the real app on a live Gemini run (2026-10-15): fictional store and data, nothing edited. AI-voice narration.',
+      caption: 'Demo: the real app on a real model, fictional data, AI voice narration.',
+      detail: 'A 90-second recording of the real app on a live Gemini run (2026-10-15): fictional store and data, nothing edited. AI-voice narration.',
       width: 1920,
       height: 1080,
     },
@@ -302,10 +305,11 @@ export const PROJECTS: readonly Project[] = [
       },
     ],
     video: {
-      src: 'https://portfolio-azure-six-79.vercel.app/videos/inbox-crm-agent-16x9.mp4',
-      poster: 'https://portfolio-azure-six-79.vercel.app/videos/inbox-crm-agent-poster.jpg',
+      src: 'https://portfolio-azure-six-79.vercel.app/videos/inbox-crm-agent-clean-16x9.mp4',
+      poster: 'https://portfolio-azure-six-79.vercel.app/videos/inbox-crm-agent-clean-poster.jpg',
       captions: 'https://portfolio-azure-six-79.vercel.app/videos/inbox-crm-agent.vtt',
-      caption: 'An 86-second recording of the real app on a live Gemini run (2026-10-18): invented data, nothing edited. The last scene is the guest demo, which runs when you run the app locally (not hosted yet). AI-voice narration.',
+      caption: 'Demo: the real app on a real model, fictional data, AI voice narration.',
+      detail: 'An 86-second recording of the real app on a live Gemini run (2026-10-18): invented data, nothing edited. The last scene is the guest demo, which runs when you run the app locally (not hosted yet). AI-voice narration.',
       width: 1920,
       height: 1080,
     },
@@ -380,6 +384,14 @@ export const PROJECTS: readonly Project[] = [
         height: 1690,
       },
     ],
+    video: {
+      src: 'https://portfolio-azure-six-79.vercel.app/videos/explainable-ats-clean-16x9.mp4',
+      poster: 'https://portfolio-azure-six-79.vercel.app/videos/explainable-ats-clean-poster.jpg',
+      captions: 'https://portfolio-azure-six-79.vercel.app/videos/explainable-ats.vtt',
+      caption: 'Demo: the real app on a real model, fictional data, AI voice narration.',
+      width: 1920,
+      height: 1080,
+    },
     links: {
       github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/explainable-ats',
       caseStudy: null,
@@ -448,6 +460,14 @@ export const PROJECTS: readonly Project[] = [
       ],
     },
     screenshots: [],
+    video: {
+      src: 'https://portfolio-azure-six-79.vercel.app/videos/knowledgeos-clean-16x9.mp4',
+      poster: 'https://portfolio-azure-six-79.vercel.app/videos/knowledgeos-clean-poster.jpg',
+      captions: 'https://portfolio-azure-six-79.vercel.app/videos/knowledgeos.vtt',
+      caption: 'Demo: the real app on a real model, fictional data, AI voice narration.',
+      width: 1920,
+      height: 1080,
+    },
     links: {
       github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/knowledgeos',
       caseStudy: null,
@@ -508,6 +528,14 @@ export const PROJECTS: readonly Project[] = [
       ],
     },
     screenshots: [],
+    video: {
+      src: 'https://portfolio-azure-six-79.vercel.app/videos/docintel-clean-16x9.mp4',
+      poster: 'https://portfolio-azure-six-79.vercel.app/videos/docintel-clean-poster.jpg',
+      captions: 'https://portfolio-azure-six-79.vercel.app/videos/docintel.vtt',
+      caption: 'Demo: the real app on a real model, fictional data, AI voice narration.',
+      width: 1920,
+      height: 1080,
+    },
     links: {
       github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/docintel',
       caseStudy: null,
@@ -572,6 +600,14 @@ export const PROJECTS: readonly Project[] = [
       ],
     },
     screenshots: [],
+    video: {
+      src: 'https://portfolio-azure-six-79.vercel.app/videos/voicedesk-clean-16x9.mp4',
+      poster: 'https://portfolio-azure-six-79.vercel.app/videos/voicedesk-clean-poster.jpg',
+      captions: 'https://portfolio-azure-six-79.vercel.app/videos/voicedesk.vtt',
+      caption: 'Demo: the real app on a real model, fictional data, AI voice narration. Typed text only. Voice and phone are not connected yet.',
+      width: 1920,
+      height: 1080,
+    },
     links: {
       github: 'https://github.com/S-MOHAMMAD-SYED-SAMEER/voicedesk',
       caseStudy: null,

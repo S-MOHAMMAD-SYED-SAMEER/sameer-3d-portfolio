@@ -16,9 +16,11 @@ import type { ProjectVideo as ProjectVideoData } from '@/data/projects'
  * the main portfolio's deployment, which is the same owner's static hosting
  * and not a third-party player. A file from another origin needs `crossOrigin`
  * for its captions track to load, and the portfolio sends the matching CORS
- * header for `/videos/*`. `preload="metadata"` matters here for the same reason
- * `loading="lazy"` matters on `ProjectEvidence` — the file is only fetched
- * once a visitor opens the project that owns it.
+ * header for `/videos/*`. `preload="none"` matters here for the same reason
+ * `loading="lazy"` matters on `ProjectEvidence` — nothing but the poster is
+ * fetched until a visitor presses play. The video starts muted (the narration
+ * is one press of the volume control away), and the frame is a fixed 16:9 box
+ * so nothing jumps when the file arrives.
  *
  * The captions track is available but OFF at first: it carries the full spoken
  * text, and short captions are already burned into the picture, so showing both
@@ -63,16 +65,20 @@ export function ProjectVideo({ video }: { video: ProjectVideoData | undefined })
         height={video.height}
         controls
         playsInline
-        preload="metadata"
+        muted
+        preload="none"
         crossOrigin={isAbsolute(video.src) ? 'anonymous' : undefined}
         aria-label={video.caption}
-        className="border-line block h-auto w-full overflow-hidden rounded-lg border"
+        className="border-line block aspect-video h-auto w-full overflow-hidden rounded-lg border"
       >
         {video.captions !== undefined && (
           <track kind="captions" src={video.captions} srcLang="en" label="English" />
         )}
       </video>
-      <p className="text-mist mt-2 text-xs leading-relaxed">{video.caption}</p>
+      <p className="text-mist mt-2 text-xs leading-relaxed">
+        {video.caption}
+        {video.detail !== undefined && <span className="mt-2 block">{video.detail}</span>}
+      </p>
     </div>
   )
 }
