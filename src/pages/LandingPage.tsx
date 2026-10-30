@@ -1,4 +1,6 @@
 import { ActionLink } from '@/components/ActionLink'
+import { ACTION_BASE, ACTION_VARIANT } from '@/components/actionStyles'
+import { RESUME_URL } from '@/data/contact'
 import { PROFILE } from '@/data/profile'
 import { ROUTES } from '@/lib/routes'
 
@@ -38,6 +40,14 @@ export function LandingPage() {
           <ActionLink to={ROUTES.normal} variant="secondary">
             View Normal Portfolio
           </ActionLink>
+          <a
+            href={RESUME_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            className={`${ACTION_BASE} ${ACTION_VARIANT.secondary}`}
+          >
+            Resume (PDF)
+          </a>
         </div>
       </div>
     </main>

@@ -6,15 +6,24 @@ import {
   caseStudySections,
   projectActions,
   type Project,
+  type ProjectId,
+  type ProjectShot,
 } from '@/data/projects'
+import { RESULTS_IMAGES } from '@/data/resultsImages'
+
+/** The results image of a project, as the evidence list shows a screenshot. */
+function resultsShot(id: ProjectId): ProjectShot {
+  const image = RESULTS_IMAGES[id]
+  return { ...image, caption: 'What was measured, and the limits that come with it.' }
+}
 
 /**
  * The long form, used by the per-project case-study route.
  *
- * Overview and proof → evidence → problem → approach → system → engineering →
- * result → technology → actions. The order matches the 3D panel exactly: what
- * it is, what is measured, what it looks like running, how it was built, and
- * only then what the reader can go and do with it.
+ * Overview and demo video → proof (with the results image) → evidence →
+ * problem → approach → system → engineering → result → technology → actions.
+ * What it is, what it looks like running, what is measured, how it was built,
+ * and only then what the reader can go and do with it.
  */
 export function ProjectArticle({ project }: { project: Project }) {
   const sections = caseStudySections(project)
@@ -27,6 +36,13 @@ export function ProjectArticle({ project }: { project: Project }) {
       <p className="text-mist mt-3 max-w-2xl text-base leading-relaxed">
         {project.shortDescription}
       </p>
+
+      {/* The recording sits right under the summary: it is the quickest way to see what the system is. */}
+      {project.video !== undefined && (
+        <div className="mt-8 max-w-3xl">
+          <ProjectVideo video={project.video} />
+        </div>
+      )}
 
       <Block title="Proof">
         <dl className="flex flex-wrap gap-x-10 gap-y-4">
@@ -49,12 +65,16 @@ export function ProjectArticle({ project }: { project: Project }) {
             ))}
           </ul>
         )}
+
+        {/* The same figures as the carousel's results slide, with their limits in the picture and in its alt text. */}
+        <div className="mt-6 max-w-sm">
+          <ProjectEvidence shots={[resultsShot(project.id)]} />
+        </div>
       </Block>
 
-      {(project.screenshots.length > 0 || project.video !== undefined) && (
+      {project.screenshots.length > 0 && (
         <Block title="Evidence">
           <div className="max-w-3xl space-y-5">
-            <ProjectVideo video={project.video} />
             {/* Two up on a wide screen; the component itself stays unchanged. */}
             <ProjectEvidence shots={project.screenshots} />
           </div>

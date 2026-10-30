@@ -2,6 +2,7 @@ import { ContactPanel } from '@/components/experience/ContactPanel'
 import { ModeSwitch } from '@/components/navigation/ModeSwitch'
 import { NormalProjects } from '@/components/normal/NormalProjects'
 import { ABOUT } from '@/data/about'
+import { RESUME_URL } from '@/data/contact'
 import { PROFILE } from '@/data/profile'
 import { PROJECTS, formatCount, totalTests } from '@/data/projects'
 import { SERVICES } from '@/data/services'
@@ -58,6 +59,14 @@ export function NormalPortfolioPage() {
                 {section.label}
               </a>
             ))}
+            <a
+              href={RESUME_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="focus-ring text-mist hover:text-chalk rounded text-xs tracking-[0.2em] uppercase transition-colors"
+            >
+              Resume (PDF)
+            </a>
           </nav>
           <ModeSwitch />
         </div>
@@ -81,12 +90,22 @@ export function NormalPortfolioPage() {
             {PROFILE.intro}
           </p>
 
-          <a
-            href="#projects"
-            className="focus-ring text-accent mt-10 inline-block rounded text-sm hover:underline"
-          >
-            See the work →
-          </a>
+          <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3">
+            <a
+              href="#projects"
+              className="focus-ring text-accent inline-block rounded text-sm hover:underline"
+            >
+              See the work →
+            </a>
+            <a
+              href={RESUME_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="focus-ring text-accent inline-block rounded text-sm hover:underline"
+            >
+              Resume (PDF)
+            </a>
+          </div>
         </section>
 
         <Section id="work" title="Selected work">

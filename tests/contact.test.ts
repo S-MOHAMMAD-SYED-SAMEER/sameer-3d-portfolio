@@ -21,7 +21,8 @@ test('a channel with no destination produces no action', () => {
 test('every action that is shown goes somewhere real', () => {
   for (const action of contactActions()) {
     assert.ok(action.href.length > 'mailto:'.length)
-    assert.ok(action.href.startsWith('mailto:') || action.href.startsWith('https://'), action.href)
+    // A file served from public/ (the résumé) is root-relative; every other channel is a mailto: or an https URL.
+    assert.ok(action.href.startsWith('mailto:') || action.href.startsWith('https://') || /^\/[\w.-]+\.pdf$/.test(action.href), action.href)
   }
 })
 

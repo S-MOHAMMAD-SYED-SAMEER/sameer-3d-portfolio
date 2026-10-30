@@ -25,6 +25,9 @@ export interface ContactChannel {
   value: string | null
 }
 
+/** The resume, a file served from public/ under its own name. */
+export const RESUME_URL = '/Mohammad_Syed_Sameer_AI_Engineer_Resume.pdf'
+
 export const CONTACT_INTRO = "Let's build something useful."
 
 /** The kind of problem worth writing about, said once and quietly. */
@@ -52,7 +55,7 @@ export const CONTACT_CHANNELS: readonly ContactChannel[] = [
     value: 'https://github.com/S-MOHAMMAD-SYED-SAMEER',
   },
   // A hosted URL or a file served from public/ (e.g. '/resume.pdf') both work.
-  { id: 'resume', label: 'Résumé', kind: 'external', value: null },
+  { id: 'resume', label: 'Resume (PDF)', kind: 'external', value: RESUME_URL },
 ]
 
 /**
